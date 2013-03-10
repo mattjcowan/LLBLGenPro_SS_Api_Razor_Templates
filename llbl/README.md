@@ -2,6 +2,7 @@ Template Usage
 =================================
 
 Use the sample LLBLGen Pro project file: Northwind.Data.llblgenproj to learn how to use the templates.
+The scripts to create the database for the sample project are in the "sql" folder in the root of this GitHub project.
 
 # Setup
 
