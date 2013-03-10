@@ -1,0 +1,357 @@
+﻿@inherits ViewPage<Northwind.Data.Services.OrderCollectionResponse>
+
+@{
+    ViewBag.Title = "Order Browser";
+    Layout = "_Layout";
+}  
+    
+@section Header {
+    <link rel="stylesheet" type="text/css" href="/css/plugins.css" />
+    <script>
+        var dtBaseUrl = '/orders';
+        var dtItemUrl = function (data) { return window.dtBaseUrl + "/" + data[0]; };
+        var dtAjaxUrl = '@Html.DataTableAjaxUrl("/orders/datatable")';
+        var dtAllIncludes = 'customer,employee,orderdetails,shipper';
+        var dtAjaxColumns = [
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // OrderId field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // CustomerId field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // EmployeeId field
+            { "bSortable": true, "bSearchable": false, "bVisible": false }, // OrderDate field
+            { "bSortable": true, "bSearchable": false, "bVisible": false }, // RequiredDate field
+            { "bSortable": true, "bSearchable": false, "bVisible": false }, // ShippedDate field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipVia field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // Freight field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipName field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipAddress field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipCity field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipRegion field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipPostalCode field
+            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipCountry field
+            { "bSortable": false, "bSearchable": false } // Related field
+        ];
+    </script>
+}
+@section Footer {
+    <script>
+        var fnDoAddItemInit = function (data) {
+            $("#modalErrorBlock").hide();
+            $("#modalErrorText").text('');
+            $("#addEditItemForm").attr("action", dtBaseUrl);
+            $("#addEditItemForm").attr("method", "POST");
+            $("#disorderid").val("");
+            $("#orderid").val("");
+            $("#customerid").val("");
+            $("#employeeid").val("");
+            $("#orderdate").val("");
+            $("#requireddate").val("");
+            $("#shippeddate").val("");
+            $("#shipvia").val("");
+            $("#freight").val("");
+            $("#shipname").val("");
+            $("#shipaddress").val("");
+            $("#shipcity").val("");
+            $("#shipregion").val("");
+            $("#shippostalcode").val("");
+            $("#shipcountry").val("");
+            $("#addEditModalTitle").text("Add");
+        };
+        var fnDoEditItemInit = function (data) {
+            $("#modalErrorBlock").hide();
+            $("#modalErrorText").text('');
+            $("#addEditItemForm").attr("action", dtItemUrl(data) + '/update');
+            $("#addEditItemForm").attr("method", "POST"); // or PUT without /update trailer in url
+            $("#disorderid").val(data[0]);
+            $("#orderid").val(data[0]);
+            $("#customerid").val(data[1]);
+            $("#employeeid").val(data[2]);
+            $("#orderdate").val(data[3]);
+            $("#requireddate").val(data[4]);
+            $("#shippeddate").val(data[5]);
+            $("#shipvia").val(data[6]);
+            $("#freight").val(data[7]);
+            $("#shipname").val(data[8]);
+            $("#shipaddress").val(data[9]);
+            $("#shipcity").val(data[10]);
+            $("#shipregion").val(data[11]);
+            $("#shippostalcode").val(data[12]);
+            $("#shipcountry").val(data[13]);
+            $("#addEditModalTitle").text("Edit");
+        };    
+    </script>
+    <script type="text/javascript" charset="utf-8" language="javascript" src="/js/plugins.js"></script>
+    <script type="text/javascript" charset="utf-8" language="javascript" src="/js/scripts.js"></script>
+}
+<div class="row-fluid">
+    <div class="span3">
+        @Html.Partial("_EntityNav", "/orders")
+    </div>
+    <div class="span9">
+        <div class="well">
+            <div class="entity-browser">
+                <h1>
+                    Order Browser
+                </h1>
+                This is where you browse your Order entities.
+                <a href="/orders/meta">
+                    <span class="label label-info">
+                        meta
+                    </span>
+                </a>&nbsp;
+                <a href="/orders?format=xml">
+                    <span class="label label-info">
+                        xml
+                    </span>
+                </a>&nbsp;
+                <a href="/orders?format=json">
+                    <span class="label label-info">
+                        json
+                    </span>
+                </a>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <ul class="breadcrumb">
+              <li><a href="/">Home</a> <span class="divider">/</span></li>
+              <li><a href="/entities">Browse</a> <span class="divider">/</span></li>
+              <li class="active">Orders</li>
+            </ul>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="alert alert-info options-box" style="display:none;">
+                    @*<button type="button" class="close" data-dismiss="alert">&times;</button>*@
+                    <h4>Options</h4>
+                    Refine your query by using the <strong>filter</strong> query string parameter. Include related items by
+                    using the <strong>include</strong> parameter. <br />Browse the <a href="/orders/meta"><span class="label label-info">meta</span></a>
+                    data for this entity to see what fields you can filter on, and what related items can be included.<br />
+                    Use the grid controls below for <strong>paging</strong>, <strong>full-text search</strong>, <strong>sorting</strong> and <strong>column selection</strong>.<br />
+                    The <strong>relations</strong> options will be supported at a later date.<br />
+                    All options are available in the <a href="/orders?format=xml"><span class="label label-info">xml</span></a> and 
+                    <a href="/orders?format=json"><span class="label label-info">json</span></a> formats, refer to the <a href="http://www.mattjcowan.com/funcoding/" target="_blank"><strong>API documentation</strong></a>.
+                    <p>
+                    <strong>Sample (categories with ids 1 through 6 with a category name containing the letters 'on'):</strong>
+                        </p>
+                    <code>
+                    filter=(^(categoryid:eq:1,2,3,4,5,6)(categoryname:lk:&#34;*on*&#34;))&amp;include=products
+                    </code>
+                </div>
+                <div class="entity-row">
+                    <div class="input-prepend input-append pull-left">
+                        <span class="add-on"><i class="icon-info-sign"></i> <a href="javascript:void(0);" style="font-weight:bold;" onclick="$('.options-box').toggle();">/orders?</a></span>
+                        <input id="filterText" type="text" value="@Html.DataTableAjaxUrl("").ToString().TrimStart('?')" placeholder="e.g.: filter=(^(Field1:eq:1,2)(Field2:lk:&#34;abc*&#34;))&amp;include=include1,include2">
+                        <button class="btn" type="button" onclick="window.location='/orders?'+$('#filterText').val();">Go!</button>
+                    </div>
+                    <div class="pull-right">
+                        <div class="btn-group input-append input-prepend">
+                            <button id="btnAddItem" class="btn" type="button"><i class="icon-plus-sign"></i> Add</button>
+                            <button id="btnEditItem" class="btn disabled" disabled="disabled" type="button"><i class="icon-edit"></i> Edit</button>
+                            <button id="btnDeleteItem" class="btn disabled" disabled="disabled" type="button"><i class="icon-minus-sign"></i> Delete</button>
+                        </div>
+                        <div class="btn-group col_vis_menu">
+                            <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
+                            <ul id="dt_d_nav" class="dropdown-menu tableMenu">
+                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" CHECKED="checked" type="checkbox"> Order Id</label></li>
+                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" type="checkbox"> Customer Id</label></li>
+                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" type="checkbox"> Employee Id</label></li>
+                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" type="checkbox"> Order Date</label></li>
+                                <li><label class="checkbox" for="dt_col_5"><input id="dt_col_5" name="toggle-cols" value="4" type="checkbox"> Required Date</label></li>
+                                <li><label class="checkbox" for="dt_col_6"><input id="dt_col_6" name="toggle-cols" value="5" type="checkbox"> Shipped Date</label></li>
+                                <li><label class="checkbox" for="dt_col_7"><input id="dt_col_7" name="toggle-cols" value="6" type="checkbox"> Ship Via</label></li>
+                                <li><label class="checkbox" for="dt_col_8"><input id="dt_col_8" name="toggle-cols" value="7" type="checkbox"> Freight</label></li>
+                                <li><label class="checkbox" for="dt_col_9"><input id="dt_col_9" name="toggle-cols" value="8" type="checkbox"> Ship Name</label></li>
+                                <li><label class="checkbox" for="dt_col_10"><input id="dt_col_10" name="toggle-cols" value="9" type="checkbox"> Ship Address</label></li>
+                                <li><label class="checkbox" for="dt_col_11"><input id="dt_col_11" name="toggle-cols" value="10" type="checkbox"> Ship City</label></li>
+                                <li><label class="checkbox" for="dt_col_12"><input id="dt_col_12" name="toggle-cols" value="11" type="checkbox"> Ship Region</label></li>
+                                <li><label class="checkbox" for="dt_col_13"><input id="dt_col_13" name="toggle-cols" value="12" type="checkbox"> Ship Postal Code</label></li>
+                                <li><label class="checkbox" for="dt_col_14"><input id="dt_col_14" name="toggle-cols" value="13" type="checkbox"> Ship Country</label></li>
+                                <li><label class="checkbox" for="dt_col_15"><input id="dt_col_15" name="toggle-cols" value="14" CHECKED="checked" type="checkbox"> Related</label></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="entity-row" style="clear:both;width:100%;display:block;">
+                    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="entity-grid">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Customer Id</th>
+                                <th>Employee Id</th>
+                                <th>Order Date</th>
+                                <th>Required Date</th>
+                                <th>Shipped Date</th>
+                                <th>Ship Via</th>
+                                <th>Freight</th>
+                                <th>Ship Name</th>
+                                <th>Ship Address</th>
+                                <th>Ship City</th>
+                                <th>Ship Region</th>
+                                <th>Ship Postal Code</th>
+                                <th>Ship Country</th>
+                                <th>Related (<a href="javascript:void(0);" id="showCountHref">@if(Html.HttpRequest.AbsoluteUri.IndexOf("include=")==-1){<text>show</text>}else{<text>hide</text>} count</a>)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="99">No matching records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide" id="addEditItemModal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3><span id="addEditModalTitle"></span> Order</h3>
+    </div>
+    <div class="modal-body">
+      <form id="addEditItemForm" class="add-update-item form-horizontal" data-target="#addEditItemModal" action="/orders" method="POST" enctype="multipart/form-data">
+          <fieldset>
+              <legend style="display:none;"></legend>
+
+              <div id="modalErrorBlock" class="alert alert-error" style="display:none;">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  <h4>Oops!</h4>
+                  <span id="modalErrorText"></span>
+              </div>
+
+
+              <div class="control-group">
+                  <label class="control-label" for="disorderid">Order Id</label>
+                  <div class="controls">
+                      <input type="text" id="disorderid" name="disorderid" placeholder="&lt; read only &gt;" disabled="disabled" class="input-xlarge disabled">
+                      <input type="hidden" id="orderid" name="orderid" />
+                      <p class="help-block"></p>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="customerid">Customer Id</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="customerid" name="customerid" placeholder="" class="input-xlarge" maxlength="5">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="employeeid">Employee Id</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="employeeid" name="employeeid" placeholder="" class="input-xlarge" maxlength="0">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="orderdate">Order Date</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="orderdate" name="orderdate" placeholder="" class="input-xlarge" maxlength="0">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="requireddate">Required Date</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="requireddate" name="requireddate" placeholder="" class="input-xlarge" maxlength="0">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shippeddate">Shipped Date</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shippeddate" name="shippeddate" placeholder="" class="input-xlarge" maxlength="0">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shipvia">Ship Via</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shipvia" name="shipvia" placeholder="" class="input-xlarge" maxlength="0">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="freight">Freight</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="freight" name="freight" placeholder="" class="input-xlarge" maxlength="0">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shipname">Ship Name</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shipname" name="shipname" placeholder="" class="input-xlarge" maxlength="40">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shipaddress">Ship Address</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shipaddress" name="shipaddress" placeholder="" class="input-xlarge" maxlength="60">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shipcity">Ship City</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shipcity" name="shipcity" placeholder="" class="input-xlarge" maxlength="15">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shipregion">Ship Region</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shipregion" name="shipregion" placeholder="" class="input-xlarge" maxlength="15">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shippostalcode">Ship Postal Code</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shippostalcode" name="shippostalcode" placeholder="" class="input-xlarge" maxlength="10">
+                      </div>
+                  </div>
+              </div>
+            
+              <div class="control-group">
+                  <label class="control-label" for="shipcountry">Ship Country</label>
+                  <div class="controls">
+                      <div class="textarea">
+                          <input type="text" id="shipcountry" name="shipcountry" placeholder="" class="input-xlarge" maxlength="15">
+                      </div>
+                  </div>
+              </div>
+
+          </fieldset>
+      </form>
+    </div>
+    <div class="modal-footer">
+        <a href="javascript:void(0);" data-dismiss="modal" class="btn">Close</a>
+        <input type="button" value="Submit" id="btnCommitAddUpdate" class="btn btn-primary">
+    </div>
+</div>
+ 

@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Data", "DbGeneric\Northwind.Data.csproj", "{32137079-C882-43A5-8389-34CBE20E3874}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.DataDBSpecific", "DbSpecific\Northwind.DataDBSpecific.csproj", "{41E0E66F-4CA4-4F79-8783-3EB6F0FA54B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Data.Services", "ServiceGeneric\Northwind.Data.Services.csproj", "{AB035A47-0352-42D1-85BE-37EA9213B498}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Data.ServiceRepositories", "ServiceSpecific\Northwind.Data.ServiceRepositories.csproj", "{228D8361-4358-4641-9868-DA9F5043DFA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleHost", "Hosts\ConsoleHost\ConsoleHost.csproj", "{C5528A9C-4565-409B-9457-92A0561C8847}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{724B3881-7D28-4B0F-B621-957248A43401}"
+	ProjectSection(SolutionItems) = preProject
+		packages.bat = packages.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosts", "Hosts", "{2B8770E0-D613-48DC-BB0E-4A30041E6C35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHost", "Hosts\WebHost\WebHost.csproj", "{BAA579CE-F448-4F79-ADE7-2FE4F018397F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32137079-C882-43A5-8389-34CBE20E3874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32137079-C882-43A5-8389-34CBE20E3874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32137079-C882-43A5-8389-34CBE20E3874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32137079-C882-43A5-8389-34CBE20E3874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41E0E66F-4CA4-4F79-8783-3EB6F0FA54B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41E0E66F-4CA4-4F79-8783-3EB6F0FA54B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41E0E66F-4CA4-4F79-8783-3EB6F0FA54B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41E0E66F-4CA4-4F79-8783-3EB6F0FA54B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB035A47-0352-42D1-85BE-37EA9213B498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB035A47-0352-42D1-85BE-37EA9213B498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB035A47-0352-42D1-85BE-37EA9213B498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB035A47-0352-42D1-85BE-37EA9213B498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{228D8361-4358-4641-9868-DA9F5043DFA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{228D8361-4358-4641-9868-DA9F5043DFA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{228D8361-4358-4641-9868-DA9F5043DFA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{228D8361-4358-4641-9868-DA9F5043DFA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5528A9C-4565-409B-9457-92A0561C8847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5528A9C-4565-409B-9457-92A0561C8847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5528A9C-4565-409B-9457-92A0561C8847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5528A9C-4565-409B-9457-92A0561C8847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAA579CE-F448-4F79-ADE7-2FE4F018397F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAA579CE-F448-4F79-ADE7-2FE4F018397F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAA579CE-F448-4F79-ADE7-2FE4F018397F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAA579CE-F448-4F79-ADE7-2FE4F018397F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C5528A9C-4565-409B-9457-92A0561C8847} = {2B8770E0-D613-48DC-BB0E-4A30041E6C35}
+		{BAA579CE-F448-4F79-ADE7-2FE4F018397F} = {2B8770E0-D613-48DC-BB0E-4A30041E6C35}
+	EndGlobalSection
+EndGlobal

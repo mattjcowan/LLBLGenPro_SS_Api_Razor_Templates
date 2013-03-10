@@ -1,0 +1,12 @@
+﻿.main_button { margin-right:10px; }
+.entity-browser a, .entity-browser a:hover, .entity-browser a:active, .entity-browser a:visited,
+.entity-row a, .entity-row a:hover, .entity-row a:active, .entity-row a:visited { text-decoration: none; }
+/* some responsive rendering */
+@media all and (max-width: 800px) { 
+    .wide-screen { display: none !important; }
+    .narrow-screen { display: block !important; }
+}
+@media all and (min-width: 801px) { 
+    .wide-screen { display: block !important; }
+    .narrow-screen { display: none !important; }
+}
