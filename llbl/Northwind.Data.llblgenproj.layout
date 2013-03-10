@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LayoutInfo>
+  <ModelViews>
+    <ModelView Name="NorthwindDataModel">
+      <EntityDefinitions>
+        <Entity Name=":Category" X="399.652954" Y="613.664" />
+        <Entity Name=":Customer" X="399.7135" Y="-371.925171" />
+        <Entity Name=":CustomerCustomerDemo" X="399.730469" Y="240.492737" />
+        <Entity Name=":CustomerDemographic" X="399.731171" Y="392.779" />
+        <Entity Name=":Employee" X="48.69934" Y="54.0362549" />
+        <Entity Name=":EmployeeTerritory" X="48.6276855" Y="491.4217" />
+        <Entity Name=":Order" X="399.7007" Y="-87.75104" />
+        <Entity Name=":OrderDetail" X="720.607" Y="-108.79129" />
+        <Entity Name=":Product" X="1041.59277" Y="111.245758" />
+        <Entity Name=":Region" X="720.618164" Y="260.819153" />
+        <Entity Name=":Shipper" X="720.7231" Y="87.42749" />
+        <Entity Name=":Supplier" X="1362.64526" Y="96.53999" />
+        <Entity Name=":Territory" X="720.7255" Y="484.1972" />
+      </EntityDefinitions>
+    </ModelView>
+  </ModelViews>
+</LayoutInfo>

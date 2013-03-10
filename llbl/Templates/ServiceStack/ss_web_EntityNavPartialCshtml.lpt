@@ -1,0 +1,55 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+%>@inherits ViewPage<string>
+@{
+    var classVal = "padding-left:6px;font-weight:bold;";
+    var entities = new[]
+    {
+<%foreach(var entity in entities)
+{%>     new { a = "/<%=Pluralize(entity.Name).ToLower()%>", b = "<%=TitleCase(Pluralize(entity.Name))%>", c = Model == "/<%=Pluralize(entity.Name).ToLower()%>" },
+<%}%>
+        };
+}
+<div class="btn-group narrow-screen span12" style="margin-bottom:10px;">
+    <a href="#" class="btn dropdown-toggle span12" data-toggle="dropdown">
+        <i class="icon-th-list"></i>
+        Entities
+        <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu" style="width:100%;">
+        <li><a href="/entities">All</a></li>
+        @foreach (var e in entities)
+        {
+            if (!e.c)
+            {
+                <li><a href="@e.a">@e.b</a></li>
+            }
+            else
+            {
+                <li class="@classVal"><a href="@e.a">&raquo; @e.b</a></li>
+            }
+        }
+    </ul>
+</div>
+<div class="well sidebar-nav wide-screen">
+    <ul class="nav nav-list">
+        <li class="nav-header">Entities</li>
+        <li></li>
+        <li><a href="/entities">All</a></li>
+        @foreach (var e in entities)
+        {
+            if (!e.c)
+            {
+                <li><a href="@e.a">@e.b</a></li>
+            }
+            else
+            {
+                <li class="@classVal"><a href="@e.a">&raquo; @e.b</a></li>
+            }
+        }
+    </ul>
+</div> 

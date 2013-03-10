@@ -1,0 +1,24 @@
+    /// <summary>Returns the EntityType enum value for this entity.</summary>
+    [Browsable(false), XmlIgnore]
+    public override EntityType EntityType 
+    {
+      get { return EntityType.<[CurrentEntityName]>Entity; }
+    }
+
+    public override List<IEntityRelation> EntityRelations
+    {
+      get { return GetAllRelations(); }
+    }
+    
+    public override List<IPrefetchPathElement2> PrefetchPaths
+    {
+      get
+      {
+        var paths = new List<IPrefetchPathElement2>();
+<[Foreach RelatedEntity OneToMany CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>
+<[Foreach RelatedEntity ManyToMany CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>
+<[Foreach RelatedEntity ManyToOne CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>
+<[Foreach RelatedEntity OneToOne CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>
+        return paths;
+      }
+    }    

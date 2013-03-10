@@ -1,0 +1,751 @@
+<$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $>
+<$ System.Data.Linq.dll $>
+<[ System ]>
+<[ System.IO ]>
+<[ System.Collections ]>
+<[ System.Collections.Generic ]>
+<[ System.Collections.Specialized ]>
+<[ System.ComponentModel ]>
+<[ System.Linq ]>
+<[ System.Text ]>
+<[ System.Data ]>
+<[ System.Data.Entity.Design ]>
+<[ System.Data.SqlClient ]>
+<[ System.Data ]>
+<[ System.Data.Linq]>
+<[ SD.LLBLGen.Pro.GeneratorCore ]>
+<[ SD.LLBLGen.Pro.ApplicationCore ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.CodeGenerationMetaData ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.CodeGenerationMetaData.Tasks ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.CodeGenerationMetaData.Templates ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.EntityModel ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.EntityModel.TypedLists ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.Interfaces ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.TypedViews ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.StoredProcedureCalls ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.ProjectClasses ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.Mapping ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.MetaData ]>
+<[ SD.LLBLGen.Pro.Core ]>
+<[ SD.LLBLGen.Pro.Core.GeneralDataStructures ]>
+<[ SD.LLBLGen.Pro.DBDriverCore ]>
+<[ SD.LLBLGen.Pro.LptParser ]><~
+
+public string CodeGenInfo(){
+  return string.Format(
+@"///////////////////////////////////////////////////////////////
+// Code is generated using LLBLGen Pro version: {0}
+// Template author: MJC
+// Generated on: {1}
+//////////////////////////////////////////////////////////////
+", ApplicationConstants.LLBLGenProVersion, DateTime.Now.ToString());
+}
+public Project CurrentProject { get { return _executingGenerator.ProjectDefinition; } }
+public string RootNamespace { get { return _executingGenerator.RootNamespaceToUse; } }
+public string RootApiNamespace { get { return RootNamespace + ".Services"; } }
+
+/// Turns a string into it's 'camelCase' version
+public string CamelCasePluralize(string text) {
+  return GeneratorUtils.CamelCaseString(Pluralize(text));
+}
+
+/// Turns a string into it's 'camelCase' version
+public string CamelCase(string text) {
+  return GeneratorUtils.CamelCaseString(text);
+}
+
+public string TitleCase(string text) {
+  return System.Text.RegularExpressions.Regex.Replace(text, "([A-Z]{1,2}|[0-9]+)", " $1").TrimStart();
+}
+
+/// Singularize a string
+/// Requires: &lt;$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $&gt;
+public string Singularize(string text) {
+    return System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(System.Globalization.CultureInfo.CurrentCulture).Singularize(text);
+}
+
+/// Pluralize a string
+/// Requires: &lt;$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $&gt;
+public string Pluralize(string text) {
+    var pluralizedText = System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(System.Globalization.CultureInfo.CurrentCulture).Pluralize(text);
+
+    // handle edge cases
+    pluralizedText = pluralizedText.Replace("emoes", "emos");
+    
+    return pluralizedText;
+}
+
+// Checks whether the relationship specified is a m:n relationship which is objectified, which means the intermediate entity has
+// non-pk fields. Returns true if relationship is the non-supported m:n, false otherwise
+internal static bool CheckIfRelationshipIsNonSupportedMtoN(RelationshipEdge relationship)
+{
+  bool toReturn = false;
+  if(relationship.RelationshipType==EntityRelationshipType.ManyToMany)
+  {
+    var indirectRelationship = (IndirectRelationshipEdge)relationship;
+    var intermediateEntity = indirectRelationship.DetermineIntermediateEntity();
+    toReturn = ((intermediateEntity.InheritanceType != InheritanceHierarchyType.None) || (intermediateEntity.Fields.Any(f=>!f.IsPartOfIdentifyingFields)));
+  }
+  return toReturn;
+}
+
+// Converts the passed in parameter direction to a usable string form for the external mapping file.
+internal static string ConvertParameterDirectionToString(ParameterDirection direction)
+{
+  string toReturn="In";
+  switch(direction)
+  {
+    case ParameterDirection.Input:
+      toReturn="In";
+      break;
+    case ParameterDirection.Output:
+      toReturn="Out";
+      break;
+    case ParameterDirection.InputOutput:
+      toReturn="InOut";
+      break;
+  }
+  return toReturn;
+}
+
+
+// Creates a db type specification to be used in a Property element in the SSDL. 
+internal static string CreateDbTypeSpecification(IProjectElementFieldMapTargetElement field)
+{
+  return CreateDbTypeSpecification(field, field.IsComputed);
+}
+
+// Creates a db type specification to be used in a Property element in the SSDL
+internal static string CreateDbTypeSpecification(IProjectElementFieldMapTargetElement field, bool forceIsComputed)
+{
+  var builder = new StringBuilder();
+  if(!field.IsNullable) 
+  {
+    builder.Append(" Nullable=\"false\"");
+  } 
+  if(field.IsIdentity) 
+  {
+    builder.Append(" StoreGeneratedPattern=\"Identity\" DefaultValue=\"1\""); // add default of 1, so sequence databases with triggers work properly.
+  } 
+  else
+  {
+    if(forceIsComputed) 
+    {
+      builder.Append(" StoreGeneratedPattern=\"Computed\"");
+    } 
+  }
+  string dbTypeAsString = field.TypeDefinition.DBTypeAsString.ToLowerInvariant();
+  if((field.Length > 0) && (field.Length < (8*1024)) && !(new string[] {"timestamp"}.Contains(dbTypeAsString)))
+  {
+    builder.AppendFormat(" MaxLength=\"{0}\"", field.Length);
+  }
+  if(field.TypeDefinition.DBTypeAsNETType == typeof(decimal))
+  {
+    if(!(new string[] {"money", "smallmoney", "currency"}.Contains(dbTypeAsString)))
+    {
+      if(field.Precision > 0)
+      {
+        builder.AppendFormat(" Precision=\"{0}\"", field.Precision);
+      }
+      if(field.Scale > 0)
+      {
+        builder.AppendFormat(" Scale=\"{0}\"", field.Scale);
+      }
+    }
+  }
+  return builder.ToString();
+}
+
+
+// Creates a type specification string for field definitions in the CSDL. It can handle valuetyped fields and .net typed fields.
+internal static string CreateFieldTypeSpecification(IFieldElementCore field, Project currentProject, bool emitEnums)
+{
+  var builder = new StringBuilder();
+  switch(field.FieldType.KindOfType)
+  {
+    case FieldTypeKind.DotNetType:
+      builder.Append(ConvertDotNetTypeToTypeString(field.FieldType.RepresentedType, field.MaxLength, field.Precision, field.Scale, 
+                             field.FieldType.FieldTypeForXml, currentProject, emitEnums));
+      switch(Type.GetTypeCode(field.FieldType.RepresentedType))
+      {
+        case TypeCode.Char:
+          builder.Append(" FixedLength=\"true\"");
+          break;
+        case TypeCode.String:
+          builder.Append(" FixedLength=\"false\" Unicode=\"true\"");
+          break;
+        case TypeCode.Object:
+          if(field.FieldType.RepresentedType==typeof(byte[]))
+          {
+            builder.Append(" FixedLength=\"false\"");
+          }
+          break;
+      }
+      break;
+    case FieldTypeKind.ValueTypeDefinition:
+      builder.AppendFormat("Type=\"Self.{0}\"", ((ValueTypeDefinition)field.FieldType).Name);
+      break;
+  }
+  return builder.ToString();
+}
+
+
+// creates a .net type string to be used in CSDL elements
+internal static string ConvertDotNetTypeToTypeString(Type dotNetType, int maxLength, int precision, int scale, string shortcutName,
+                           Project currentProject, bool emitEnums)
+{
+  var realLength = GeneratorUtils.GetRealMaxLength(maxLength, dotNetType);
+  string lengthString = realLength.ToString();
+  if(realLength > (8*1024))
+  {
+    lengthString = "Max";
+  }
+  
+  StringBuilder builder = new StringBuilder();
+  if(dotNetType.IsEnum && emitEnums)
+  {
+    builder.AppendFormat("Type=\"Self.{0}\"", dotNetType.Name);
+  }
+  else
+  {
+    switch(Type.GetTypeCode(dotNetType))
+    {
+      case TypeCode.Boolean:
+        builder.Append("Type=\"Boolean\"");
+        break;
+      case TypeCode.Char:
+        builder.Append("Type=\"String\" MaxLength=\"1\"");
+        break;
+      case TypeCode.Byte:
+        builder.Append("Type=\"Byte\"");
+        break;
+      case TypeCode.Int16:
+        builder.Append("Type=\"Int16\"");
+        break;
+      case TypeCode.Int32:
+        builder.Append("Type=\"Int32\"");
+        break;
+      case TypeCode.Int64:
+        builder.Append("Type=\"Int64\"");
+        break;
+      case TypeCode.Single:
+        builder.Append("Type=\"Single\"");
+        break;
+      case TypeCode.Double:
+        builder.Append("Type=\"Double\"");
+        break;
+      case TypeCode.Decimal:
+        builder.AppendFormat("Type=\"Decimal\"");
+        if(precision>0)
+        {
+          builder.AppendFormat(" Precision=\"{0}\"", precision);
+        }
+        builder.AppendFormat(" Scale=\"{0}\"", scale);
+        break;
+      case TypeCode.DateTime:
+        builder.Append("Type=\"DateTime\"");
+        break;
+      case TypeCode.String:
+        builder.AppendFormat("Type=\"String\" MaxLength=\"{0}\"", lengthString);
+        break;
+      case TypeCode.Object:
+        if(dotNetType==typeof(System.Guid))
+        {
+          builder.Append("Type=\"Guid\"");
+        }
+        else if(dotNetType==typeof(System.TimeSpan))
+        {
+          builder.Append("Type=\"Time\"");
+        }
+        else if(dotNetType==typeof(System.DateTimeOffset))
+        {
+          builder.Append("Type=\"DateTimeOffset\"");
+        }
+        else if(dotNetType==typeof(byte[]))
+        {
+          builder.AppendFormat("Type=\"Binary\" MaxLength=\"{0}\"", lengthString);
+        }
+        else if(dotNetType.Name=="SqlGeometry")
+        {
+          builder.Append("Type=\"Geometry\"");
+        }
+        else if(dotNetType.Name=="SqlGeography")
+        {
+          builder.Append("Type=\"Geography\"");
+        }
+        else
+        {
+          builder.Append("Type=\"\"");
+        }
+        break;
+    }
+  }
+  return builder.ToString();
+}
+
+
+// Determines the pk and fk side of the relationship specified (if m:n relationship, the pk side is the startvertex, fk side the end vertex) and the 
+// name for the pkside role. This is the role name which can be different from pkSide.Name, if pkside and fkside are equal. 
+internal static void DeterminePkFkSideAndPkRoleName(RelationshipEdge relationship, out string pkSideRoleName, out EntityDefinition fkSide, 
+                          out EntityDefinition  pkSide)
+{
+  // fk side is always mentioned first (if applicable), so role names of fk's to self will be named consistently.
+  pkSide = relationship.StartVertex;
+  fkSide = relationship.EndVertex;
+  NormalRelationshipEdge relationshipAsNormalEdge = relationship as NormalRelationshipEdge;
+  if((relationshipAsNormalEdge!=null) && !relationshipAsNormalEdge.StartEntityIsPkSide)
+  {
+    pkSide = relationship.EndVertex;
+    fkSide = relationship.StartVertex;
+  }
+  pkSideRoleName = pkSide.Name;
+  if(fkSide==pkSide)
+  {
+    pkSideRoleName+="1";
+  }
+}
+
+
+// Determines for normal relationships the multiplicity strings for fk side and pk side. 
+internal static void DetermineNormalRelationshipMultiplicities(NormalRelationshipEdge relationship, out string fkSideMultiplicity, out string pkSideMultiplicity)
+{
+  pkSideMultiplicity="*";
+  fkSideMultiplicity="*";
+  if(relationship==null)
+  {
+    return;
+  }
+  bool fkSideIsOptional = relationship.StartEntityIsPkSide ? relationship.EndEntityIsOptional : relationship.StartEntityIsOptional; 
+  switch(relationship.RelationshipType)
+  {
+    case EntityRelationshipType.OneToOne:
+      pkSideMultiplicity = relationship.GetFkFieldsFromFkSide().Any(f=>f.IsOptional) ? "0..1" : "1";
+      fkSideMultiplicity = fkSideIsOptional ? "0..1" : "1";
+      break;
+    case EntityRelationshipType.OneToMany:
+    case EntityRelationshipType.ManyToOne:
+      pkSideMultiplicity = relationship.GetFkFieldsFromFkSide().Any(f=>f.IsOptional) ? "0..1" : "1";
+      fkSideMultiplicity = "*";
+      break;
+    case EntityRelationshipType.ManyToMany:
+      pkSideMultiplicity = "*";
+      fkSideMultiplicity = "*";
+      break;
+  }
+}
+
+
+// converts the multiplicity string into a string for emitting as RelationshipMultiplicity enum value
+internal static string ConvertMultiplicityStringToEnumValue(string multiplicity)
+{
+  string toReturn = string.Empty;
+  switch(multiplicity)
+  {
+    case "1":
+      toReturn = "One";
+      break;
+    case "0..1":
+      toReturn = "ZeroOrOne";
+      break;
+    case "*":
+      toReturn = "Many";
+      break;
+  }
+  return toReturn;
+}
+
+
+// returns the provider name to use for the driverid specified
+internal static string DriverIdToProviderName(string driverID)
+{
+  string toReturn;
+  switch(driverID)
+  {
+    case "2D18D138-1DD2-467E-86CC-4838250611AE":
+      // sql server
+      toReturn = "System.Data.SqlClient";
+      break;
+    case "3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA":
+      // Sybase iAnywhere / ASA
+      toReturn = "iAnywhere.Data.SQLAnywhere";
+      break;
+    case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+      // Mysql. DevArt's provider factory name is emitted
+      toReturn = "Devart.Data.MySql";
+      break;
+    case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":
+      // PostgreSql
+      toReturn = "Npgsql";
+      break;
+    case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":
+      // DB2
+      toReturn = "IBM.Data.DB2";
+      break;
+    case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":
+      // Firebird
+      toReturn = "FirebirdSql.Data.FirebirdClient";
+      break;
+    default:
+      toReturn = string.Empty;
+      break;
+  }
+  return toReturn;
+}
+
+
+// gets all the attributes defined on the element specified, with all macro's evaluated.
+internal static IEnumerable<string> GetAttributes(IOutputSettingValuesTarget element, Project currentProject)
+{
+  return element.GetAttributes(currentProject);
+}
+
+
+// produces the proper entity member name for the entity specified. Normally, this is the pluralized version of the entity's name, however, when the
+// entity is a subtype, it's equal to the pluralized version of the root of the inheritance hierarchy.
+// Used in TypedList linq query generation
+internal static string GetCorrectContextMemberName(EntityDefinition entity, Project currentProject)
+{
+  EntityDefinition toUse = entity;
+  string suffix = string.Empty;
+  if((entity.InheritanceType!=InheritanceHierarchyType.None) && !entity.IsHierarchyRoot)
+  {
+    toUse = currentProject.GetHierarchyRootForEntity(entity);
+    suffix = string.Format(".OfType<{0}>()", entity.Name);
+  }
+  return GeneratorUtils.PluralizeString(toUse.Name)+suffix;
+}
+
+// produces the proper entity member name for the entity represented by the entity alias specified. 
+// Normally, this is the pluralized version of the entity's name, however, when the
+// entity is a subtype, it's equal to the pluralized version of the root of the inheritance hierarchy.
+// Used in TypedList linq query generation
+internal static string GetCorrectContextMemberName(EntityAlias alias, Project currentProject)
+{
+  return GetCorrectContextMemberName(alias.AliassedEntity, currentProject);
+}
+
+
+// returns all inherited types (base class from settings, additional interfaces from settings) as a comma separated string
+// doesn't look at supertypes for inheritance scenario's. Filters out empty names.
+internal static string GetInheritedTypesAsString(IOutputSettingValuesTarget element, string baseClassSettingName, Project currentProject)
+{
+  List<string> inheritedTypes = new List<string>();
+  inheritedTypes.Add((element.OutputSettingValues.GetRealStringSettingValue(baseClassSettingName, currentProject) ?? string.Empty).Trim());
+  inheritedTypes.AddRange(element.GetAdditionalInterfaces(currentProject));
+  return string.Join(", ", inheritedTypes.Where(s=>s.Trim().Length>0).ToArray());
+}
+
+
+// Gets the real entity set name for the entity specified (CSDL). Will return the entity's name, unless the entity is in an inheritance hierarchy,
+// then it will return the hierarchy root's name, as that's the entityset the entity is in.
+internal static string GetRealEntitySetName(Project currentProject, EntityDefinition entity)
+{
+  if(entity.IsSubType)
+  {
+    var root = currentProject.GetHierarchyRootForEntity(entity);
+    if(root!=null)
+    {
+      return root.Name;
+    }
+  }
+  return entity.Name;
+}
+  
+// produces the .net type string for the field specified. takes settings into account
+internal static string ProduceDotNetTypeName(IFieldElementCore field, IGenerator generator, string nullablePattern)
+{
+  string toReturn = string.Empty;
+  switch(field.FieldType.KindOfType)
+  {
+    case FieldTypeKind.DotNetType:
+      var representedType = field.FieldType.RepresentedType;
+      toReturn = GeneratorUtils.ProduceDotNetTypeName(representedType, field.IsOptional, nullablePattern);
+      toReturn = toReturn.Replace("Microsoft.SqlServer.Types.SqlGeography", "System.Data.Spatial.DbGeography");
+      toReturn = toReturn.Replace("Microsoft.SqlServer.Types.SqlGeometry", "System.Data.Spatial.DbGeometry");
+      toReturn = toReturn.Replace("[", generator.LanguageToUse.ArrayIndexOperatorOpenChar)
+                 .Replace("]", generator.LanguageToUse.ArrayIndexOperatorCloseChar);
+      break;        
+    case FieldTypeKind.ValueTypeDefinition:
+      toReturn = string.Format("{0}.ValueTypeClasses.{1}", generator.RootNamespaceToUse, ((ValueTypeDefinition)field.FieldType).Name);
+      break;
+  }
+  return toReturn;  
+}
+
+
+// produces an operand string which is usable as an operand in the 'on' clause of a linq join statement. 
+// if fields is just 1 field, it returns sourceName.suffix + field.Name.
+// if fields are more than 1 field, it returns: sourceName.suffix+field1.name, sourceName.suffix + field2.name etc. wrapped in a string
+// produced by the compound pattern which should be 'new {{{0}}}' in C#. 
+// if the field to emit is a foreign key field, it's replaced by the Pk field it relates to and the fk side navigator of the relationship in joinInfo.
+internal static string ProduceLinqOnClauseOperand(string sourceName, string suffix, bool useLeftFields, TypedListLinqJoinInfo joinInfo, string compoundPattern)
+{
+  List<IFieldElementCore> fields = useLeftFields ? joinInfo.LeftFields.ToList() : joinInfo.RightFields.ToList();
+  List<IFieldElementCore> oppositeFields = useLeftFields ? joinInfo.RightFields.ToList() : joinInfo.LeftFields.ToList();
+  bool leftSideIsPk = joinInfo.LeftSideIsPkSide;
+  bool fieldsArePkFields = (useLeftFields && leftSideIsPk) || (!useLeftFields && !leftSideIsPk);
+  List<string> fieldFragments = new List<string>();
+  for(int i=0;i<fields.Count;i++)
+  {
+    var field = fields[i];
+    var oppositeField = oppositeFields[i];
+    string nameFragment = field.Name;
+    string namePrefix = string.Empty;
+    if(!fieldsArePkFields)
+    {
+      // EF v1 doesn't support foreign keys. Get the opposite field instead and the foreign key side navigator of the relationship.
+      nameFragment = oppositeField.Name;
+      // traverse the typedlist relationship, which contains the normal relationship, which contains the fk navigator.
+      namePrefix = joinInfo.RepresentedRelationship.RepresentedRelationship.NavigatorFkSide + ".";
+    }
+    fieldFragments.Add(string.Format("{0}.{1}{2}{3}", sourceName, suffix, namePrefix, nameFragment));
+  }
+  if(fieldFragments.Count<1)
+  {
+    return string.Format("{0}.{1}", sourceName, suffix);
+  }
+  return fieldFragments.Count==1? fieldFragments[0] : string.Format(compoundPattern, string.Join(", ", fieldFragments.ToArray()));
+}
+
+
+// produces a unique name within the set of namesInUse for the original name specified. Returns true if the name was renamed, false otherwise.
+// it adds the name returned to the namesInUse. If the original name was renamed, it's also added to renamedTargets
+internal static bool ProduceUniqueTargetName<TElement>(TElement element, string originalName, HashSet<string> namesInUse, 
+                            Dictionary<TElement, string> renamedTargets, out string nameToUse)
+{
+  string toReturn = originalName;
+  if(namesInUse.Contains(toReturn))
+  {
+    toReturn = CoreUtils.MakeUniqueName(namesInUse, toReturn, true);
+  }
+  string clsCompliantName = CoreUtils.MakeCLSCompliantName(toReturn, null, false, false, false);
+  if(clsCompliantName.ToLowerInvariant()!=toReturn.ToLowerInvariant())
+  {
+    toReturn = clsCompliantName;
+  }
+
+  namesInUse.Add(toReturn);
+  bool isRenamed = (toReturn.ToLowerInvariant()!=originalName.ToLowerInvariant());
+  if(isRenamed)
+  {
+    renamedTargets[element] = toReturn;
+  }
+  
+  nameToUse = toReturn;
+  return isRenamed;
+}
+
+
+// returns the target pattern string for the driverid specified
+internal static string ProduceTargetPatternStringForDriverId(string driverID)
+{
+  string toReturn;
+  switch(driverID)
+  {
+    case "2D18D138-1DD2-467E-86CC-4838250611AE":
+      // sql server
+      toReturn = "[{0}].[{1}]";
+      break;
+    case "3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA":
+      // Sybase iAnywhere / ASA
+      toReturn = "[{0}].[{1}]";
+      break;
+    case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+      // Mysql. 
+      toReturn = "`{1}`";
+      break;
+    case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":
+      // PostgreSql
+      toReturn = "\"{0}\".\"{1}\"";
+      break;
+    case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":
+      // DB2
+      toReturn = "\"{0}\".\"{1}\"";
+      break;
+    case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":
+      // Firebird
+      toReturn = "\"{1}\"";
+      break;
+    default:
+      toReturn = "{1}";
+      break;
+  }
+  return toReturn;
+}
+
+
+// Creates the full target name for the target specified.
+internal static string ProduceTargetFullName(IProjectElementMapTargetElement target, IGenerator executingGenerator)
+{
+  DBSchema schema = target.ContainingSchema;
+  StringBuilder builder = new StringBuilder();
+  string patternString = ProduceTargetPatternStringForDriverId(executingGenerator.DriverID);
+  builder.AppendFormat(patternString, schema.SchemaOwner, target.Name);
+  return builder.ToString();
+}
+
+/* START CUSTOM METHODS */
+
+// Define other methods and classes here
+/// <summary>
+/// Determines if a type is numeric.  Nullable numeric types are considered numeric.
+/// </summary>
+/// <remarks>
+/// Boolean is not considered numeric.
+/// </remarks>
+internal static bool IsNumericType( Type type )
+{
+    if (type == null)
+    {
+        return false;
+    }
+
+    switch (Type.GetTypeCode(type))
+    {
+        case TypeCode.Byte:
+        case TypeCode.Decimal:
+        case TypeCode.Double:
+        case TypeCode.Int16:
+        case TypeCode.Int32:
+        case TypeCode.Int64:
+        case TypeCode.SByte:
+        case TypeCode.Single:
+        case TypeCode.UInt16:
+        case TypeCode.UInt32:
+        case TypeCode.UInt64:
+            return true;
+        case TypeCode.Object:
+            if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+               return IsNumericType(Nullable.GetUnderlyingType(type));
+            }
+            return false;
+    }
+    return false;
+}
+
+// Define other methods and classes here
+/// <summary>
+/// Determines if a type is sortable.  Nullable numeric types are considered numeric.
+/// </summary>
+/// <remarks>
+/// Boolean is not considered numeric.
+/// </remarks>
+internal static bool IsFieldSortable( FieldElement fieldElement )
+{
+    if(fieldElement == null) return false;  
+
+    var type = fieldElement.FieldType.RepresentedType;
+    if(IsNumericType(type))
+        return true;
+    
+    // process generic
+    while(Type.GetTypeCode(type) == TypeCode.Object){   
+        if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            type = Nullable.GetUnderlyingType(type);
+        else {
+      if(type==typeof(System.Guid)) return true;
+      else if(type==typeof(System.TimeSpan)) return true;
+      else if(type==typeof(System.DateTimeOffset)) return true;
+            else return false;
+    }
+    }
+    
+    switch (Type.GetTypeCode(type))
+    {
+        case TypeCode.Boolean:
+        case TypeCode.Char:
+        case TypeCode.DateTime:
+            return true;
+        case TypeCode.String:
+            return (fieldElement.MaxLength <= 500);
+    }
+    return false;
+}
+
+// Define other methods and classes here
+/// <summary>
+/// Determines if a type is sortable.  Nullable numeric types are considered numeric.
+/// </summary>
+/// <remarks>
+/// Boolean is not considered numeric.
+/// </remarks>
+internal static bool IsFieldSearchable( FieldElement fieldElement )
+{
+    if(fieldElement == null) return false;  
+
+    var type = fieldElement.FieldType.RepresentedType;
+    if(IsNumericType(type))
+        return true;
+    
+    // process generic
+    while(Type.GetTypeCode(type) == TypeCode.Object){   
+        if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            type = Nullable.GetUnderlyingType(type);
+        else {
+      if(type==typeof(System.Guid)) return true;
+            else return false;
+    }
+    }
+    
+    switch (Type.GetTypeCode(type))
+    {
+        case TypeCode.Boolean:
+        case TypeCode.Char:
+        case TypeCode.String:
+            return (fieldElement.MaxLength <= 500);
+    }
+    return false;
+}
+
+internal static bool IsFieldVisible( FieldElement fieldElement )
+{
+    if(fieldElement == null) return false;  
+  if(fieldElement.IsPartOfIdentifyingFields) return true;
+  if(fieldElement.IsOptional || fieldElement.IsForeignKeyField) return false;
+  
+    var type = fieldElement.FieldType.RepresentedType;
+    if(IsNumericType(type))
+        return true;
+    
+    // process generic
+    while(Type.GetTypeCode(type) == TypeCode.Object){   
+        if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            type = Nullable.GetUnderlyingType(type);
+        else {
+      return false;
+    }
+    }
+    
+    switch (Type.GetTypeCode(type))
+    {
+        case TypeCode.Boolean:
+        case TypeCode.Char:
+        case TypeCode.DateTime:
+            return true;
+        case TypeCode.String:
+            return (fieldElement.MaxLength <= 500);
+    }
+    return false;
+}
+
+internal static bool IsFieldBinary( FieldElement fieldElement )
+{
+    if(fieldElement == null) return false;  
+  
+    var type = fieldElement.FieldType.RepresentedType;
+    
+    // process generic
+    while(Type.GetTypeCode(type) == TypeCode.Object){   
+        if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            type = Nullable.GetUnderlyingType(type);
+        else {
+      if(type == typeof(byte[])) 
+        return true;
+      return false;
+    }
+    }
+    
+    return false;
+}
+~>

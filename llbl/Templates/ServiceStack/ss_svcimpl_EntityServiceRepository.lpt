@@ -1,0 +1,494 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+  
+  //-- Single entity template --
+  var entity = (EntityDefinition)_activeObject;
+  var isSubType = entity.IsSubType;
+  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+            .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
+              ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
+              ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
+              !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
+            .ToList();
+  var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var pkFields = entity.IdentifyingFields.Select(f => f.Name).ToArray();
+  var pkRouteSb = new StringBuilder();
+  foreach(var pkField in pkFields)
+    pkRouteSb.Append("{" + pkField + "}/");
+  var pkRoute = pkRouteSb.ToString().TrimEnd('/');
+  var ucRoutes = new Dictionary<string, string>();
+  foreach(var uc in entity.UniqueConstraints){
+    var ucRouteSb = new StringBuilder();
+    foreach(var ucField in uc.FieldsAsString.Split(','))
+      ucRouteSb.Append("{" + ucField + "}/");
+    var ucRoute = ucRouteSb.ToString().TrimEnd('/');
+    ucRoutes.Add(uc.Name, ucRoute);
+  }  
+%>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+using ServiceStack.Text;
+using <%=rootNameSpace%>;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.EntityClasses;
+using <%=rootNameSpace%>.FactoryClasses;
+using <%=rootNameSpace%>.HelperClasses;
+using <%=rootNameSpace%>.ServiceInterfaces;
+using <%=rootNameSpace%>.Services;
+
+namespace <%=rootNameSpace%>.ServiceRepositories
+{ 
+    public partial class <%=entity.Name%>ServiceRepository : EntityServiceRepositoryBase<<%=entity.Name%>, <%=entity.Name%>Entity, <%=entity.Name%>EntityFactory, <%=entity.Name%>FieldIndex>, I<%=entity.Name%>ServiceRepository
+    {
+        public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
+        protected override EntityType EntityType
+        {
+            get { return EntityType.<%=entity.Name%>Entity; }
+        }
+
+        // Description for parameters: http://datatables.net/usage/server-side
+        public DataTableResponse GetDataTableResponse(<%=entity.Name%>DataTableRequest request)
+        {
+            //UrlDecode Request Properties
+            request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
+            request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
+            request.Include = System.Web.HttpUtility.UrlDecode(request.Include);
+            request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
+            request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
+            request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+
+            //Paging
+            var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
+            iDisplayStart = iDisplayStart <= 0 ? (1+((request.PageNumber-1)*request.PageSize)): iDisplayStart;
+            var iDisplayLength = request.iDisplayLength <= 0 ? request.PageSize: request.iDisplayLength;
+            var pageNumber = Math.Ceiling(iDisplayStart*1.0/iDisplayLength);
+            var pageSize = iDisplayLength;
+            //Sorting
+            var sort = request.Sort;
+            if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
+            {
+                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+            }
+            //Search
+            var filter = request.Filter;
+            var searchStr = string.Empty;
+            if (!string.IsNullOrEmpty(request.sSearch))
+            {
+                // process int field searches
+                var n = 0;
+                var searchStrAsInt = -1;
+                if (int.TryParse(request.sSearch, out searchStrAsInt))
+                {
+                    foreach (var fm in FieldMap)
+                    {
+                        if (fm.Value.DataType.IsNumericType())
+                        {
+                            n++;
+                            searchStr += string.Format("({0}:eq:{1})", fm.Key, searchStrAsInt);
+                        }
+                    }
+                }
+                // process string field searches
+                foreach (var fm in FieldMap)
+                {
+                    if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
+                    {
+                        n++;
+                        searchStr += string.Format("({0}:lk:*{1}*)", fm.Key, request.sSearch);
+                    }
+                }
+                searchStr = n > 1 ? "(|" + searchStr + ")": searchStr.Trim('(', ')');
+
+                filter = string.IsNullOrEmpty(filter) ? searchStr
+                    : string.Format("(^{0}{1})", 
+                    filter.StartsWith("(") ? filter: "(" + filter + ")",
+                    searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
+            }
+
+            var entities = Fetch(new <%=entity.Name%>QueryCollectionRequest
+                {
+                    Filter = filter, 
+                    PageNumber = Convert.ToInt32(pageNumber),
+                    PageSize = pageSize,
+                    Sort = sort,
+                    Include = request.Include,
+                    Relations = request.Relations,
+                    Select = request.Select,
+                });
+            var response = new DataTableResponse();
+<%  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden) continue;
+  var includeStr = (relationshipInfo.RelationshipType == EntityRelationshipType.OneToOne || relationshipInfo.RelationshipType == EntityRelationshipType.ManyToOne) ?
+        relationshipInfo.RelatedEntity.Name.ToLower():
+        Pluralize(relationshipInfo.RelatedEntity.Name).ToLower();
+  includeStr = relationshipInfo.Navigator.ToLower();
+%>            var include<%=relationshipInfo.Navigator%> = ((request.Include ?? "").IndexOf("<%=includeStr%>", StringComparison.InvariantCultureIgnoreCase)) >= 0;
+<%}%>
+            foreach (var item in entities.Result)
+            {
+                var relatedDivs = new List<string>();
+<%  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden) continue;
+  var fieldPairs = relationshipInfo.GetRelationshipFieldPairs().OrderBy(fp=>fp.Value1.Name);
+  var qsFilterList = new List<string>();
+  var iii = 2;
+  foreach(var fieldPair in fieldPairs){
+    qsFilterList.Add(string.Format("{0}:eq:{{{1}}}",fieldPair.Value2.Name.ToLower(),iii.ToString()));
+      iii = iii+1;
+  }
+  var qsFilter = qsFilterList.Count() == 1 ? qsFilterList.First():  "(^(" + string.Join(")(", qsFilterList.ToArray()) + "))";
+%>                relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/<%=Pluralize(relationshipInfo.RelatedEntity.Name).ToLower()%>?filter=<%=qsFilter%>"">{1} <%=TitleCase(relationshipInfo.Navigator)%></a></div>",
+                            include<%=relationshipInfo.Navigator%> ? <%if(relationshipInfo.RelationshipType == EntityRelationshipType.OneToOne || relationshipInfo.RelationshipType == EntityRelationshipType.ManyToOne){%>(item.<%=relationshipInfo.Navigator%>==null?"0":"1")<%}else{%>item.<%=relationshipInfo.Navigator%>.Count.ToString(CultureInfo.InvariantCulture)<%}%>: "",
+                            include<%=relationshipInfo.Navigator%> ? "": "",
+<%    for(var z=0;z<fieldPairs.Count();z++){
+%>                            item.<%=fieldPairs.ElementAt(z).Value1.Name%><%if(z<fieldPairs.Count()-1){%>,<%}%>
+<%    }%>                        ));
+<%}%>
+                response.aaData.Add(new string[]
+                    {
+<%  foreach(var field in entityFields)
+    {
+    string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>");
+    var isOfStringType = dotNetFieldTypeName.IndexOf("string", 0, StringComparison.InvariantCultureIgnoreCase)>=0;
+    if(IsFieldBinary(field)) {
+%>                        string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.<%=field.Name%>.ToImageSrc(null, 160)),<%
+    } else {
+%>                        item.<%=field.Name%><%if(!isOfStringType){%>.ToString()<%}%>,
+<%
+    }
+  }%>
+                        string.Join("", relatedDivs.ToArray())
+                    });
+            }
+            response.sEcho = request.sEcho;
+            // total records in the database before datatables search
+            response.iTotalRecords = entities.Paging.TotalCount;
+            // total records in the database after datatables search
+            response.iTotalDisplayRecords = entities.Paging.TotalCount;
+            return response;
+        }
+
+        public <%=entity.Name%>CollectionResponse Fetch(<%=entity.Name%>QueryCollectionRequest request)
+        {
+            var totalItemCount = 0;
+            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
+                                      request.Relations, request.Select, request.PageNumber,
+                                      request.PageSize, out totalItemCount);
+            var response = new <%=entity.Name%>CollectionResponse(entities.ToDtoCollection(), request.PageNumber,
+                                                          request.PageSize, totalItemCount);
+            return response;
+        }
+    
+<%foreach(var uc in entity.UniqueConstraints){
+%>        public <%=entity.Name%>Response Fetch(<%=entity.Name%><%=uc.Name%>Request request)
+        {
+            var entity = new <%=entity.Name%>Entity();
+<%foreach(var ucField in uc.FieldsAsString.Split(',')){
+%>            entity.<%=ucField%> = request.<%=ucField%>;
+<%}%>
+            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
+            var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                if (adapter.FetchEntityUsingUniqueConstraint(entity, entity.ConstructFilterForUC<%foreach(var ucField in uc.FieldsAsString.Split(',')){%><%=ucField%><%}%>(), prefetchPath, null, excludedIncludedFields))
+                {
+                    return new <%=entity.Name%>Response(entity.ToDto());
+                }
+            }
+
+            throw new NullReferenceException();
+        }
+<%}%>
+        public <%=entity.Name%>Response Fetch(<%=entity.Name%>PkRequest request)
+        {
+            var entity = new <%=entity.Name%>Entity();
+<%  foreach(var field in entityFields.Where(f => f.IsPartOfIdentifyingFields)){
+%>            entity.<%=field.Name%> = request.<%=field.Name%>;
+<%}%>
+            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
+            var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
+                {
+                    return new <%=entity.Name%>Response(entity.ToDto());
+                }
+            }
+
+            throw new NullReferenceException();
+        }
+
+        public <%=entity.Name%>Response Create(<%=entity.Name%>AddRequest request)
+        {
+            var entity = request.FromDto();
+            entity.IsNew = true;
+
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                if(adapter.SaveEntity(entity, true))
+                {
+                    return new <%=entity.Name%>Response(entity.ToDto());
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        public <%=entity.Name%>Response Update(<%=entity.Name%>UpdateRequest request)
+        {
+            var entity = request.FromDto();
+            entity.IsNew = false;
+            entity.IsDirty = true;
+
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                if (adapter.SaveEntity(entity, true))
+                {
+                    return new <%=entity.Name%>Response(entity.ToDto());
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        public bool Delete(<%=entity.Name%>DeleteRequest request)
+        {
+            var entity = new <%=entity.Name%>Entity();
+<%  foreach(var field in entityFields.Where(f => f.IsPartOfIdentifyingFields)){
+%>            entity.<%=field.Name%> = request.<%=field.Name%>;
+<%}%>
+
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                return adapter.DeleteEntity(entity);
+            }
+        }
+
+        private const string UcMapCacheKey = "<%=entity.Name.ToLower()%>-uc-map";
+        internal override IDictionary< string, IEntityField2[] > UniqueConstraintMap
+        {
+            get 
+            { 
+                var map = CacheClient.Get<IDictionary< string, IEntityField2[] >>(UcMapCacheKey);
+                if (map == null)
+                {
+                    map = new Dictionary< string, IEntityField2[] >();
+<%foreach(var uc in entity.UniqueConstraints){
+%>                    map.Add("<%=uc.FieldsAsString.Replace(",","").ToLower()%>", new IEntityField2[]
+                        {
+<%
+    foreach(var ucField in uc.FieldsAsString.Split(',')){
+%>                            <%=entity.Name%>Fields.<%=ucField%>,                         
+<%  }%>                        });
+<%}%>                    CacheClient.Set(UcMapCacheKey, map);
+                }
+                return map;
+            }
+            set { }
+        }
+    }
+
+    internal static class <%=entity.Name%>EntityDtoMapperExtensions
+    {
+        public static <%=entity.Name%> ToDto(this <%=entity.Name%>Entity entity)
+        {
+            return entity.ToDto(new Hashtable(), new Hashtable());
+        }
+
+        public static <%=entity.Name%> ToDto(this <%=entity.Name%>Entity entity, Hashtable seenObjects, Hashtable parents)
+        {
+            var dto = new <%=entity.Name%>();
+            if (entity != null)
+            {
+                if (seenObjects == null)
+                    seenObjects = new Hashtable();
+                seenObjects[entity] = dto;
+
+                parents = new Hashtable(parents) { { entity, null } };
+
+              // Map dto properties
+<%  foreach(var field in entityFields){
+%>                dto.<%=field.Name%> = entity.<%=field.Name%>;
+<%}%>
+
+              // Map dto associations
+<%  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden) continue;
+    switch(relationshipInfo.RelationshipType)
+    {     
+      case EntityRelationshipType.OneToOne:
+%>          // 1:1 <%=relationshipInfo.Navigator%> association
+            if (entity.<%=relationshipInfo.Navigator%> != null)
+            {
+        dto.<%=relationshipInfo.Navigator%> = entity.<%=relationshipInfo.Navigator%>.RelatedObject(seenObjects, parents);
+            }
+<%        break; 
+      case EntityRelationshipType.ManyToOne:
+%>              // n:1 <%=relationshipInfo.Navigator%> association
+              if (entity.<%=relationshipInfo.Navigator%> != null)
+              {
+                dto.<%=relationshipInfo.Navigator%> = entity.<%=relationshipInfo.Navigator%>.RelatedObject(seenObjects, parents);
+              }
+<%        break;
+      case EntityRelationshipType.OneToMany:
+%>              // 1:n <%=relationshipInfo.Navigator%> association of <%=relationshipInfo.RelatedEntity.Name%> entities
+              if (entity.<%=relationshipInfo.Navigator%> != null && entity.<%=relationshipInfo.Navigator%>.Any())
+              {
+                dto.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection(entity.<%=relationshipInfo.Navigator%>.RelatedArray(seenObjects, parents));
+              }
+<%        break;         
+    case EntityRelationshipType.ManyToMany:
+%>              // n:n <%=relationshipInfo.Navigator%> association of <%=relationshipInfo.RelatedEntity.Name%> entities
+              if (entity.<%=relationshipInfo.Navigator%> != null && entity.<%=relationshipInfo.Navigator%>.Any())
+              {
+                dto.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection(entity.<%=relationshipInfo.Navigator%>.RelatedArray(seenObjects, parents));
+              }
+<%        break;    
+    }
+  }
+%>
+            }
+            return dto;
+        }
+
+        public static <%=entity.Name%>Collection ToDtoCollection(this EntityCollection<<%=entity.Name%>Entity> entities)
+        {
+            var seenObjects = new Hashtable();
+            var collection = new <%=entity.Name%>Collection();
+            foreach (var entity in entities)
+            {
+                collection.Add(entity.ToDto(seenObjects, new Hashtable()));
+            }
+            return collection;
+        }
+
+        public static <%=entity.Name%>Entity FromDto(this <%=entity.Name%> dto)
+        {
+            var entity = new <%=entity.Name%>Entity();
+
+            // Map entity properties
+<%  foreach(var field in entityFields){
+      if(IsFieldBinary(field)){
+%>            if (dto.<%=field.Name%> != null) entity.<%=field.Name%> = dto.<%=field.Name%>;
+<%    }else{
+%>            entity.<%=field.Name%> = dto.<%=field.Name%>;
+<%    }
+    }%>
+
+            // Map entity associations
+<%  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden) continue;
+    switch(relationshipInfo.RelationshipType)
+    {     
+      case EntityRelationshipType.OneToOne:
+%>            // 1:1 <%=relationshipInfo.Navigator%> association
+            if (dto.<%=relationshipInfo.Navigator%> != null)
+            {
+        entity.<%=relationshipInfo.Navigator%> = dto.<%=relationshipInfo.Navigator%>.FromDto();
+            }
+<%        break; 
+      case EntityRelationshipType.ManyToOne:
+%>            // n:1 <%=relationshipInfo.Navigator%> association
+            if (dto.<%=relationshipInfo.Navigator%> != null)
+            {
+        entity.<%=relationshipInfo.Navigator%> = dto.<%=relationshipInfo.Navigator%>.FromDto();
+            }
+<%        break;
+      case EntityRelationshipType.OneToMany:
+%>            // 1:n <%=relationshipInfo.Navigator%> association
+            if (dto.<%=relationshipInfo.Navigator%> != null && dto.<%=relationshipInfo.Navigator%>.Any())
+            {
+                foreach (var relatedDto in dto.<%=relationshipInfo.Navigator%>)
+                    entity.<%=relationshipInfo.Navigator%>.Add(relatedDto.FromDto());
+            }
+<%        break;         
+    case EntityRelationshipType.ManyToMany:
+%>            // n:n <%=relationshipInfo.Navigator%> association
+            if (dto.<%=relationshipInfo.Navigator%> != null && dto.<%=relationshipInfo.Navigator%>.Any())
+            {
+                foreach (var relatedDto in dto.<%=relationshipInfo.Navigator%>)
+                    entity.<%=relationshipInfo.Navigator%>.Add(relatedDto.FromDto());
+            }
+<%        break;  
+    }
+  }
+%>
+            return entity;
+        }
+
+        public static <%=entity.Name%>[] RelatedArray(this EntityCollection<<%=entity.Name%>Entity> entities, Hashtable seenObjects, Hashtable parents)
+        {
+            if (null == entities)
+            {
+                return null;
+            }
+
+            var arr = new <%=entity.Name%>[entities.Count];
+            var i = 0;
+
+            foreach (var entity in entities)
+            {
+                if (parents.Contains(entity))
+                {
+                    // - avoid all cyclic references and return null
+                    // - another option is to 'continue' and just disregard this one entity; however,
+                    // if this is a collection this would lead the client app to believe that other
+                    // items are part of the collection and not the parent item, which is misleading and false
+                    // - it is therefore better to just return null, indicating nothing is being retrieved
+                    // for the property all-together
+                    return null;
+                }
+            }
+
+            foreach (var entity in entities)
+            {
+                if (seenObjects.Contains(entity))
+                {
+                    arr[i++] = seenObjects[entity] as <%=entity.Name%>;
+                }
+                else
+                {
+                    arr[i++] = entity.ToDto(seenObjects, parents);
+                }
+            }
+            return arr;
+        }
+
+        public static <%=entity.Name%> RelatedObject(this <%=entity.Name%>Entity entity, Hashtable seenObjects, Hashtable parents)
+        {
+            if (null == entity)
+            {
+                return null;
+            }
+
+            if (seenObjects.Contains(entity))
+            {
+                if (parents.Contains(entity))
+                {
+                    // avoid cyclic references
+                    return null;
+                }
+                else
+                {
+                    return seenObjects[entity] as <%=entity.Name%>;
+                }
+            }
+
+            return entity.ToDto(seenObjects, parents);
+        }
+    }
+}

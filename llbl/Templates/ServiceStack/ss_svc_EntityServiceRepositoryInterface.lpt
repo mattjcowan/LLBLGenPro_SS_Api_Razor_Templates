@@ -1,0 +1,39 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+
+  //-- Single entity template --
+  var entity = (EntityDefinition)_activeObject;
+  var isSubType = entity.IsSubType;
+  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+                          .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
+                                ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
+                                ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
+                                !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
+                          .ToList();
+  var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+%>using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Services;
+
+namespace <%=rootNameSpace%>.ServiceInterfaces
+{ 
+  public interface I<%=entity.Name%>ServiceRepository: IEntityServiceRepository<<%=entity.Name%>>
+    {
+        EntityMetaDetailsResponse GetEntityMetaDetails(ServiceStack.ServiceInterface.Service service);
+        DataTableResponse GetDataTableResponse(<%=entity.Name%>DataTableRequest request);
+
+        <%=entity.Name%>CollectionResponse Fetch(<%=entity.Name%>QueryCollectionRequest request);
+        <%=entity.Name%>Response Fetch(<%=entity.Name%>PkRequest request);
+<%foreach(var uc in entity.UniqueConstraints){%>
+        <%=entity.Name%>Response Fetch(<%=entity.Name%><%=uc.Name%>Request request);<%
+  }%>
+
+        <%=entity.Name%>Response Create(<%=entity.Name%>AddRequest request);
+        <%=entity.Name%>Response Update(<%=entity.Name%>UpdateRequest request);
+        bool Delete(<%=entity.Name%>DeleteRequest request);
+    } 
+}

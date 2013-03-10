@@ -1,0 +1,230 @@
+﻿<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+
+  //-- Single entity template --
+  var entity = (EntityDefinition)_activeObject;
+  var isSubType = entity.IsSubType;
+  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+                          .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
+                                ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
+                                ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
+                                !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
+                          .ToList();
+  var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  string propertyAccessor = "public";
+  bool emitKnownTypeAttributes = false; //entity.OutputSettingValues.GetRealBoolSettingValue("EmitKnownTypeAttributesForWCF", currentProject);
+  //_executingGenerator.StoreValueInRunQueueCache("EntityClassesNamespace", _executingGenerator.RootNamespaceToUse + ".EntityClasses");
+%>using System;
+using System.ComponentModel;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+#if !CF
+using System.Runtime.Serialization;
+#endif
+using System.Xml.Serialization;
+
+namespace <%=rootNameSpace%>.Dtos
+{ 
+  [Serializable]
+  public partial class <%=entity.Name%>Collection : CommonDtoBaseCollection<<%=entity.Name%>>
+  {
+      public <%=entity.Name%>Collection(){}
+      public <%=entity.Name%>Collection(IEnumerable<<%=entity.Name%>> collection): base(collection ?? new List<<%=entity.Name%>>()){}
+      public <%=entity.Name%>Collection(List<<%=entity.Name%>> list): base(list ?? new List<<%=entity.Name%>>()){}
+  }
+
+  [Serializable]
+  public partial class <%=entity.Name%> : <%if(entity.IsSubType){%><%=entity.GetSuperType().Name%><%}else{%>CommonDtoBase<<%=entity.Name%>><%}%>
+  {
+    public <%=entity.Name%>()
+    {
+<%  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden) continue;
+    switch(relationshipInfo.RelationshipType)
+    {
+      case EntityRelationshipType.ManyToOne:
+      case EntityRelationshipType.OneToOne:
+	  	  break;
+      case EntityRelationshipType.OneToMany:
+      case EntityRelationshipType.ManyToMany:
+%>      this.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection();
+<%        break;
+    }
+  }
+%>    }
+
+    /// <summary>Factory method to create a new instance of the type '<%=entity.FullName%>' (includes only required properties)</summary>
+<%  var parameterFragments = new List<string>();
+  foreach(var field in entityFields.Where(f=>!f.IsOptional))
+  {
+    string fieldName = GeneratorUtils.CamelCaseString(field.Name);
+    parameterFragments.Add(string.Format("{0} {1}", MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>"), fieldName));
+%>    /// <param name="<%=fieldName%>">The initial value for the field '<%=field.Name%>'</param>  
+<%  }
+%>    public static <%=entity.Name%> Create(<%=string.Join(", ", parameterFragments.ToArray())%>)
+    {
+      var entity = new <%=entity.Name%>();
+<%  foreach(var field in entityFields.Where(f=>!f.IsOptional))
+  {
+%>      entity.<%=field.Name%> = <%=GeneratorUtils.CamelCaseString(field.Name)%>;
+<%  }
+%>      return entity;
+    }
+
+<%  if(parameterFragments.Count() < entityFields.Count()) 
+  {
+%>    /// <summary>Factory method to create a new instance of the type '<%=entity.FullName%>' (includes optional properties)</summary>
+<%    parameterFragments = new List<string>();
+    foreach(var field in entityFields)
+    {
+      string fieldName = GeneratorUtils.CamelCaseString(field.Name);
+      parameterFragments.Add(string.Format("{0} {1}", MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>"), fieldName));
+%>    /// <param name="<%=fieldName%>">The initial value for the field '<%=field.Name%>'</param>  
+<%    }
+%>    public static <%=entity.Name%> Create(<%=string.Join(", ", parameterFragments.ToArray())%>)
+    {
+      var entity = new <%=entity.Name%>();
+<%      foreach(var field in entityFields)
+      {
+%>      entity.<%=field.Name%> = <%=GeneratorUtils.CamelCaseString(field.Name)%>;
+<%      }
+%>      return entity;
+    }
+<% } %>
+    #region Class Property Declarations
+	
+<%  foreach(IFieldElementCore field in entityFields)
+  {
+    var camelCasedFieldName = GeneratorUtils.CamelCaseString(field.Name);
+%>    /// <summary>Gets or sets the <%=field.Name%> field. <%=field.Description%></summary>
+<%    if(field.OutputSettingValues.CustomProperties.Count>0)
+    {
+%>    /// <remarks>Custom Properties: <br/>
+<%      foreach(var kvp in field.OutputSettingValues.CustomProperties)
+      {
+%>    /// <%=kvp.Key%>: <%=kvp.Value%><br/>
+<%      }
+%>    /// </remarks>
+<%    }
+    foreach(var additionalAttribute in MJC_SS_GeneralMethods.GetAttributes(field, currentProject))
+    {
+%>    <%=_executingGenerator.ProduceRealAttributeString(additionalAttribute)%>
+<%    }
+    string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>");
+    switch(field.FieldType.KindOfType)
+    {
+      case FieldTypeKind.ValueTypeDefinition:
+%>    <%=propertyAccessor%> virtual <%=dotNetFieldTypeName%> <%=field.Name%> { get; set; }
+
+<%        break;
+      case FieldTypeKind.DotNetType:
+        if(field.IsForeignKeyField)
+        {
+%>    <%=propertyAccessor%> virtual <%=dotNetFieldTypeName%> <%=field.Name%> { get; set; }  
+
+<%        }
+        else
+        {
+%>    <%=propertyAccessor%> virtual <%=dotNetFieldTypeName%> <%=field.Name%>  { get; set; }
+
+<%        }
+        break;
+    }
+  }
+
+  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden)
+    {
+      continue;
+    }
+%>    /// <summary>Represents the navigator which is mapped onto the association '<%=relationshipInfo.Relationship.ToString()%>'</summary>
+<%    if(relationshipInfo.NavigatorInstance.OutputSettingValues.CustomProperties.Count>0)
+    {
+%>    /// <remarks>Custom Properties: <br/>
+<%      foreach(var kvp in relationshipInfo.NavigatorInstance.OutputSettingValues.CustomProperties)
+      {
+%>    /// <%=kvp.Key%>: <%=kvp.Value%><br/>
+<%      }
+%>    /// </remarks>
+<%    }
+    foreach(var additionalAttribute in MJC_SS_GeneralMethods.GetAttributes(relationshipInfo.NavigatorInstance, currentProject))
+    {
+%>    <%=_executingGenerator.ProduceRealAttributeString(additionalAttribute)%>
+<%    }
+    EntityDefinition pkSide;
+    EntityDefinition fkSide;
+    string pkSideRoleName;
+    MJC_SS_GeneralMethods.DeterminePkFkSideAndPkRoleName(relationshipInfo.Relationship, out pkSideRoleName, out fkSide, out pkSide);
+    string roleNameToUse = string.Empty;
+    if(relationshipInfo.RelationshipType==EntityRelationshipType.ManyToMany)
+    {
+      roleNameToUse = relationshipInfo.ViaStartNavigator ?  fkSide.Name : pkSideRoleName;
+    }
+    else
+    {
+      roleNameToUse = relationshipInfo.IsOnPkSide ? fkSide.Name : pkSideRoleName;
+    }
+    switch(relationshipInfo.RelationshipType)
+    {
+      case EntityRelationshipType.ManyToOne:
+      case EntityRelationshipType.OneToOne:
+%>    <%=propertyAccessor%> virtual <%=relationshipInfo.RelatedEntity.Name%> <%=relationshipInfo.Navigator%> { get; set; } 
+
+<%        break;
+      case EntityRelationshipType.OneToMany:
+      case EntityRelationshipType.ManyToMany:
+%>    <%=propertyAccessor%> virtual <%=relationshipInfo.RelatedEntity.Name%>Collection <%=relationshipInfo.Navigator%> { get; set; }
+
+<%        break;
+    }
+  }
+  
+  foreach(var forf in entity.FieldsMappedOntoRelatedFields.OrderBy(f=>f.Name))
+  {
+    if(forf.MappedField.Field.IsForeignKeyField && !emitForeignKeyFields)
+    {
+      continue;
+    }
+    string typeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(forf.MappedField.Field, _executingGenerator, "Nullable<{0}>");
+%>    /// <summary>Represents the related field 'this.<%=forf.MappedFieldAsString%>'</summary>
+<%    if(forf.OutputSettingValues.CustomProperties.Count>0)
+    {
+%>    /// <remarks>Custom Properties: <br/>
+<%      foreach(var kvp in forf.OutputSettingValues.CustomProperties)
+      {
+%>    /// <%=kvp.Key%>: <%=kvp.Value%><br/>
+<%      }
+%>    /// </remarks>
+<%    }
+    foreach(var additionalAttribute in MJC_SS_GeneralMethods.GetAttributes(forf, currentProject))
+    {
+%>    <%=_executingGenerator.ProduceRealAttributeString(additionalAttribute)%>
+<%    }
+%>    <%=propertyAccessor%> <%=typeName%> <%=forf.Name%>
+    {
+      get { return this.<%=forf.MappedField.NavigatorUsed%>==null ? default(<%=typeName%>) : this.<%=forf.MappedField.NavigatorUsed%>.<%=forf.MappedField.Field.Name%>; }
+<%    if(!forf.IsReadOnly)
+    {
+%>      set
+      {
+        if(this.<%=forf.MappedField.NavigatorUsed%>!=null)
+        {
+          this.<%=forf.MappedField.NavigatorUsed%>.<%=forf.MappedField.Field.Name%> = value;
+        }
+      }
+<%    }     
+%>    }
+
+<%  }
+%>    #endregion
+
+  }
+}

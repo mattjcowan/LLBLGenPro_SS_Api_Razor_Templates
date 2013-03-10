@@ -1,0 +1,15 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+%>using <%=rootNameSpace%>.Dtos;
+
+namespace <%=rootNameSpace%>.ServiceInterfaces
+{
+    public interface IEntityServiceRepository<TDto>
+        where TDto : CommonDtoBase
+    {
+    }
+}

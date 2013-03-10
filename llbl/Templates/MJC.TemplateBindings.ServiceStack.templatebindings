@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="MJC.TemplateBindings.ServiceStack" description="General template bindings for the ServiceStack templates which are shared among all database providers. Specific for .NET 4.0/4.5 based platforms" precedenceLevel="9" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+  <supportedPlatforms>
+    <platform name=".NET 4.0" />
+    <platform name=".NET 4.5" />
+  </supportedPlatforms>
+  <supportedFrameworks>
+    <framework name="LLBLGen Pro Runtime Framework" />
+  </supportedFrameworks>
+  <supportedDrivers />
+  <language name="C#">
+    <templateBinding templateID="Custom_CommonEntityBaseTemplate" filename="ServiceStack\custom_CommonEntityBaseAdapter.template" templateLanguage="TDL" includeOnly="true" />
+    <templateBinding templateID="Custom_EntityAdapterTemplate" filename="ServiceStack\custom_EntityAdapter.template" templateLanguage="TDL" includeOnly="true" />
+    <templateBinding templateID="MJC_SS_GeneralMethods" filename="ServiceStack\ss_GeneralMethods.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_SvcImpl_AssemblyInfoTemplate" filename="ServiceStack\ss_svcimpl_AssemblyInfo.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_SvcImpl_EntityServiceRepositoryBaseTemplate" filename="ServiceStack\ss_svcimpl_EntityServiceRepositoryBase.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_SvcImpl_EntityServiceRepositoryTemplate" filename="ServiceStack\ss_svcimpl_EntityServiceRepository.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_SvcImpl_FilterParserTemplate" filename="ServiceStack\ss_svcimpl_FilterParser.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_SvcImpl_IDataAccessAdapterFactoryTemplate" filename="ServiceStack\ss_svcimpl_IDataAccessAdapterFactory.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_SvcImpl_Packages" filename="ServiceStack\ss_svcimpl_PackagesConfig.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_SvcImpl_StringTokenizerTemplate" filename="ServiceStack\ss_svcimpl_StringTokenizer.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_SvcImpl_VsNet2010ServiceStackImplAdapterTemplate" filename="ServiceStack\ss_svcimpl_VsNet2010ServiceStackImplAdapter.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Svc_AssemblyInfoTemplate" filename="ServiceStack\ss_svc_AssemblyInfo.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Svc_CommonDtoBaseTemplate" filename="ServiceStack\ss_svc_CommonDtoBaseAdapter.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Svc_CommonServiceContractsTemplate" filename="ServiceStack\ss_svc_CommonServiceContracts.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_EntityClassTemplate" filename="ServiceStack\ss_svc_EntityClass.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_EntityDtoTemplate" filename="ServiceStack\ss_svc_EntityDtoAdapter.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_EntityGenericServiceTemplate" filename="ServiceStack\ss_svc_EntityGenericService.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_EntityServiceBaseTemplate" filename="ServiceStack\ss_svc_EntityServiceBase.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_EntityServiceRepositoryInterfaceTemplate" filename="ServiceStack\ss_svc_EntityServiceRepositoryInterface.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_EntityServiceTemplate" filename="ServiceStack\ss_svc_EntityService.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_IEntityServiceRepositoryTemplate" filename="ServiceStack\ss_svc_IEntityServiceRepository.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_Packages" filename="ServiceStack\ss_svc_PackagesConfig.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Svc_PagedListTemplate" filename="ServiceStack\ss_svc_PagedList.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Svc_VsNet2010ServiceStackAdapterTemplate" filename="ServiceStack\ss_svc_VsNet2010ServiceStackAdapter.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Web_AnalyticsPartialCshtml" filename="ServiceStack\ss_web_AnalyticsPartialCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_AppConfigTemplate" filename="ServiceStack\ss_web_AppConfigTemplate.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Web_AssemblyInfoTemplate" filename="ServiceStack\ss_web_AssemblyInfo.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Web_ConsoleAppHost" filename="ServiceStack\ss_web_ConsoleAppHost.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_CssPlugins" filename="ServiceStack\ss_web_CssPlugins.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_CssStyles" filename="ServiceStack\ss_web_CssStyles.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_DefaultCshtml" filename="ServiceStack\ss_web_DefaultCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_EntitiesDashboardCshtml" filename="ServiceStack\ss_web_EntitiesDashboardCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_EntitiesDetailsCshtml" filename="ServiceStack\ss_web_EntitiesDetailsCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_EntityNavPartialCshtml" filename="ServiceStack\ss_web_EntityNavPartialCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_JsPlugins" filename="ServiceStack\ss_web_JsPlugins.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_JsScripts" filename="ServiceStack\ss_web_JsScripts.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_LayoutsMasterpageCshtml" filename="ServiceStack\ss_web_LayoutsMasterpageCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_NotFoundCshtml" filename="ServiceStack\ss_web_NotFoundCshtml.lpt" templateLanguage="C#" />
+    <templateBinding templateID="MJC_SS_Web_Packages" filename="ServiceStack\ss_web_PackagesConfig.template" templateLanguage="TDL" />
+    <templateBinding templateID="MJC_SS_Web_VsNet2010ServiceStackConsoleHostAdapterTemplate" filename="ServiceStack\ss_web_VsNet2010ServiceStackConsoleHostAdapter.lpt" templateLanguage="C#" />
+  </language>
+</templateBindings>

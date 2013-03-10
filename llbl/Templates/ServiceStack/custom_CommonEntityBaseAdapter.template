@@ -1,0 +1,4 @@
+﻿ 		/// <summary>Returns the EntityType enum value for the entity.</summary>		
+        public abstract EntityType EntityType { get; }
+        public virtual List<IEntityRelation> EntityRelations { get { return new List<IEntityRelation>(); } }
+        public virtual List<IPrefetchPathElement2> PrefetchPaths { get { return new List<IPrefetchPathElement2>(); } }		

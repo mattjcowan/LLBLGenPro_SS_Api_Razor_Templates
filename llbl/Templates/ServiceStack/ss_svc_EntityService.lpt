@@ -1,0 +1,233 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+
+  //-- Single entity template --
+  var entity = (EntityDefinition)_activeObject;
+  var isSubType = entity.IsSubType;
+  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+                          .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
+                                ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
+                                ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
+                                !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
+                          .ToList();
+  var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  var binaryFields = entityFields.Where(f=>IsFieldBinary(f)).ToList();
+  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var baseRoute = Pluralize(entity.Name).ToLower();
+  var pkFields = entity.IdentifyingFields.Select(f => f.Name).ToArray();
+  var pkRouteSb = new StringBuilder();
+  foreach(var pkField in pkFields)
+    pkRouteSb.Append("{" + pkField + "}/");
+  var pkRoute = pkRouteSb.ToString().TrimEnd('/');
+  var ucRoutes = new Dictionary<string, string>();
+  foreach(var uc in entity.UniqueConstraints){
+    var ucRouteSb = new StringBuilder();
+    foreach(var ucField in uc.FieldsAsString.Split(','))
+      ucRouteSb.Append("{" + ucField + "}/");
+    var ucRoute = ucRouteSb.ToString().TrimEnd('/');
+    ucRoutes.Add(uc.Name, ucRoute);
+  }
+  
+%>using System;
+using System.Collections.Generic;
+using ServiceStack.Logging;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.Text;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.ServiceInterfaces;
+
+namespace <%=rootNameSpace%>.Services
+{
+    #region Service
+    public partial class <%=entity.Name%>Service : ServiceBase<<%=entity.Name%>, I<%=entity.Name%>ServiceRepository>
+    {
+        //Meta request
+        public EntityMetaDetailsResponse Get(<%=entity.Name%>MetaRequest request)
+        {
+            return Repository.GetEntityMetaDetails(this);
+        }
+
+        //DataTable request
+        public DataTableResponse Post(<%=entity.Name%>DataTableRequest request)
+        {
+            return Repository.GetDataTableResponse(request);
+        }
+
+        //Collection/query request
+        public <%=entity.Name%>CollectionResponse Get(<%=entity.Name%>QueryCollectionRequest request)
+        {
+            return Repository.Fetch(request);
+        }
+
+<%if(entity.UniqueConstraints.Count()>0){%>
+        //Unique constraint request go first (the order matters in service stack)
+        //If the PK constraint was first, it could be used by ServiceStack instead
+        //of the UC route (this is how Route order is controlled)
+<%foreach(var uc in entity.UniqueConstraints){
+%>        public <%=entity.Name%>Response Get(<%=entity.Name%><%=uc.Name%>Request request)
+        {
+            return Repository.Fetch(request);
+        }
+<%}}%>
+
+        //Pk request
+        public <%=entity.Name%>Response Get(<%=entity.Name%>PkRequest request)
+        {
+            return Repository.Fetch(request);
+        }
+
+        [Authenticate]
+        public <%=entity.Name%>Response Any(<%=entity.Name%>AddRequest request)
+        {
+<%if(binaryFields.Count()>0){
+%>            var filesInBytes = base.GetFilesInBytes();
+            var filesUploaded = filesInBytes.Count;
+            var fidx = 0;
+      
+            if(filesUploaded > 0)
+            {
+<%foreach(var field in binaryFields){
+%>              if(!string.IsNullOrEmpty(request.<%=field.Name%>SrcPath))
+              {
+                request.<%=field.Name%> = filesInBytes[fidx];
+                fidx++;
+              }<%
+  }%>
+            }
+<%}%>            return Repository.Create(request);
+        }
+
+        [Authenticate]
+        public <%=entity.Name%>Response Any(<%=entity.Name%>UpdateRequest request)
+        {
+<%if(binaryFields.Count()>0){
+%>            var filesInBytes = base.GetFilesInBytes();
+            var filesUploaded = filesInBytes.Count;
+            var fidx = 0;
+      
+            if(filesUploaded > 0)
+            {
+<%foreach(var field in binaryFields){
+%>              if(!string.IsNullOrEmpty(request.<%=field.Name%>SrcPath))
+              {
+                request.<%=field.Name%> = filesInBytes[fidx];
+                fidx++;
+              }<%
+  }%>
+            }
+<%}%>            return Repository.Update(request);
+        }
+
+        [Authenticate]
+        public bool Any(<%=entity.Name%>DeleteRequest request)
+        {
+            return Repository.Delete(request);
+        }
+    }
+    #endregion
+
+    #region Requests
+    [Route("<%=baseRoute%>/meta", Verbs = "GET")] // unique constraint filter
+    public partial class <%=entity.Name%>MetaRequest : IReturn<EntityMetaDetailsResponse>
+    {
+    }
+
+    [Route("<%=baseRoute%>/datatable", Verbs = "POST")] // general query
+    public partial class <%=entity.Name%>DataTableRequest : GetCollectionRequest<<%=entity.Name%>, <%=entity.Name%>CollectionResponse>
+    {
+        public int iDisplayStart { get; set; }
+        public int iDisplayLength { get; set; }
+        public string sSearch { get; set; }
+        public bool bEscapeRegex { get; set; }
+        public int iColumns { get; set; }
+        public int iSortingCols { get; set; }
+        public string sEcho { get; set; }
+        public string bRegex { get; set; }
+
+<%for(int i=0;i<entityFields.Count();i++){
+%>        public int iSortCol_<%=i.ToString()%> { get; set; }
+        public string sSortDir_<%=i.ToString()%> { get; set; }
+        public string bSortable_<%=i.ToString()%> { get; set; } 
+        public string mDataProp_<%=i.ToString()%> { get; set; } 
+        public string bRegex_<%=i.ToString()%> { get; set; }
+        public string bSearchable_<%=i.ToString()%> { get; set; }
+<%}%>
+    }
+
+<%foreach(var uc in entity.UniqueConstraints){
+%>    [Route("<%=baseRoute%>/uc/<%=uc.Name.ToLower().Substring(2)%>/<%=ucRoutes[uc.Name]%>", Verbs = "GET")] // unique constraint filter
+    public partial class <%=entity.Name%><%=uc.Name%>Request : GetRequest<<%=entity.Name%>, <%=entity.Name%>Response>
+    {
+        // unique constraint fields (that are not also primary key fields)
+<%foreach(var ucFieldName in uc.FieldsAsString.Split(',')){
+    if(pkFields.Contains(ucFieldName)) continue;
+    var ucField = entity.Fields.Single(f=>f.Name==ucFieldName);
+    string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(ucField, _executingGenerator, "Nullable<{0}>");
+%>        public <%=dotNetFieldTypeName%> <%=ucField.Name%> { get; set; }
+<%}%>
+    }
+<%}%>
+
+    [Route("<%=baseRoute%>/<%=pkRoute%>", Verbs = "GET")] // primary key filter
+    public partial class <%=entity.Name%>PkRequest: GetRequest<<%=entity.Name%>, <%=entity.Name%>Response>
+    {
+<%foreach(var pkField in entity.IdentifyingFields){
+    string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(pkField, _executingGenerator, "Nullable<{0}>");
+%>        public <%=dotNetFieldTypeName%> <%=pkField.Name%> { get; set; }
+<%}%>
+    }
+
+    [Route("<%=baseRoute%>", Verbs = "GET")] // general query
+    [DefaultView("<%=entity.Name%>View")]
+    public partial class <%=entity.Name%>QueryCollectionRequest : GetCollectionRequest<<%=entity.Name%>, <%=entity.Name%>CollectionResponse>
+    {
+    }
+
+    [Route("<%=baseRoute%>", Verbs = "POST")] // add item
+    public partial class <%=entity.Name%>AddRequest : <%=entity.Name%>, IReturn<<%=entity.Name%>Response>
+    {
+<%foreach(var field in binaryFields){
+%>        public string <%=field.Name%>SrcPath { get; set; }
+<%}%>
+    }
+
+    [Route("<%=baseRoute%>/<%=pkRoute%>", Verbs = "PUT")] // update item
+    [Route("<%=baseRoute%>/<%=pkRoute%>/update", Verbs = "POST")] // delete item
+    public partial class <%=entity.Name%>UpdateRequest : <%=entity.Name%>, IReturn<<%=entity.Name%>Response>
+    {
+<%foreach(var field in binaryFields){
+%>        public string <%=field.Name%>SrcPath { get; set; }
+<%}%>
+    }
+
+    [Route("<%=baseRoute%>/<%=pkRoute%>", Verbs = "DELETE")] // delete item
+    [Route("<%=baseRoute%>/<%=pkRoute%>/delete", Verbs = "POST")] // delete item
+    public partial class <%=entity.Name%>DeleteRequest: SimpleRequest<bool>
+    {
+<%foreach(var pkField in entity.IdentifyingFields){
+    string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(pkField, _executingGenerator, "Nullable<{0}>");
+%>        public <%=dotNetFieldTypeName%> <%=pkField.Name%> { get; set; }
+<%}%>
+    }
+    #endregion
+
+    #region Responses
+    public partial class <%=entity.Name%>Response : GetResponse<<%=entity.Name%>>
+    {
+        public <%=entity.Name%>Response() : base() { }
+        public <%=entity.Name%>Response(<%=entity.Name%> category) : base(category) { }
+    }
+
+    public partial class <%=entity.Name%>CollectionResponse : GetCollectionResponse<<%=entity.Name%>>
+    {
+        public <%=entity.Name%>CollectionResponse(): base(){}
+        public <%=entity.Name%>CollectionResponse(IEnumerable<<%=entity.Name%>> collection, int pageNumber, int pageSize, int totalItemCount) : 
+            base(collection, pageNumber, pageSize, totalItemCount){}
+    }
+    #endregion
+}
