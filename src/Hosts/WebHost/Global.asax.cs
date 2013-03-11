@@ -92,8 +92,8 @@ namespace WebHost
 
             SetConfig(new EndpointHostConfig
             {
-                AllowJsonpRequests = true,
-                DebugMode = true,
+                AllowJsonpRequests = false,
+                DebugMode = false,
                 EnableFeatures = Feature.All.Remove(GetDisabledFeatures()),
                 CustomHttpHandlers = {
                         { HttpStatusCode.NotFound, new RazorHandler("/notfound") }

@@ -509,8 +509,7 @@ namespace Northwind.Data.ServiceRepositories
                     break;
                 case("nl"): //null
                 case("nnl"): //not null
-                    /* objAlias */ objElements[0] = valueElements.Length == 1 ? valueElements[0] : null;
-                    predicate = new FieldCompareNullPredicate(field, null, (string)objElements[0], comparisonOperatorStr == "nnl");
+                    predicate = new FieldCompareNullPredicate(field, null, null, comparisonOperatorStr == "nnl");
                     break;
                 case("gt"): //greater than) 
                 case("gte"): //greater than or equal to
@@ -523,7 +522,7 @@ namespace Northwind.Data.ServiceRepositories
                     if(comparisonOperatorStr == "gte") comparisonOperator = ComparisonOperator.GreaterEqual;
                     else if(comparisonOperatorStr == "lt") comparisonOperator = ComparisonOperator.LesserThan;
                     else if(comparisonOperatorStr == "lte") comparisonOperator = ComparisonOperator.LessEqual;
-                    predicate = new FieldCompareValuePredicate(field, null, comparisonOperator, objElements, objAlias);
+                    predicate = new FieldCompareValuePredicate(field, null, comparisonOperator, objElements[0], objAlias);
                     break;
                 case("ct"): //full text contains
                 case("ft"): //full text free text

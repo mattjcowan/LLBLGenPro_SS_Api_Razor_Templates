@@ -4313,6 +4313,33 @@ GO
 ALTER TABLE [dbo].[Territories] CHECK CONSTRAINT [FK_Territories_Region]
 GO
 
+/* Create a full text index for the demo */
+IF  EXISTS (SELECT * FROM sys.fulltext_indexes fti WHERE fti.object_id = OBJECT_ID(N'[dbo].[Employees]'))
+ALTER FULLTEXT INDEX ON [dbo].[Employees] DISABLE
+GO
+
+/****** Object:  FullTextIndex     Script Date: 03/10/2013 22:23:35 ******/
+IF  EXISTS (SELECT * FROM sys.fulltext_indexes fti WHERE fti.object_id = OBJECT_ID(N'[dbo].[Employees]'))
+DROP FULLTEXT INDEX ON [dbo].[Employees]
+GO
+
+IF  EXISTS (SELECT * FROM sysfulltextcatalogs ftc WHERE ftc.name = N'NorthwindFullTextCatalog')
+DROP FULLTEXT CATALOG [NorthwindFullTextCatalog]
+GO
+
+/****** Object:  FullTextCatalog [NorthwindFullTextCatalog]    Script Date: 03/10/2013 22:23:35 ******/
+CREATE FULLTEXT CATALOG [NorthwindFullTextCatalog]WITH ACCENT_SENSITIVITY = ON
+AUTHORIZATION [dbo]
+GO
+
+CREATE FULLTEXT INDEX ON [dbo].[Employees]
+ ( 
+  Notes Language 1033
+ ) 
+ KEY INDEX PK_Employees ON [NorthwindFullTextCatalog]; 
+GO
+
+
 USE [Northwind]
 GO
 
