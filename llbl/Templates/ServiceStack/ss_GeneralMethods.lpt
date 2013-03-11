@@ -31,8 +31,8 @@
 <[ SD.LLBLGen.Pro.DBDriverCore ]>
 <[ SD.LLBLGen.Pro.LptParser ]><~
 
-public string CodeGenInfo(){
-  return string.Format(
+public string CodeGenInfo(){ 
+  return string.Format( 
 @"///////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: {0}
 // Template author: MJC
