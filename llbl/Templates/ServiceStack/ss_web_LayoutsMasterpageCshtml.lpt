@@ -12,6 +12,7 @@
     <meta charset="utf-8">
     <title><%=rootNameSpace%> - @ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
     <meta name="description" content="A code-generated demo REST api and HTML site, generated using LLBLGen Pro, using the ServiceStack framework">
     <meta name="author" content="Matt Cowan (MJC)">
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">
