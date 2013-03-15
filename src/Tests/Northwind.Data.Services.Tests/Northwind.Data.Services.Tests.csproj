@@ -77,6 +77,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesTests\BasicQueryTests.cs" />
     <Compile Include="ServicesTests\ConnectivityTests.cs" />
+    <Compile Include="ServicesTests\FilterQueryTests.cs" />
+    <Compile Include="ServicesTests\SelectQueryTests.cs" />
+    <Compile Include="ServicesTests\PagingQueryTests.cs" />
+    <Compile Include="ServicesTests\IncludeQueryTests.cs" />
+    <Compile Include="ServicesTests\SortQueryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
