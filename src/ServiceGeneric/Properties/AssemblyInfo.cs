@@ -60,5 +60,5 @@ using System.Runtime.Serialization;
 [assembly: AssemblyKeyName("")]
 
 //MONO 2.8 now supports this so we can remove [DataContract(Namespace = ExampleConfig.DefaultNamespace)] when its popular
-[assembly: ContractNamespace("", ClrNamespace = "Northwind.Data.Dtos")]
-[assembly: ContractNamespace("", ClrNamespace = "Northwind.Data.Services")]
+[assembly: ContractNamespace("http://schemas.servicestack.net/types", ClrNamespace = "Northwind.Data.Dtos")]
+[assembly: ContractNamespace("http://schemas.servicestack.net/types", ClrNamespace = "Northwind.Data.Services")]

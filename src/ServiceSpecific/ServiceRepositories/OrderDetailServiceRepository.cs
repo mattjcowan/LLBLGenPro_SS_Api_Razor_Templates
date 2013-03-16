@@ -132,10 +132,12 @@ OrderDetailQueryCollectionRequest
 
         public OrderDetailCollectionResponse Fetch(OrderDetailQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new OrderDetailCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -148,8 +150,8 @@ OrderDetailQueryCollectionRequest
             entity.OrderId = request.OrderId;
             entity.ProductId = request.ProductId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -243,7 +245,7 @@ OrderDetailQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.OrderId = entity.OrderId;
                 dto.ProductId = entity.ProductId;
                 dto.UnitPrice = entity.UnitPrice;
@@ -251,17 +253,17 @@ OrderDetailQueryCollectionRequest
                 dto.Discount = entity.Discount;
 
 
-              // Map dto associations
-              // n:1 Order association
-              if (entity.Order != null)
-              {
-                dto.Order = entity.Order.RelatedObject(seenObjects, parents);
-              }
-              // n:1 Product association
-              if (entity.Product != null)
-              {
-                dto.Product = entity.Product.RelatedObject(seenObjects, parents);
-              }
+                // Map dto associations
+                // n:1 Order association
+                if (entity.Order != null)
+                {
+                  dto.Order = entity.Order.RelatedObject(seenObjects, parents);
+                }
+                // n:1 Product association
+                if (entity.Product != null)
+                {
+                  dto.Product = entity.Product.RelatedObject(seenObjects, parents);
+                }
 
             }
             return dto;
@@ -294,12 +296,12 @@ OrderDetailQueryCollectionRequest
             // n:1 Order association
             if (dto.Order != null)
             {
-        entity.Order = dto.Order.FromDto();
+                entity.Order = dto.Order.FromDto();
             }
             // n:1 Product association
             if (dto.Product != null)
             {
-        entity.Product = dto.Product.FromDto();
+                entity.Product = dto.Product.FromDto();
             }
 
             return entity;

@@ -130,6 +130,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
     <None Include="web.config" />
     <None Include="packages.config" />

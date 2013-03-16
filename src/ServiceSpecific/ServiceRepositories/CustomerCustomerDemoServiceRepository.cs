@@ -129,10 +129,12 @@ CustomerCustomerDemoQueryCollectionRequest
 
         public CustomerCustomerDemoCollectionResponse Fetch(CustomerCustomerDemoQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new CustomerCustomerDemoCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -145,8 +147,8 @@ CustomerCustomerDemoQueryCollectionRequest
             entity.CustomerId = request.CustomerId;
             entity.CustomerTypeId = request.CustomerTypeId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -240,22 +242,22 @@ CustomerCustomerDemoQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.CustomerId = entity.CustomerId;
                 dto.CustomerTypeId = entity.CustomerTypeId;
 
 
-              // Map dto associations
-              // n:1 Customer association
-              if (entity.Customer != null)
-              {
-                dto.Customer = entity.Customer.RelatedObject(seenObjects, parents);
-              }
-              // n:1 CustomerDemographic association
-              if (entity.CustomerDemographic != null)
-              {
-                dto.CustomerDemographic = entity.CustomerDemographic.RelatedObject(seenObjects, parents);
-              }
+                // Map dto associations
+                // n:1 Customer association
+                if (entity.Customer != null)
+                {
+                  dto.Customer = entity.Customer.RelatedObject(seenObjects, parents);
+                }
+                // n:1 CustomerDemographic association
+                if (entity.CustomerDemographic != null)
+                {
+                  dto.CustomerDemographic = entity.CustomerDemographic.RelatedObject(seenObjects, parents);
+                }
 
             }
             return dto;
@@ -285,12 +287,12 @@ CustomerCustomerDemoQueryCollectionRequest
             // n:1 Customer association
             if (dto.Customer != null)
             {
-        entity.Customer = dto.Customer.FromDto();
+                entity.Customer = dto.Customer.FromDto();
             }
             // n:1 CustomerDemographic association
             if (dto.CustomerDemographic != null)
             {
-        entity.CustomerDemographic = dto.CustomerDemographic.FromDto();
+                entity.CustomerDemographic = dto.CustomerDemographic.FromDto();
             }
 
             return entity;

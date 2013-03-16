@@ -1,4 +1,4 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
@@ -31,7 +31,7 @@ using System.Xml.Serialization;
 
 namespace <%=rootNameSpace%>.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class <%=entity.Name%>Collection : CommonDtoBaseCollection<<%=entity.Name%>>
   {
       public <%=entity.Name%>Collection(){}
@@ -39,7 +39,7 @@ namespace <%=rootNameSpace%>.Dtos
       public <%=entity.Name%>Collection(List<<%=entity.Name%>> list): base(list ?? new List<<%=entity.Name%>>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class <%=entity.Name%> : <%if(entity.IsSubType){%><%=entity.GetSuperType().Name%><%}else{%>CommonDtoBase<<%=entity.Name%>><%}%>
   {
     public <%=entity.Name%>()
@@ -51,7 +51,7 @@ namespace <%=rootNameSpace%>.Dtos
     {
       case EntityRelationshipType.ManyToOne:
       case EntityRelationshipType.OneToOne:
-	  	  break;
+        break;
       case EntityRelationshipType.OneToMany:
       case EntityRelationshipType.ManyToMany:
 %>      this.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection();
@@ -99,7 +99,7 @@ namespace <%=rootNameSpace%>.Dtos
     }
 <% } %>
     #region Class Property Declarations
-	
+  
 <%  foreach(IFieldElementCore field in entityFields)
   {
     var camelCasedFieldName = GeneratorUtils.CamelCaseString(field.Name);

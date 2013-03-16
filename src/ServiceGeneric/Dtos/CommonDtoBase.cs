@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 3.5
-// Code is generated on: Saturday, March 09, 2013 5:47:50 PM
+// Code is generated on: Saturday, March 16, 2013 2:58:24 PM
 //////////////////////////////////////////////////////////////
 using System;
 using System.Collections;
@@ -42,7 +42,7 @@ namespace Northwind.Data.Dtos
   }
   
   /// <summary>Common base class which is the base class for all generated dtos which aren't a subtype of another dto.</summary>
-  [Serializable]
+  //[Serializable]
   public abstract partial class CommonDtoBase
   {
     /// <summary>Method called from the constructor</summary>
@@ -62,7 +62,7 @@ namespace Northwind.Data.Dtos
   }
   
   /// <summary>Common base class which is the base class for all generated dtos which aren't a subtype of another dto.</summary>
-  [Serializable]
+  //[Serializable]
   public abstract partial class CommonDtoBase<TDto>: CommonDtoBase
   {   
     /// <summary>Initializes a new instance of the <see cref="CommonDtoBase"/> class.</summary>

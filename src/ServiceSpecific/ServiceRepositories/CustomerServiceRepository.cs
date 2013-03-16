@@ -138,10 +138,12 @@ CustomerQueryCollectionRequest
 
         public CustomerCollectionResponse Fetch(CustomerQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new CustomerCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -152,8 +154,8 @@ CustomerQueryCollectionRequest
             var entity = new CustomerEntity();
             entity.CompanyName = request.CompanyName;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -171,8 +173,8 @@ CustomerQueryCollectionRequest
             var entity = new CustomerEntity();
             entity.CustomerId = request.CustomerId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -269,7 +271,7 @@ CustomerQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.CustomerId = entity.CustomerId;
                 dto.CompanyName = entity.CompanyName;
                 dto.ContactName = entity.ContactName;
@@ -283,17 +285,17 @@ CustomerQueryCollectionRequest
                 dto.Fax = entity.Fax;
 
 
-              // Map dto associations
-              // 1:n CustomerCustomerDemos association of CustomerCustomerDemo entities
-              if (entity.CustomerCustomerDemos != null && entity.CustomerCustomerDemos.Any())
-              {
-                dto.CustomerCustomerDemos = new CustomerCustomerDemoCollection(entity.CustomerCustomerDemos.RelatedArray(seenObjects, parents));
-              }
-              // 1:n Orders association of Order entities
-              if (entity.Orders != null && entity.Orders.Any())
-              {
-                dto.Orders = new OrderCollection(entity.Orders.RelatedArray(seenObjects, parents));
-              }
+                // Map dto associations
+                // 1:n CustomerCustomerDemos association of CustomerCustomerDemo entities
+                if (entity.CustomerCustomerDemos != null && entity.CustomerCustomerDemos.Any())
+                {
+                  dto.CustomerCustomerDemos = new CustomerCustomerDemoCollection(entity.CustomerCustomerDemos.RelatedArray(seenObjects, parents));
+                }
+                // 1:n Orders association of Order entities
+                if (entity.Orders != null && entity.Orders.Any())
+                {
+                  dto.Orders = new OrderCollection(entity.Orders.RelatedArray(seenObjects, parents));
+                }
 
             }
             return dto;

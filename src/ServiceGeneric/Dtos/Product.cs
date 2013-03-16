@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class ProductCollection : CommonDtoBaseCollection<Product>
   {
       public ProductCollection(){}
@@ -18,7 +18,7 @@ namespace Northwind.Data.Dtos
       public ProductCollection(List<Product> list): base(list ?? new List<Product>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class Product : CommonDtoBase<Product>
   {
     public Product()
@@ -67,7 +67,7 @@ namespace Northwind.Data.Dtos
     }
 
     #region Class Property Declarations
-	
+  
     /// <summary>Gets or sets the ProductId field. </summary>
     public virtual System.Int32 ProductId  { get; set; }
 

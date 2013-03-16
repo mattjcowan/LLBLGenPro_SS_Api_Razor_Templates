@@ -153,10 +153,12 @@ OrderQueryCollectionRequest
 
         public OrderCollectionResponse Fetch(OrderQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new OrderCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -168,8 +170,8 @@ OrderQueryCollectionRequest
             var entity = new OrderEntity();
             entity.OrderId = request.OrderId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -262,7 +264,7 @@ OrderQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.OrderId = entity.OrderId;
                 dto.CustomerId = entity.CustomerId;
                 dto.EmployeeId = entity.EmployeeId;
@@ -279,27 +281,27 @@ OrderQueryCollectionRequest
                 dto.ShipCountry = entity.ShipCountry;
 
 
-              // Map dto associations
-              // n:1 Customer association
-              if (entity.Customer != null)
-              {
-                dto.Customer = entity.Customer.RelatedObject(seenObjects, parents);
-              }
-              // n:1 Employee association
-              if (entity.Employee != null)
-              {
-                dto.Employee = entity.Employee.RelatedObject(seenObjects, parents);
-              }
-              // 1:n OrderDetails association of OrderDetail entities
-              if (entity.OrderDetails != null && entity.OrderDetails.Any())
-              {
-                dto.OrderDetails = new OrderDetailCollection(entity.OrderDetails.RelatedArray(seenObjects, parents));
-              }
-              // n:1 Shipper association
-              if (entity.Shipper != null)
-              {
-                dto.Shipper = entity.Shipper.RelatedObject(seenObjects, parents);
-              }
+                // Map dto associations
+                // n:1 Customer association
+                if (entity.Customer != null)
+                {
+                  dto.Customer = entity.Customer.RelatedObject(seenObjects, parents);
+                }
+                // n:1 Employee association
+                if (entity.Employee != null)
+                {
+                  dto.Employee = entity.Employee.RelatedObject(seenObjects, parents);
+                }
+                // 1:n OrderDetails association of OrderDetail entities
+                if (entity.OrderDetails != null && entity.OrderDetails.Any())
+                {
+                  dto.OrderDetails = new OrderDetailCollection(entity.OrderDetails.RelatedArray(seenObjects, parents));
+                }
+                // n:1 Shipper association
+                if (entity.Shipper != null)
+                {
+                  dto.Shipper = entity.Shipper.RelatedObject(seenObjects, parents);
+                }
 
             }
             return dto;
@@ -341,12 +343,12 @@ OrderQueryCollectionRequest
             // n:1 Customer association
             if (dto.Customer != null)
             {
-        entity.Customer = dto.Customer.FromDto();
+                entity.Customer = dto.Customer.FromDto();
             }
             // n:1 Employee association
             if (dto.Employee != null)
             {
-        entity.Employee = dto.Employee.FromDto();
+                entity.Employee = dto.Employee.FromDto();
             }
             // 1:n OrderDetails association
             if (dto.OrderDetails != null && dto.OrderDetails.Any())
@@ -357,7 +359,7 @@ OrderQueryCollectionRequest
             // n:1 Shipper association
             if (dto.Shipper != null)
             {
-        entity.Shipper = dto.Shipper.FromDto();
+                entity.Shipper = dto.Shipper.FromDto();
             }
 
             return entity;

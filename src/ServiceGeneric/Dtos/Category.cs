@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class CategoryCollection : CommonDtoBaseCollection<Category>
   {
       public CategoryCollection(){}
@@ -18,7 +18,7 @@ namespace Northwind.Data.Dtos
       public CategoryCollection(List<Category> list): base(list ?? new List<Category>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class Category : CommonDtoBase<Category>
   {
     public Category()
@@ -53,7 +53,7 @@ namespace Northwind.Data.Dtos
     }
 
     #region Class Property Declarations
-	
+  
     /// <summary>Gets or sets the CategoryId field. </summary>
     public virtual System.Int32 CategoryId  { get; set; }
 

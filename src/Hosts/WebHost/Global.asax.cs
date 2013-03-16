@@ -83,6 +83,8 @@ namespace WebHost
         public override void Configure(Funq.Container container)
         {
             JsConfig.EmitCamelCaseNames = true;
+            JsConfig.IncludeNullValues = true;
+            JsConfig.DateHandler = JsonDateHandler.ISO8601;
 
             //            LogManager.LogFactory = new ServiceStack.Logging.Support.Logging.ConsoleLogFactory();
             //            LogManager.LogFactory = new ServiceStack.Logging.Log4Net.Log4NetFactory("log4net.config");

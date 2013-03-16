@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class OrderCollection : CommonDtoBaseCollection<Order>
   {
       public OrderCollection(){}
@@ -18,7 +18,7 @@ namespace Northwind.Data.Dtos
       public OrderCollection(List<Order> list): base(list ?? new List<Order>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class Order : CommonDtoBase<Order>
   {
     public Order()
@@ -71,7 +71,7 @@ namespace Northwind.Data.Dtos
     }
 
     #region Class Property Declarations
-	
+  
     /// <summary>Gets or sets the OrderId field. </summary>
     public virtual System.Int32 OrderId  { get; set; }
 

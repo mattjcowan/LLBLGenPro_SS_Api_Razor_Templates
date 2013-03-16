@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class SupplierCollection : CommonDtoBaseCollection<Supplier>
   {
       public SupplierCollection(){}
@@ -18,7 +18,7 @@ namespace Northwind.Data.Dtos
       public SupplierCollection(List<Supplier> list): base(list ?? new List<Supplier>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class Supplier : CommonDtoBase<Supplier>
   {
     public Supplier()
@@ -69,7 +69,7 @@ namespace Northwind.Data.Dtos
     }
 
     #region Class Property Declarations
-	
+  
     /// <summary>Gets or sets the SupplierId field. </summary>
     public virtual System.Int32 SupplierId  { get; set; }
 

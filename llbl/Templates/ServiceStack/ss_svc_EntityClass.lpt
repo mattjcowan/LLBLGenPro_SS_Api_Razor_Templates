@@ -1,4 +1,4 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace <%=rootNameSpace%>.Dtos
 {
-    [Serializable]
+    //[Serializable]
     public partial class EntityCollection : CommonDtoBaseCollection<Entity>
     {
         public EntityCollection() { }
@@ -20,7 +20,7 @@ namespace <%=rootNameSpace%>.Dtos
         public EntityCollection(List<Entity> list) : base(list ?? new List<Entity>()) { }
     }
 
-    [Serializable]
+    //[Serializable]
     public partial class Entity
     {
         public string Name { get; set; }

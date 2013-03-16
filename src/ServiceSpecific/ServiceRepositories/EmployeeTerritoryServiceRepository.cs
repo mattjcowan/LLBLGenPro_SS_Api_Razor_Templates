@@ -129,10 +129,12 @@ EmployeeTerritoryQueryCollectionRequest
 
         public EmployeeTerritoryCollectionResponse Fetch(EmployeeTerritoryQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new EmployeeTerritoryCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -145,8 +147,8 @@ EmployeeTerritoryQueryCollectionRequest
             entity.EmployeeId = request.EmployeeId;
             entity.TerritoryId = request.TerritoryId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -240,22 +242,22 @@ EmployeeTerritoryQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.EmployeeId = entity.EmployeeId;
                 dto.TerritoryId = entity.TerritoryId;
 
 
-              // Map dto associations
-              // n:1 Employee association
-              if (entity.Employee != null)
-              {
-                dto.Employee = entity.Employee.RelatedObject(seenObjects, parents);
-              }
-              // n:1 Territory association
-              if (entity.Territory != null)
-              {
-                dto.Territory = entity.Territory.RelatedObject(seenObjects, parents);
-              }
+                // Map dto associations
+                // n:1 Employee association
+                if (entity.Employee != null)
+                {
+                  dto.Employee = entity.Employee.RelatedObject(seenObjects, parents);
+                }
+                // n:1 Territory association
+                if (entity.Territory != null)
+                {
+                  dto.Territory = entity.Territory.RelatedObject(seenObjects, parents);
+                }
 
             }
             return dto;
@@ -285,12 +287,12 @@ EmployeeTerritoryQueryCollectionRequest
             // n:1 Employee association
             if (dto.Employee != null)
             {
-        entity.Employee = dto.Employee.FromDto();
+                entity.Employee = dto.Employee.FromDto();
             }
             // n:1 Territory association
             if (dto.Territory != null)
             {
-        entity.Territory = dto.Territory.FromDto();
+                entity.Territory = dto.Territory.FromDto();
             }
 
             return entity;

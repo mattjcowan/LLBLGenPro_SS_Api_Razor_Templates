@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class EmployeeCollection : CommonDtoBaseCollection<Employee>
   {
       public EmployeeCollection(){}
@@ -18,7 +18,7 @@ namespace Northwind.Data.Dtos
       public EmployeeCollection(List<Employee> list): base(list ?? new List<Employee>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class Employee : CommonDtoBase<Employee>
   {
     public Employee()
@@ -85,7 +85,7 @@ namespace Northwind.Data.Dtos
     }
 
     #region Class Property Declarations
-	
+  
     /// <summary>Gets or sets the EmployeeId field. </summary>
     public virtual System.Int32 EmployeeId  { get; set; }
 

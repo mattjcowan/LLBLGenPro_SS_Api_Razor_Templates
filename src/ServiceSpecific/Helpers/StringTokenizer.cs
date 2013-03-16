@@ -16,7 +16,7 @@ namespace Northwind.Data.Helpers
 
         int line;
         int column;
-        int pos;	// position within data
+        int pos;  // position within data
 
         string data;
 
@@ -153,7 +153,7 @@ namespace Northwind.Data.Helpers
                         StartRead();
                         Consume();
                         if (LA(0) == '\n')
-                            Consume();	// on DOS/Windows we have \r\n for new line
+                            Consume();  // on DOS/Windows we have \r\n for new line
 
                         line++;
                         column = 1;
@@ -296,16 +296,16 @@ namespace Northwind.Data.Helpers
                 char ch = LA(0);
                 if (ch == EOF)
                     break;
-                else if (ch == '\r')	// handle CR in strings
+                else if (ch == '\r')  // handle CR in strings
                 {
                     Consume();
-                    if (LA(0) == '\n')	// for DOS & windows
+                    if (LA(0) == '\n')  // for DOS & windows
                         Consume();
 
                     line++;
                     column = 1;
                 }
-                else if (ch == '\n')	// new line in quoted string
+                else if (ch == '\n')  // new line in quoted string
                 {
                     Consume();
 
@@ -316,7 +316,7 @@ namespace Northwind.Data.Helpers
                 {
                     Consume();
                     if (LA(0) != '"')
-                        break;	// done reading, and this quotes does not have escape character
+                        break;  // done reading, and this quotes does not have escape character
                     else
                         Consume(); // consume second ", because first was just an escape
                 }

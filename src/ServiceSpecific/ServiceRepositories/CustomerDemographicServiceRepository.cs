@@ -123,10 +123,12 @@ CustomerDemographicQueryCollectionRequest
 
         public CustomerDemographicCollectionResponse Fetch(CustomerDemographicQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new CustomerDemographicCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -138,8 +140,8 @@ CustomerDemographicQueryCollectionRequest
             var entity = new CustomerDemographicEntity();
             entity.CustomerTypeId = request.CustomerTypeId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -232,17 +234,17 @@ CustomerDemographicQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.CustomerTypeId = entity.CustomerTypeId;
                 dto.CustomerDesc = entity.CustomerDesc;
 
 
-              // Map dto associations
-              // 1:n CustomerCustomerDemos association of CustomerCustomerDemo entities
-              if (entity.CustomerCustomerDemos != null && entity.CustomerCustomerDemos.Any())
-              {
-                dto.CustomerCustomerDemos = new CustomerCustomerDemoCollection(entity.CustomerCustomerDemos.RelatedArray(seenObjects, parents));
-              }
+                // Map dto associations
+                // 1:n CustomerCustomerDemos association of CustomerCustomerDemo entities
+                if (entity.CustomerCustomerDemos != null && entity.CustomerCustomerDemos.Any())
+                {
+                  dto.CustomerCustomerDemos = new CustomerCustomerDemoCollection(entity.CustomerCustomerDemos.RelatedArray(seenObjects, parents));
+                }
 
             }
             return dto;

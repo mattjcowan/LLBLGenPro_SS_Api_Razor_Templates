@@ -180,10 +180,12 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
         public <%=entity.Name%>CollectionResponse Fetch(<%=entity.Name%>QueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new <%=entity.Name%>CollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -196,8 +198,8 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 <%foreach(var ucField in uc.FieldsAsString.Split(',')){
 %>            entity.<%=ucField%> = request.<%=ucField%>;
 <%}%>
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -216,8 +218,8 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 <%  foreach(var field in entityFields.Where(f => f.IsPartOfIdentifyingFields)){
 %>            entity.<%=field.Name%> = request.<%=field.Name%>;
 <%}%>
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -318,44 +320,44 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
 <%  foreach(var field in entityFields){
 %>                dto.<%=field.Name%> = entity.<%=field.Name%>;
 <%}%>
 
-              // Map dto associations
+                // Map dto associations
 <%  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
   {
     if(relationshipInfo.NavigatorIsHidden) continue;
     switch(relationshipInfo.RelationshipType)
     {     
       case EntityRelationshipType.OneToOne:
-%>          // 1:1 <%=relationshipInfo.Navigator%> association
-            if (entity.<%=relationshipInfo.Navigator%> != null)
-            {
-        dto.<%=relationshipInfo.Navigator%> = entity.<%=relationshipInfo.Navigator%>.RelatedObject(seenObjects, parents);
-            }
+%>                // 1:1 <%=relationshipInfo.Navigator%> association
+                if (entity.<%=relationshipInfo.Navigator%> != null)
+                {
+                  dto.<%=relationshipInfo.Navigator%> = entity.<%=relationshipInfo.Navigator%>.RelatedObject(seenObjects, parents);
+                }
 <%        break; 
       case EntityRelationshipType.ManyToOne:
-%>              // n:1 <%=relationshipInfo.Navigator%> association
-              if (entity.<%=relationshipInfo.Navigator%> != null)
-              {
-                dto.<%=relationshipInfo.Navigator%> = entity.<%=relationshipInfo.Navigator%>.RelatedObject(seenObjects, parents);
-              }
+%>                // n:1 <%=relationshipInfo.Navigator%> association
+                if (entity.<%=relationshipInfo.Navigator%> != null)
+                {
+                  dto.<%=relationshipInfo.Navigator%> = entity.<%=relationshipInfo.Navigator%>.RelatedObject(seenObjects, parents);
+                }
 <%        break;
       case EntityRelationshipType.OneToMany:
-%>              // 1:n <%=relationshipInfo.Navigator%> association of <%=relationshipInfo.RelatedEntity.Name%> entities
-              if (entity.<%=relationshipInfo.Navigator%> != null && entity.<%=relationshipInfo.Navigator%>.Any())
-              {
-                dto.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection(entity.<%=relationshipInfo.Navigator%>.RelatedArray(seenObjects, parents));
-              }
+%>                // 1:n <%=relationshipInfo.Navigator%> association of <%=relationshipInfo.RelatedEntity.Name%> entities
+                if (entity.<%=relationshipInfo.Navigator%> != null && entity.<%=relationshipInfo.Navigator%>.Any())
+                {
+                  dto.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection(entity.<%=relationshipInfo.Navigator%>.RelatedArray(seenObjects, parents));
+                }
 <%        break;         
     case EntityRelationshipType.ManyToMany:
-%>              // n:n <%=relationshipInfo.Navigator%> association of <%=relationshipInfo.RelatedEntity.Name%> entities
-              if (entity.<%=relationshipInfo.Navigator%> != null && entity.<%=relationshipInfo.Navigator%>.Any())
-              {
-                dto.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection(entity.<%=relationshipInfo.Navigator%>.RelatedArray(seenObjects, parents));
-              }
+%>                // n:n <%=relationshipInfo.Navigator%> association of <%=relationshipInfo.RelatedEntity.Name%> entities
+                if (entity.<%=relationshipInfo.Navigator%> != null && entity.<%=relationshipInfo.Navigator%>.Any())
+                {
+                  dto.<%=relationshipInfo.Navigator%> = new <%=relationshipInfo.RelatedEntity.Name%>Collection(entity.<%=relationshipInfo.Navigator%>.RelatedArray(seenObjects, parents));
+                }
 <%        break;    
     }
   }
@@ -398,14 +400,14 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 %>            // 1:1 <%=relationshipInfo.Navigator%> association
             if (dto.<%=relationshipInfo.Navigator%> != null)
             {
-        entity.<%=relationshipInfo.Navigator%> = dto.<%=relationshipInfo.Navigator%>.FromDto();
+                entity.<%=relationshipInfo.Navigator%> = dto.<%=relationshipInfo.Navigator%>.FromDto();
             }
 <%        break; 
       case EntityRelationshipType.ManyToOne:
 %>            // n:1 <%=relationshipInfo.Navigator%> association
             if (dto.<%=relationshipInfo.Navigator%> != null)
             {
-        entity.<%=relationshipInfo.Navigator%> = dto.<%=relationshipInfo.Navigator%>.FromDto();
+                entity.<%=relationshipInfo.Navigator%> = dto.<%=relationshipInfo.Navigator%>.FromDto();
             }
 <%        break;
       case EntityRelationshipType.OneToMany:

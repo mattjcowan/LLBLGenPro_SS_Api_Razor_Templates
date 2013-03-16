@@ -13,7 +13,7 @@ namespace Northwind.Data.Helpers
                     // the following two should be mutually exclusive
                     // if the following have a mutually shared char, Word char will take precedence
                     // when creating tokens at this time...
-                    AdditionalWordChars = new char[] { '*', ' ' },
+                    AdditionalWordChars = new char[] { '*', ' ', '.' },
                     SymbolChars = new[] { '(', ')', '^', '|', ':' }
                 };
                 

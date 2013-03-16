@@ -130,10 +130,12 @@ TerritoryQueryCollectionRequest
 
         public TerritoryCollectionResponse Fetch(TerritoryQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new TerritoryCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -145,8 +147,8 @@ TerritoryQueryCollectionRequest
             var entity = new TerritoryEntity();
             entity.TerritoryId = request.TerritoryId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -239,23 +241,23 @@ TerritoryQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.TerritoryId = entity.TerritoryId;
                 dto.TerritoryDescription = entity.TerritoryDescription;
                 dto.RegionId = entity.RegionId;
 
 
-              // Map dto associations
-              // 1:n EmployeeTerritories association of EmployeeTerritory entities
-              if (entity.EmployeeTerritories != null && entity.EmployeeTerritories.Any())
-              {
-                dto.EmployeeTerritories = new EmployeeTerritoryCollection(entity.EmployeeTerritories.RelatedArray(seenObjects, parents));
-              }
-              // n:1 Region association
-              if (entity.Region != null)
-              {
-                dto.Region = entity.Region.RelatedObject(seenObjects, parents);
-              }
+                // Map dto associations
+                // 1:n EmployeeTerritories association of EmployeeTerritory entities
+                if (entity.EmployeeTerritories != null && entity.EmployeeTerritories.Any())
+                {
+                  dto.EmployeeTerritories = new EmployeeTerritoryCollection(entity.EmployeeTerritories.RelatedArray(seenObjects, parents));
+                }
+                // n:1 Region association
+                if (entity.Region != null)
+                {
+                  dto.Region = entity.Region.RelatedObject(seenObjects, parents);
+                }
 
             }
             return dto;
@@ -292,7 +294,7 @@ TerritoryQueryCollectionRequest
             // n:1 Region association
             if (dto.Region != null)
             {
-        entity.Region = dto.Region.FromDto();
+                entity.Region = dto.Region.FromDto();
             }
 
             return entity;

@@ -124,10 +124,12 @@ ShipperQueryCollectionRequest
 
         public ShipperCollectionResponse Fetch(ShipperQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new ShipperCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -138,8 +140,8 @@ ShipperQueryCollectionRequest
             var entity = new ShipperEntity();
             entity.CompanyName = request.CompanyName;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -157,8 +159,8 @@ ShipperQueryCollectionRequest
             var entity = new ShipperEntity();
             entity.ShipperId = request.ShipperId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -255,18 +257,18 @@ ShipperQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.ShipperId = entity.ShipperId;
                 dto.CompanyName = entity.CompanyName;
                 dto.Phone = entity.Phone;
 
 
-              // Map dto associations
-              // 1:n Orders association of Order entities
-              if (entity.Orders != null && entity.Orders.Any())
-              {
-                dto.Orders = new OrderCollection(entity.Orders.RelatedArray(seenObjects, parents));
-              }
+                // Map dto associations
+                // 1:n Orders association of Order entities
+                if (entity.Orders != null && entity.Orders.Any())
+                {
+                  dto.Orders = new OrderCollection(entity.Orders.RelatedArray(seenObjects, parents));
+                }
 
             }
             return dto;

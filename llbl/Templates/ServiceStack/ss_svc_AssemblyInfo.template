@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+"http://schemas.servicestack.net/types"using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 [assembly: AssemblyProduct("")]
 [assembly: AssemblyCopyright("Copyright © 2013")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCulture("")]   
 [assembly: System.CLSCompliant(false)]
 
 //
@@ -60,5 +60,6 @@ using System.Runtime.Serialization;
 [assembly: AssemblyKeyName("")]
 
 //MONO 2.8 now supports this so we can remove [DataContract(Namespace = ExampleConfig.DefaultNamespace)] when its popular
-[assembly: ContractNamespace("", ClrNamespace = "<[RootNamespace]>.Dtos")]
-[assembly: ContractNamespace("", ClrNamespace = "<[RootNamespace]>.Services")]
+//Match up the ContractNamespace to ServiceStack's so that the XML comes out looking nice and tidy
+[assembly: ContractNamespace("http://schemas.servicestack.net/types", ClrNamespace = "<[RootNamespace]>.Dtos")]
+[assembly: ContractNamespace("http://schemas.servicestack.net/types", ClrNamespace = "<[RootNamespace]>.Services")]

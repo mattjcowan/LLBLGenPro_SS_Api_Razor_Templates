@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Drawing;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using ServiceStack.CacheAccess;
@@ -27,42 +28,41 @@ using Northwind.Data.ServiceRepositories;
 
 namespace Northwind.Data.ConsoleHost
 {
-  class Program
-  {
-        static void Main(string[] args)
-        {
-            var listeningOn = args.Length == 0 ? "http://*:1337/" : args[0];
-            var appHost = new ConsoleAppHost();
-            appHost.Init();
-            appHost.Start(listeningOn);
+    class Program
+    {
+          static void Main(string[] args)
+          {
+              var listeningOn = args.Length == 0 ? "http://*:1337/" : args[0];
+              var appHost = new ConsoleAppHost();
+              appHost.Init();
+              appHost.Start(listeningOn);
 
-            Console.WriteLine("----------------------------------------------------------------------------");
-            Console.WriteLine("Northwind.Data API");
-            Console.WriteLine("  - Host started at {0}", DateTime.Now);
-            Console.WriteLine("  - Host listening on {0}", listeningOn);
-            Console.WriteLine("----------------------------------------------------------------------------");
-            Console.WriteLine("");
+              Console.WriteLine("----------------------------------------------------------------------------");
+              Console.WriteLine("Northwind.Data API");
+              Console.WriteLine("  - Host started at {0}", DateTime.Now);
+              Console.WriteLine("  - Host listening on {0}", listeningOn);
+              Console.WriteLine("----------------------------------------------------------------------------");
+              Console.WriteLine("");
 
-            "Type Ctrl+C to quit..".Print();
-            Thread.Sleep(Timeout.Infinite);
+              "Type Ctrl+C to quit..".Print();
+              Thread.Sleep(Timeout.Infinite);
 
-            appHost.Stop();
-            appHost.Dispose();
+              appHost.Stop();
+              appHost.Dispose();
 
-            Console.WriteLine("Host has stopped");
-            Console.WriteLine("");
-        }
-  }
-  
-  // A sample implementation of a self-hosted application to quickly get up and running with hosting the 
-  // code-generated API ... See the ServiceStack documentation at https://github.com/ServiceStack/ServiceStack/wiki
-  // for more detailed information on the various options you can set for hosting the API.
+              Console.WriteLine("Host has stopped");
+              Console.WriteLine("");
+          }
+    }
+
+    // A sample implementation of a self-hosted application to quickly get up and running with hosting the 
+    // code-generated API ... See the ServiceStack documentation at https://github.com/ServiceStack/ServiceStack/wiki
+    // for more detailed information on the various options you can set for hosting the API.
     class ConsoleAppHost : AppHostHttpListenerBase
     {
-        public ConsoleAppHost() : base("Northwind.Data API (updated on 3/9/2013 5:47:50 PM)", 
-      typeof(CommonDtoBase).Assembly) { }
+        public ConsoleAppHost() : base("Northwind.Data API (updated on 3/16/2013 2:58:24 PM)", typeof(CommonDtoBase).Assembly) { }
 
-    // THIS IS TO SIMULATE AUTHENTICATION
+        // THIS IS TO SIMULATE AUTHENTICATION
         private const string UserName = "admin";
         private const string Password = "admin";
 
@@ -71,11 +71,14 @@ namespace Northwind.Data.ConsoleHost
         public override void Configure(Funq.Container container)
         {
             JsConfig.EmitCamelCaseNames = true;
+            JsConfig.IncludeNullValues = true;
+            JsConfig.DateHandler = JsonDateHandler.ISO8601;
 
-            LogManager.LogFactory = new ConsoleLogFactory(); //typeof(ConsoleAppHost));
+            LogManager.LogFactory = new ConsoleLogFactory();
 
             SetConfig(new EndpointHostConfig
                 {
+                    WsdlServiceNamespace = "",
                     AllowJsonpRequests = true,
                     DebugMode = true,
                     EnableFeatures = Feature.All.Remove(GetDisabledFeatures()),
@@ -99,7 +102,7 @@ namespace Northwind.Data.ConsoleHost
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
       
-      //Repositories
+            //Repositories
             container.RegisterAs<CategoryServiceRepository, ICategoryServiceRepository>();
             container.RegisterAs<CustomerServiceRepository, ICustomerServiceRepository>();
             container.RegisterAs<CustomerCustomerDemoServiceRepository, ICustomerCustomerDemoServiceRepository>();
@@ -114,12 +117,11 @@ namespace Northwind.Data.ConsoleHost
             container.RegisterAs<SupplierServiceRepository, ISupplierServiceRepository>();
             container.RegisterAs<TerritoryServiceRepository, ITerritoryServiceRepository>();
 
-
-      //DataAccess / OrmLite
+            //DataAccess / OrmLite
             var connectionString = ConfigurationManager.ConnectionStrings["ApiDbConnectionString"].ConnectionString;
             container.Register<IDataAccessAdapterFactory>(c => new DataAccessAdapterFactory(connectionString));
             container.Register<IDbConnectionFactory>(c => new OrmLiteConnectionFactory(connectionString, true, new SqlServerOrmLiteDialectProvider()));
-    }
+        }
 
         private static void CreateUser(IUserAuthRepository repository, int id, string username, string displayName, string email, string password)
         {
@@ -178,9 +180,7 @@ namespace Northwind.Data.ConsoleHost
     {
         public static MvcHtmlString TitleCase(this ServiceStack.Html.HtmlHelper helper, string text)
         {
-            return
-                MvcHtmlString.Create(
-                    System.Text.RegularExpressions.Regex.Replace(text, "([A-Z]{1,2}|[0-9]+)", " $1").TrimStart());
+            return MvcHtmlString.Create(Regex.Replace(text, "([A-Z]{1,2}|[0-9]+)", " $1").TrimStart());
         }
         public static MvcHtmlString DataTableAjaxUrl(this ServiceStack.Html.HtmlHelper helper, string ajaxBaseUri)
         {

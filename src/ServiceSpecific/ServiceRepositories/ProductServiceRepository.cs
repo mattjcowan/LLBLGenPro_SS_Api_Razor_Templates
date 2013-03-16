@@ -143,10 +143,12 @@ ProductQueryCollectionRequest
 
         public ProductCollectionResponse Fetch(ProductQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new ProductCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -157,8 +159,8 @@ ProductQueryCollectionRequest
             var entity = new ProductEntity();
             entity.ProductName = request.ProductName;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -176,8 +178,8 @@ ProductQueryCollectionRequest
             var entity = new ProductEntity();
             entity.ProductId = request.ProductId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -274,7 +276,7 @@ ProductQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.ProductId = entity.ProductId;
                 dto.ProductName = entity.ProductName;
                 dto.SupplierId = entity.SupplierId;
@@ -287,22 +289,22 @@ ProductQueryCollectionRequest
                 dto.Discontinued = entity.Discontinued;
 
 
-              // Map dto associations
-              // n:1 Category association
-              if (entity.Category != null)
-              {
-                dto.Category = entity.Category.RelatedObject(seenObjects, parents);
-              }
-              // 1:n OrderDetails association of OrderDetail entities
-              if (entity.OrderDetails != null && entity.OrderDetails.Any())
-              {
-                dto.OrderDetails = new OrderDetailCollection(entity.OrderDetails.RelatedArray(seenObjects, parents));
-              }
-              // n:1 Supplier association
-              if (entity.Supplier != null)
-              {
-                dto.Supplier = entity.Supplier.RelatedObject(seenObjects, parents);
-              }
+                // Map dto associations
+                // n:1 Category association
+                if (entity.Category != null)
+                {
+                  dto.Category = entity.Category.RelatedObject(seenObjects, parents);
+                }
+                // 1:n OrderDetails association of OrderDetail entities
+                if (entity.OrderDetails != null && entity.OrderDetails.Any())
+                {
+                  dto.OrderDetails = new OrderDetailCollection(entity.OrderDetails.RelatedArray(seenObjects, parents));
+                }
+                // n:1 Supplier association
+                if (entity.Supplier != null)
+                {
+                  dto.Supplier = entity.Supplier.RelatedObject(seenObjects, parents);
+                }
 
             }
             return dto;
@@ -340,7 +342,7 @@ ProductQueryCollectionRequest
             // n:1 Category association
             if (dto.Category != null)
             {
-        entity.Category = dto.Category.FromDto();
+                entity.Category = dto.Category.FromDto();
             }
             // 1:n OrderDetails association
             if (dto.OrderDetails != null && dto.OrderDetails.Any())
@@ -351,7 +353,7 @@ ProductQueryCollectionRequest
             // n:1 Supplier association
             if (dto.Supplier != null)
             {
-        entity.Supplier = dto.Supplier.FromDto();
+                entity.Supplier = dto.Supplier.FromDto();
             }
 
             return entity;

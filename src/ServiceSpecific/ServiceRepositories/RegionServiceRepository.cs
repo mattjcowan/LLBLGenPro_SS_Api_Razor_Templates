@@ -123,10 +123,12 @@ RegionQueryCollectionRequest
 
         public RegionCollectionResponse Fetch(RegionQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new RegionCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -137,8 +139,8 @@ RegionQueryCollectionRequest
             var entity = new RegionEntity();
             entity.RegionDescription = request.RegionDescription;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -156,8 +158,8 @@ RegionQueryCollectionRequest
             var entity = new RegionEntity();
             entity.RegionId = request.RegionId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -254,17 +256,17 @@ RegionQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.RegionId = entity.RegionId;
                 dto.RegionDescription = entity.RegionDescription;
 
 
-              // Map dto associations
-              // 1:n Territories association of Territory entities
-              if (entity.Territories != null && entity.Territories.Any())
-              {
-                dto.Territories = new TerritoryCollection(entity.Territories.RelatedArray(seenObjects, parents));
-              }
+                // Map dto associations
+                // 1:n Territories association of Territory entities
+                if (entity.Territories != null && entity.Territories.Any())
+                {
+                  dto.Territories = new TerritoryCollection(entity.Territories.RelatedArray(seenObjects, parents));
+                }
 
             }
             return dto;

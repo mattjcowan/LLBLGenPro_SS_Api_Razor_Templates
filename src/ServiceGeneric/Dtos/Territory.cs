@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  [Serializable]
+  //[Serializable]
   public partial class TerritoryCollection : CommonDtoBaseCollection<Territory>
   {
       public TerritoryCollection(){}
@@ -18,7 +18,7 @@ namespace Northwind.Data.Dtos
       public TerritoryCollection(List<Territory> list): base(list ?? new List<Territory>()){}
   }
 
-  [Serializable]
+  //[Serializable]
   public partial class Territory : CommonDtoBase<Territory>
   {
     public Territory()
@@ -41,7 +41,7 @@ namespace Northwind.Data.Dtos
 
 
     #region Class Property Declarations
-	
+  
     /// <summary>Gets or sets the TerritoryId field. </summary>
     public virtual System.String TerritoryId  { get; set; }
 

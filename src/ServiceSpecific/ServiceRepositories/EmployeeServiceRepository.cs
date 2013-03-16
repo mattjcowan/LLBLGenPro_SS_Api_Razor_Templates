@@ -156,10 +156,12 @@ EmployeeQueryCollectionRequest
 
         public EmployeeCollectionResponse Fetch(EmployeeQueryCollectionRequest request)
         {
+            base.FixupLimitAndPagingOnRequest(request);
+
             var totalItemCount = 0;
             var entities = base.Fetch(request.Sort, request.Include, request.Filter,
                                       request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, out totalItemCount);
+                                      request.PageSize, request.Limit, out totalItemCount);
             var response = new EmployeeCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
             return response;
@@ -171,8 +173,8 @@ EmployeeQueryCollectionRequest
             var entity = new EmployeeEntity();
             entity.EmployeeId = request.EmployeeId;
 
-            var prefetchPath = ConvertStringToPrefetchPath(EntityType, request.Include);
             var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -265,7 +267,7 @@ EmployeeQueryCollectionRequest
 
                 parents = new Hashtable(parents) { { entity, null } };
 
-              // Map dto properties
+                // Map dto properties
                 dto.EmployeeId = entity.EmployeeId;
                 dto.LastName = entity.LastName;
                 dto.FirstName = entity.FirstName;
@@ -286,27 +288,27 @@ EmployeeQueryCollectionRequest
                 dto.PhotoPath = entity.PhotoPath;
 
 
-              // Map dto associations
-              // n:1 ReportsTo association
-              if (entity.ReportsTo != null)
-              {
-                dto.ReportsTo = entity.ReportsTo.RelatedObject(seenObjects, parents);
-              }
-              // 1:n Employees association of Employee entities
-              if (entity.Employees != null && entity.Employees.Any())
-              {
-                dto.Employees = new EmployeeCollection(entity.Employees.RelatedArray(seenObjects, parents));
-              }
-              // 1:n EmployeeTerritories association of EmployeeTerritory entities
-              if (entity.EmployeeTerritories != null && entity.EmployeeTerritories.Any())
-              {
-                dto.EmployeeTerritories = new EmployeeTerritoryCollection(entity.EmployeeTerritories.RelatedArray(seenObjects, parents));
-              }
-              // 1:n Orders association of Order entities
-              if (entity.Orders != null && entity.Orders.Any())
-              {
-                dto.Orders = new OrderCollection(entity.Orders.RelatedArray(seenObjects, parents));
-              }
+                // Map dto associations
+                // n:1 ReportsTo association
+                if (entity.ReportsTo != null)
+                {
+                  dto.ReportsTo = entity.ReportsTo.RelatedObject(seenObjects, parents);
+                }
+                // 1:n Employees association of Employee entities
+                if (entity.Employees != null && entity.Employees.Any())
+                {
+                  dto.Employees = new EmployeeCollection(entity.Employees.RelatedArray(seenObjects, parents));
+                }
+                // 1:n EmployeeTerritories association of EmployeeTerritory entities
+                if (entity.EmployeeTerritories != null && entity.EmployeeTerritories.Any())
+                {
+                  dto.EmployeeTerritories = new EmployeeTerritoryCollection(entity.EmployeeTerritories.RelatedArray(seenObjects, parents));
+                }
+                // 1:n Orders association of Order entities
+                if (entity.Orders != null && entity.Orders.Any())
+                {
+                  dto.Orders = new OrderCollection(entity.Orders.RelatedArray(seenObjects, parents));
+                }
 
             }
             return dto;
@@ -352,7 +354,7 @@ EmployeeQueryCollectionRequest
             // n:1 ReportsTo association
             if (dto.ReportsTo != null)
             {
-        entity.ReportsTo = dto.ReportsTo.FromDto();
+                entity.ReportsTo = dto.ReportsTo.FromDto();
             }
             // 1:n Employees association
             if (dto.Employees != null && dto.Employees.Any())
