@@ -8,7 +8,7 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 ## DEMO ##
 
 - Demo site: [http://northwind.mattjcowan.com][demo-site]
-- Blog post: [Generating a RESTful Api and UI from a database with LLBLGen and ServiceStack]
+- Blog post: [Generating a RESTful Api and UI from a database with LLBLGen and ServiceStack][blog-site]
 
 ## CHANGE LOG ##
 
@@ -52,7 +52,7 @@ For the "json" examples below, you may want to use Chrome or a browser that can 
 ### Initial Release - March 11, 2013 ###
 
 - Demo site: [http://northwind.mattjcowan.com][demo-site]
-- Blog post: [Generating a fully RESTful Api and UI from a database with LLBLGen and ServiceStack]
+- Blog post: [Generating a fully RESTful Api and UI from a database with LLBLGen and ServiceStack][blog-site]
 
 ## PLANNED FEATURES ##
 
@@ -60,23 +60,23 @@ For the "json" examples below, you may want to use Chrome or a browser that can 
 - Be able to filter included items down (not just limit) in response (for example return products and orderdetails and orders, but only those orders where the quantity sold was greater then 30)
 - Be able to support aggregates (MAX, MIN, SUM, COUNT) and grouping clauses 
 
-[demo-site] http://northwind.mattjcowan.com
-[blog-site] http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack
-[1-xml]   http://northwind.mattjcowan.com/products?limit=10&include=supplier&format=xml
-[1-json]  http://northwind.mattjcowan.com/products?limit=10&include=supplier&format=json
-[2-xml]   http://northwind.mattjcowan.com/products?limit=5&include=supplier&format=xml
-[2-json]  http://northwind.mattjcowan.com/products?limit=5&include=supplier&format=json
-[3-xml]   http://northwind.mattjcowan.com/customers?limit=15&format=xml
-[3-json]  http://northwind.mattjcowan.com/customers?limit=15&format=json
-[4-xml]   http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products:3.orderdetails:2,products.supplier&format=xml
-[4-json]  http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products:3.orderdetails:2,products.supplier&format=json
-[5-xml]   http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&format=xml
-[5-json]  http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&format=json
-[6-xml]   http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&select=products.orderdetails.order.customerid,products.orderdetails.quantity,categoryid,products.productname,products.supplier.companyname&format=xml
-[6-json]  http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&select=products.orderdetails.order.customerid,products.orderdetails.quantity,categoryid,products.productname,products.supplier.companyname&format=json
-[7-xml]   http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&include=supplier&format=xml
-[7-json]  http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&include=supplier&format=json
-[8-xml]   http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&format=xml
-[8-json]  http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&format=json
-[9-xml]   http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=xml
-[9-json]  http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=json
+[demo-site]: http://northwind.mattjcowan.com
+[blog-site]: http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack
+[1-xml]: http://northwind.mattjcowan.com/products?limit=10&include=supplier&format=xml
+[1-json]: http://northwind.mattjcowan.com/products?limit=10&include=supplier&format=json
+[2-xml]: http://northwind.mattjcowan.com/products?limit=5&include=supplier&format=xml
+[2-json]: http://northwind.mattjcowan.com/products?limit=5&include=supplier&format=json
+[3-xml]: http://northwind.mattjcowan.com/customers?limit=15&format=xml
+[3-json]: http://northwind.mattjcowan.com/customers?limit=15&format=json
+[4-xml]: http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products:3.orderdetails:2,products.supplier&format=xml
+[4-json]: http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products:3.orderdetails:2,products.supplier&format=json
+[5-xml]: http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&format=xml
+[5-json]: http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&format=json
+[6-xml]: http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&select=products.orderdetails.order.customerid,products.orderdetails.quantity,categoryid,products.productname,products.supplier.companyname&format=xml
+[6-json]: http://northwind.mattjcowan.com/categories?filter=categoryId:eq:1&include=products.supplier,products.orderdetails:3.order&select=products.orderdetails.order.customerid,products.orderdetails.quantity,categoryid,products.productname,products.supplier.companyname&format=json
+[7-xml]: http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&include=supplier&format=xml
+[7-json]: http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&include=supplier&format=json
+[8-xml]: http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&format=xml
+[8-json]: http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&format=json
+[9-xml]: http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=xml
+[9-json]: http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=json
