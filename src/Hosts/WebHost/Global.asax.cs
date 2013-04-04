@@ -15,6 +15,7 @@ using ServiceStack.Razor;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.ServiceInterface.Auth;
+using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
 using Northwind.Data;
@@ -110,6 +111,10 @@ namespace WebHost
             userRepository = new InMemoryAuthRepository();
             container.Register<IUserAuthRepository>(userRepository);
             CreateUser(userRepository, 1, UserName, "DisplayName", null, Password);
+
+            //Enable the validation feature and scan the service assembly for validators
+            Plugins.Add(new ValidationFeature());
+            container.RegisterValidators(typeof(Northwind.Data.Services.CategoryService).Assembly);
 
             //Logging
             container.Register<ILog>(LogManager.GetLogger(typeof(WebAppHost)));

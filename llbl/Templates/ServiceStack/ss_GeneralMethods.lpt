@@ -748,4 +748,90 @@ internal static bool IsFieldBinary( FieldElement fieldElement )
     
     return false;
 }
+
+public static string SetupRuleFor(Project currentProject, EntityDefinition entity, IFieldElementCore field){
+
+  var dotNetType = field.FieldType.RepresentedType;
+  var isRequired = !field.IsOptional;
+  //var isNullable = field.IsNullable;
+  //var isReadOnly = field.IsReadOnly;
+  var maxLength = field.MaxLength;
+  var isPkField = field.IsPartOfIdentifyingFields;
+  
+  //currently not supporting enums and value types
+  if(dotNetType.IsEnum || field.FieldType.KindOfType == FieldTypeKind.ValueTypeDefinition)
+    return null;
+  
+  var realLength = GeneratorUtils.GetRealMaxLength(maxLength, dotNetType);
+  string lengthString = realLength.ToString();
+  if(realLength > (8*1024))
+  {
+    lengthString = "Max";
+  }
+  
+  var fs = string.Format("RuleFor(y => y.{0})", field.Name);
+  
+  var sb = new StringBuilder();
+  switch(Type.GetTypeCode(dotNetType))
+  {
+    case TypeCode.Boolean:
+      break;
+    case TypeCode.Char:
+      break;
+    case TypeCode.Byte:
+      break;
+    case TypeCode.Int16:
+      if(isRequired) sb.AppendFormat(".Must(s => s > {0})", isPkField ? 1: 0);
+      break;
+    case TypeCode.Int32:
+      if(isRequired) sb.AppendFormat(".GreaterThanOrEqualTo({0})", isPkField ? 1: 0);
+      break;
+    case TypeCode.Int64:
+      if(isRequired) sb.AppendFormat(".GreaterThanOrEqualTo({0})", isPkField ? 1: 0);
+      break;
+    case TypeCode.Single:
+      if(isRequired) sb.AppendFormat(".GreaterThanOrEqualTo({0})", isPkField ? 1: 0);
+      break;
+    case TypeCode.Double:
+      if(isRequired) sb.AppendFormat(".GreaterThanOrEqualTo({0})", isPkField ? 1: 0);
+      break;
+    case TypeCode.Decimal:
+      if(isRequired) sb.AppendFormat(".GreaterThanOrEqualTo({0})", isPkField ? 1: 0);
+      break;
+    case TypeCode.DateTime:
+      break;
+    case TypeCode.String:
+      if(isRequired) sb.Append(".NotEmpty()");
+      sb.AppendFormat(".Length({0}, {1})", (isRequired ? 1: 0), realLength);
+      if(!isRequired) sb.AppendFormat(".Unless(y => y.{0} == null)", field.Name);
+      break;
+    case TypeCode.Object:
+      if(dotNetType==typeof(System.Guid))
+      {
+      }
+      else if(dotNetType==typeof(System.TimeSpan))
+      {
+      }
+      else if(dotNetType==typeof(System.DateTimeOffset))
+      {
+      }
+      else if(dotNetType==typeof(byte[]))
+      {
+        if(isRequired) sb.Append(".NotNull()");
+      }
+      else if(dotNetType.Name=="SqlGeometry")
+      {
+      }
+      else if(dotNetType.Name=="SqlGeography")
+      {
+      }
+      else
+      {
+      }
+      break;
+  }
+  var sbStr = sb.ToString();
+  return string.IsNullOrEmpty(sbStr) ? (string)null: string.Concat(fs, sbStr);
+}
+
 ~>

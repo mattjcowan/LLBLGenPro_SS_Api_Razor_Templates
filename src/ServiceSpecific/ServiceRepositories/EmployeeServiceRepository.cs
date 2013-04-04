@@ -12,11 +12,29 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class EmployeeServiceRepository : EntityServiceRepositoryBase<Employee, EmployeeEntity, EmployeeEntityFactory, EmployeeFieldIndex>, IEmployeeServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeEmployeeDeleteRequest(IDataAccessAdapter adapter, EmployeeDeleteRequest request, EmployeeEntity entity);
+        partial void OnAfterEmployeeDeleteRequest(IDataAccessAdapter adapter, EmployeeDeleteRequest request, EmployeeEntity entity, ref bool deleted);
+        partial void OnBeforeEmployeeUpdateRequest(IDataAccessAdapter adapter, EmployeeUpdateRequest request);
+        partial void OnAfterEmployeeUpdateRequest(IDataAccessAdapter adapter, EmployeeUpdateRequest request);
+        partial void OnBeforeEmployeeAddRequest(IDataAccessAdapter adapter, EmployeeAddRequest request);
+        partial void OnAfterEmployeeAddRequest(IDataAccessAdapter adapter, EmployeeAddRequest request);
+        partial void OnBeforeFetchEmployeePkRequest(IDataAccessAdapter adapter, EmployeePkRequest request, EmployeeEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchEmployeePkRequest(IDataAccessAdapter adapter, EmployeePkRequest request, EmployeeEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchEmployeeQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchEmployeeQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeQueryCollectionRequest request, EntityCollection<EmployeeEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -153,20 +171,32 @@ EmployeeQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public EmployeeCollectionResponse Fetch(EmployeeQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<EmployeeEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchEmployeeQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchEmployeeQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new EmployeeCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
 
         public EmployeeResponse Fetch(EmployeePkRequest request)
         {
@@ -178,8 +208,10 @@ EmployeeQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchEmployeePkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchEmployeePkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new EmployeeResponse(entity.ToDto());
                 }
             }
@@ -194,8 +226,10 @@ EmployeeQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeEmployeeAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterEmployeeAddRequest(adapter, request);
                     return new EmployeeResponse(entity.ToDto());
                 }
             }
@@ -211,25 +245,31 @@ EmployeeQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeEmployeeUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterEmployeeUpdateRequest(adapter, request);
                     return new EmployeeResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(EmployeeDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(EmployeeDeleteRequest request)
         {
             var entity = new EmployeeEntity();
             entity.EmployeeId = request.EmployeeId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeEmployeeDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterEmployeeDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "employee-uc-map";
@@ -247,10 +287,21 @@ EmployeeQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class EmployeeEntityDtoMapperExtensions
+    internal static partial class EmployeeEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(EmployeeEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(EmployeeEntity entity, Hashtable seenObjects, Hashtable parents, Employee dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<EmployeeEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<EmployeeEntity> entities, EmployeeCollection dtos);
+        static partial void OnBeforeDtoToEntity(Employee dto);
+        static partial void OnAfterDtoToEntity(Employee dto, EmployeeEntity entity);
+        
         public static Employee ToDto(this EmployeeEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -258,6 +309,7 @@ EmployeeQueryCollectionRequest
 
         public static Employee ToDto(this EmployeeEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new Employee();
             if (entity != null)
             {
@@ -311,22 +363,27 @@ EmployeeQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static EmployeeCollection ToDtoCollection(this EntityCollection<EmployeeEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new EmployeeCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static EmployeeEntity FromDto(this Employee dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new EmployeeEntity();
 
             // Map entity properties
@@ -375,6 +432,7 @@ EmployeeQueryCollectionRequest
                     entity.Orders.Add(relatedDto.FromDto());
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

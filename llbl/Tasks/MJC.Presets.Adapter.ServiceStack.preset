@@ -40,6 +40,12 @@
               <parameter name="folderToCreate" value="Services" />
             </parameters>
           </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ValidatorsDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Validators" />
+            </parameters>
+          </taskPreset>
         </taskGroupPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.PagedListClassGenerator">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
@@ -121,6 +127,16 @@
             <parameter name="filenameFormat" value="[elementName]Service.[extension]" />
             <parameter name="templateID" value="MJC_SS_Svc_EntityServiceTemplate" />
             <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ValidatorClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Validators" />
+            <parameter name="filenameFormat" value="[elementName]Validator.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityValidatorTemplate" />
+            <parameter name="emitType" value="allEntities" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.AssemblyInfoFileGenerator">

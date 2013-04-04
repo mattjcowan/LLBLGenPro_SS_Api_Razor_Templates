@@ -1,0 +1,122 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+
+  //-- Single entity template --
+  var entity = (EntityDefinition)_activeObject;
+  var isSubType = entity.IsSubType;
+  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+                          .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
+                                ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
+                                ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
+                                !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
+                          .ToList();
+  var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var pkFields = entity.IdentifyingFields.Select(f => f.Name).ToArray();
+  var valFieldDict = new Dictionary<string, string>();
+  foreach(var ef in entityFields)
+    valFieldDict.Add(ef.Name, MJC_SS_GeneralMethods.SetupRuleFor(currentProject, entity, ef));
+  //var valFieldDict = entityFields.ToDictionary<string, string>(f => f.Name, (Func<FieldElement,string>)(v => (string)MJC_SS_GeneralMethods.SetupRuleFor(currentProject, entity, v)));
+%>using System.Collections.Generic;
+using <%=rootNameSpace%>.Dtos;
+using ServiceStack.FluentValidation;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.Validators
+{ 
+    public partial class <%=entity.Name%>Validator : AbstractValidator<<%=entity.Name%>>, IRequiresHttpRequest
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
+    {
+        /// <summary>The HTTP request. Lazily loaded, so only available in the validation delegates.</summary>
+        public IHttpRequest HttpRequest { get; set; }
+
+        #region Class Extensibility Methods
+        partial void OnCreateValidator();
+        #endregion
+
+        private IList<string> ParentValidators { get; set; }
+
+        public <%=entity.Name%>Validator(): this(null)
+        {
+        }
+
+        internal <%=entity.Name%>Validator(IList<string> parentValidators)
+        {
+            ParentValidators = parentValidators ?? new List<string>();
+            OnCreateValidator();
+            
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBeforeRules", @"//")%>
+
+            //Validation rules for GET requests (READ)
+            RuleSet("PkRequest", () =>
+                {<%
+foreach(var pkField in pkFields){if(!string.IsNullOrEmpty(valFieldDict[pkField])){%>
+                    <%=valFieldDict[pkField]%>;<%}}%>
+                });
+<%foreach(var uc in entity.UniqueConstraints){%>
+            RuleSet("<%=uc.Name%>", () =>
+                {<%
+foreach(var ucField in uc.FieldsAsString.Split(',')){if(!string.IsNullOrEmpty(valFieldDict[ucField])){%>
+                    <%=valFieldDict[ucField]%>;<%}}%>
+                });
+<%}%>
+            //Validation rules for POST requests (CREATE)
+            RuleSet(ApplyTo.Post, () =>
+                {<%
+foreach(var pkField in pkFields){if(!string.IsNullOrEmpty(valFieldDict[pkField])){
+  var pkRField = entityFields.First(f=>f.Name == pkField);
+  //on create, we don't need readonly fields populated
+  if(!pkRField.IsReadOnly){
+%>
+                    <%=valFieldDict[pkField]%>;<%}}}%>
+                });
+            
+            //Validation rules for PUT and DELETE requests (UPDATE / DELETE)
+            RuleSet(ApplyTo.Put | ApplyTo.Delete, () =>
+                {<%
+foreach(var pkField in pkFields){if(!string.IsNullOrEmpty(valFieldDict[pkField])){%>
+                    <%=valFieldDict[pkField]%>;<%}}%>
+                });
+
+            //Common Validation rules for POST and PUT requests (CREATE and UPDATE)
+            RuleSet(ApplyTo.Post | ApplyTo.Put, () =>
+                {<%
+foreach(var f in entityFields.Where(x => !x.IsPartOfIdentifyingFields)){if(!string.IsNullOrEmpty(valFieldDict[f.Name])){%>
+                    <%=valFieldDict[f.Name]%>;<%}}%>
+
+                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
+                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
+                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
+                    //      previously validated objects for each type of validator (TBD).
+<%foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+  {
+    if(relationshipInfo.NavigatorIsHidden) continue;
+    switch(relationshipInfo.RelationshipType)
+    {
+      case EntityRelationshipType.ManyToOne:
+      case EntityRelationshipType.OneToOne:
+%>                    if(!ParentValidators.Contains("<%=relationshipInfo.RelatedEntity.Name%>Validator")) 
+                      RuleFor(x => x.<%=relationshipInfo.Navigator%>).SetValidator(new <%=relationshipInfo.RelatedEntity.Name%>Validator(new List<string>( ParentValidators ) { { "<%=entity.Name%>Validator" } })).When(x => x.<%=relationshipInfo.Navigator%> != null);
+<%          break;
+      case EntityRelationshipType.OneToMany:
+      case EntityRelationshipType.ManyToMany:
+%>                    if(!ParentValidators.Contains("<%=relationshipInfo.RelatedEntity.Name%>Validator")) 
+                      RuleFor(x => x.<%=relationshipInfo.Navigator%>).SetCollectionValidator(new <%=relationshipInfo.RelatedEntity.Name%>Validator(new List<string>( ParentValidators ) { { "<%=entity.Name%>Validator" } })).When(x => x.<%=relationshipInfo.Navigator%> != null);
+<%          break;
+    }
+  }%>                });
+
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAfterRules", @"//")%>
+
+        }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>  
+
+    }
+}

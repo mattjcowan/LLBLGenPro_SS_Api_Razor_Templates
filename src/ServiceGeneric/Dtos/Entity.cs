@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Northwind.Data.Dtos
 {
-    //[Serializable]
     public partial class EntityCollection : CommonDtoBaseCollection<Entity>
     {
         public EntityCollection() { }
@@ -14,7 +13,6 @@ namespace Northwind.Data.Dtos
         public EntityCollection(List<Entity> list) : base(list ?? new List<Entity>()) { }
     }
 
-    //[Serializable]
     public partial class Entity
     {
         public string Name { get; set; }

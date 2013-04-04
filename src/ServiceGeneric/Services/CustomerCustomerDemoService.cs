@@ -1,65 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'CustomerCustomerDemo'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class CustomerCustomerDemoService : ServiceBase<CustomerCustomerDemo, ICustomerCustomerDemoServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetCustomerCustomerDemoMetaRequest(CustomerCustomerDemoMetaRequest request);
+        partial void OnAfterGetCustomerCustomerDemoMetaRequest(CustomerCustomerDemoMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostCustomerCustomerDemoDataTableRequest(CustomerCustomerDemoDataTableRequest request);
+        partial void OnAfterPostCustomerCustomerDemoDataTableRequest(CustomerCustomerDemoDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetCustomerCustomerDemoQueryCollectionRequest(CustomerCustomerDemoQueryCollectionRequest request);
+        partial void OnAfterGetCustomerCustomerDemoQueryCollectionRequest(CustomerCustomerDemoQueryCollectionRequest request, CustomerCustomerDemoCollectionResponse response);
+        partial void OnBeforeGetCustomerCustomerDemoPkRequest(CustomerCustomerDemoPkRequest request);
+        partial void OnAfterGetCustomerCustomerDemoPkRequest(CustomerCustomerDemoPkRequest request, CustomerCustomerDemoResponse response);
+        partial void OnBeforeCustomerCustomerDemoAddRequest(CustomerCustomerDemoAddRequest request);
+        partial void OnAfterCustomerCustomerDemoAddRequest(CustomerCustomerDemoAddRequest request, CustomerCustomerDemoResponse response);
+        partial void OnBeforeCustomerCustomerDemoUpdateRequest(CustomerCustomerDemoUpdateRequest request);
+        partial void OnAfterCustomerCustomerDemoUpdateRequest(CustomerCustomerDemoUpdateRequest request, CustomerCustomerDemoResponse response);
+        partial void OnBeforeCustomerCustomerDemoDeleteRequest(CustomerCustomerDemoDeleteRequest request);
+        partial void OnAfterCustomerCustomerDemoDeleteRequest(CustomerCustomerDemoDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<CustomerCustomerDemo> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'CustomerCustomerDemo' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CustomerCustomerDemoMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetCustomerCustomerDemoMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetCustomerCustomerDemoMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'CustomerCustomerDemo' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(CustomerCustomerDemoDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostCustomerCustomerDemoDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostCustomerCustomerDemoDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'CustomerCustomerDemo' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public CustomerCustomerDemoCollectionResponse Get(CustomerCustomerDemoQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetCustomerCustomerDemoQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerCustomerDemoQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'CustomerCustomerDemo' based on it's primary key.</summary>
         public CustomerCustomerDemoResponse Get(CustomerCustomerDemoPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new CustomerCustomerDemo { CustomerId = request.CustomerId, CustomerTypeId = request.CustomerTypeId }, "PkRequest");
+
+            OnBeforeGetCustomerCustomerDemoPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerCustomerDemoPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CustomerCustomerDemoResponse Any(CustomerCustomerDemoAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeCustomerCustomerDemoAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterCustomerCustomerDemoAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CustomerCustomerDemoResponse Any(CustomerCustomerDemoUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeCustomerCustomerDemoUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterCustomerCustomerDemoUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(CustomerCustomerDemoDeleteRequest request)
+        public SimpleResponse<bool> Any(CustomerCustomerDemoDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new CustomerCustomerDemo { CustomerId = request.CustomerId, CustomerTypeId = request.CustomerTypeId }, ApplyTo.Delete);
+                
+            OnBeforeCustomerCustomerDemoDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterCustomerCustomerDemoDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("CustomerCustomerDemo matching [CustomerId = {0}, CustomerTypeId = {1}]  does not exist".Fmt(request.CustomerId, request.CustomerTypeId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("customercustomerdemos/meta", Verbs = "GET")] // unique constraint filter
+    [Route("customercustomerdemos/meta", Verbs = "GET")]
     public partial class CustomerCustomerDemoMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -135,6 +206,9 @@ namespace Northwind.Data.Services
     {
         public CustomerCustomerDemoResponse() : base() { }
         public CustomerCustomerDemoResponse(CustomerCustomerDemo category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class CustomerCustomerDemoCollectionResponse : GetCollectionResponse<CustomerCustomerDemo>
@@ -142,6 +216,9 @@ namespace Northwind.Data.Services
         public CustomerCustomerDemoCollectionResponse(): base(){}
         public CustomerCustomerDemoCollectionResponse(IEnumerable<CustomerCustomerDemo> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

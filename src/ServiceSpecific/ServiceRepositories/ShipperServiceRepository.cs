@@ -12,11 +12,31 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class ShipperServiceRepository : EntityServiceRepositoryBase<Shipper, ShipperEntity, ShipperEntityFactory, ShipperFieldIndex>, IShipperServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeShipperDeleteRequest(IDataAccessAdapter adapter, ShipperDeleteRequest request, ShipperEntity entity);
+        partial void OnAfterShipperDeleteRequest(IDataAccessAdapter adapter, ShipperDeleteRequest request, ShipperEntity entity, ref bool deleted);
+        partial void OnBeforeShipperUpdateRequest(IDataAccessAdapter adapter, ShipperUpdateRequest request);
+        partial void OnAfterShipperUpdateRequest(IDataAccessAdapter adapter, ShipperUpdateRequest request);
+        partial void OnBeforeShipperAddRequest(IDataAccessAdapter adapter, ShipperAddRequest request);
+        partial void OnAfterShipperAddRequest(IDataAccessAdapter adapter, ShipperAddRequest request);
+        partial void OnBeforeFetchShipperPkRequest(IDataAccessAdapter adapter, ShipperPkRequest request, ShipperEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchShipperPkRequest(IDataAccessAdapter adapter, ShipperPkRequest request, ShipperEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnBeforeFetchShipperUcShipperNameRequest(IDataAccessAdapter adapter, ShipperUcShipperNameRequest request, ShipperEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchShipperUcShipperNameRequest(IDataAccessAdapter adapter, ShipperUcShipperNameRequest request, ShipperEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchShipperQueryCollectionRequest(IDataAccessAdapter adapter, ShipperQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchShipperQueryCollectionRequest(IDataAccessAdapter adapter, ShipperQueryCollectionRequest request, EntityCollection<ShipperEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -121,20 +141,32 @@ ShipperQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public ShipperCollectionResponse Fetch(ShipperQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<ShipperEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchShipperQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchShipperQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new ShipperCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
         public ShipperResponse Fetch(ShipperUcShipperNameRequest request)
         {
             var entity = new ShipperEntity();
@@ -145,14 +177,18 @@ ShipperQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if (adapter.FetchEntityUsingUniqueConstraint(entity, entity.ConstructFilterForUCCompanyName(), prefetchPath, null, excludedIncludedFields))
+                var predicate = entity.ConstructFilterForUCCompanyName();
+                OnBeforeFetchShipperUcShipperNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
+                if (adapter.FetchEntityUsingUniqueConstraint(entity, predicate, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchShipperUcShipperNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
                     return new ShipperResponse(entity.ToDto());
                 }
             }
 
             throw new NullReferenceException();
         }
+        
 
         public ShipperResponse Fetch(ShipperPkRequest request)
         {
@@ -164,8 +200,10 @@ ShipperQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchShipperPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchShipperPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new ShipperResponse(entity.ToDto());
                 }
             }
@@ -180,8 +218,10 @@ ShipperQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeShipperAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterShipperAddRequest(adapter, request);
                     return new ShipperResponse(entity.ToDto());
                 }
             }
@@ -197,25 +237,31 @@ ShipperQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeShipperUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterShipperUpdateRequest(adapter, request);
                     return new ShipperResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(ShipperDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(ShipperDeleteRequest request)
         {
             var entity = new ShipperEntity();
             entity.ShipperId = request.ShipperId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeShipperDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterShipperDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "shipper-uc-map";
@@ -237,10 +283,21 @@ ShipperQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class ShipperEntityDtoMapperExtensions
+    internal static partial class ShipperEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(ShipperEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(ShipperEntity entity, Hashtable seenObjects, Hashtable parents, Shipper dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<ShipperEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<ShipperEntity> entities, ShipperCollection dtos);
+        static partial void OnBeforeDtoToEntity(Shipper dto);
+        static partial void OnAfterDtoToEntity(Shipper dto, ShipperEntity entity);
+        
         public static Shipper ToDto(this ShipperEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -248,6 +305,7 @@ ShipperQueryCollectionRequest
 
         public static Shipper ToDto(this ShipperEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new Shipper();
             if (entity != null)
             {
@@ -271,22 +329,27 @@ ShipperQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static ShipperCollection ToDtoCollection(this EntityCollection<ShipperEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new ShipperCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static ShipperEntity FromDto(this Shipper dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new ShipperEntity();
 
             // Map entity properties
@@ -303,6 +366,7 @@ ShipperQueryCollectionRequest
                     entity.Orders.Add(relatedDto.FromDto());
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

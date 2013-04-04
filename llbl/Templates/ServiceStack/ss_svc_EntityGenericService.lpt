@@ -1,4 +1,4 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
@@ -15,11 +15,13 @@ using ServiceStack.ServiceInterface.ServiceModel;
 using ServiceStack.Text;
 using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.ServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
 
 namespace <%=rootNameSpace%>.Services
 {
     #region EntityService
     public partial class EntityService : ServiceBase
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
     {
         public EntityCollectionResponse Get(EntitiesMetaRequest request)
         {
@@ -47,7 +49,7 @@ namespace <%=rootNameSpace%>.Services
         private EntityCollectionResponse GetEntitiesResponseInternal()
         {
             var baseUri = base.BaseServiceUri;
-			
+      
             var entities = new List<Entity>();
 <%foreach(var entity in entities){
 %>            entities.Add(new Entity{ Name="<%=entity.Name%>", MetaLink = GenerateEntityLink(baseUri, "<%=entity.Name%>", "<%=Pluralize(entity.Name).ToLower()%>") });
@@ -72,6 +74,9 @@ namespace <%=rootNameSpace%>.Services
                         }
                 };
         }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>        
+
     }
     #endregion
 
@@ -79,12 +84,18 @@ namespace <%=rootNameSpace%>.Services
     [Route("entities/meta")] // unique constraint filter
     public partial class EntitiesMetaRequest : IReturn<EntityCollectionResponse>
     {
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntitiesMetaRequestAdditionalMethods", @"//")%>  
+
     }
 
     [Route("entities")]
     [DefaultView("Entities")]
     public partial class EntitiesRequest : IReturn<EntityCollectionResponse>
     {
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntitiesRequestAdditionalMethods", @"//")%>  
+
     }
     #endregion
 
@@ -93,6 +104,9 @@ namespace <%=rootNameSpace%>.Services
     {
         public EntityResponse() : base() { }
         public EntityResponse(Entity entity) : base(entity) { }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntityResponseAdditionalMethods", @"//")%>  
+
     }
 
     public partial class EntityCollectionResponse : GetCollectionResponse<Entity>
@@ -100,6 +114,9 @@ namespace <%=rootNameSpace%>.Services
         public EntityCollectionResponse() : base() { }
         public EntityCollectionResponse(IEnumerable<Entity> collection, int pageNumber, int pageSize, int totalItemCount) :
             base(collection, pageNumber, pageSize, totalItemCount) { }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntityCollectionResponseAdditionalMethods", @"//")%>  
+
     }
     #endregion
 }

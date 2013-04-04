@@ -9,11 +9,15 @@ using ServiceStack.ServiceInterface.ServiceModel;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region EntityService
     public partial class EntityService : ServiceBase
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         public EntityCollectionResponse Get(EntitiesMetaRequest request)
         {
@@ -41,7 +45,7 @@ namespace Northwind.Data.Services
         private EntityCollectionResponse GetEntitiesResponseInternal()
         {
             var baseUri = base.BaseServiceUri;
-			
+      
             var entities = new List<Entity>();
             entities.Add(new Entity{ Name="Category", MetaLink = GenerateEntityLink(baseUri, "Category", "categories") });
             entities.Add(new Entity{ Name="Customer", MetaLink = GenerateEntityLink(baseUri, "Customer", "customers") });
@@ -77,6 +81,10 @@ namespace Northwind.Data.Services
                         }
                 };
         }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                                                                                                                                 
+
     }
     #endregion
 
@@ -84,12 +92,20 @@ namespace Northwind.Data.Services
     [Route("entities/meta")] // unique constraint filter
     public partial class EntitiesMetaRequest : IReturn<EntityCollectionResponse>
     {
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntitiesMetaRequestAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+
     }
 
     [Route("entities")]
     [DefaultView("Entities")]
     public partial class EntitiesRequest : IReturn<EntityCollectionResponse>
     {
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntitiesRequestAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+
     }
     #endregion
 
@@ -98,6 +114,10 @@ namespace Northwind.Data.Services
     {
         public EntityResponse() : base() { }
         public EntityResponse(Entity entity) : base(entity) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntityResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+
     }
 
     public partial class EntityCollectionResponse : GetCollectionResponse<Entity>
@@ -105,6 +125,10 @@ namespace Northwind.Data.Services
         public EntityCollectionResponse() : base() { }
         public EntityCollectionResponse(IEnumerable<Entity> collection, int pageNumber, int pageSize, int totalItemCount) :
             base(collection, pageNumber, pageSize, totalItemCount) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntityCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+
     }
     #endregion
 }

@@ -1,9 +1,13 @@
 ﻿using Northwind.Data.Dtos;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceInterfaces
 { 
-  public interface IProductServiceRepository: IEntityServiceRepository<Product>
+    public interface IProductServiceRepository: IEntityServiceRepository<Product>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         EntityMetaDetailsResponse GetEntityMetaDetails(ServiceStack.ServiceInterface.Service service);
         DataTableResponse GetDataTableResponse(ProductDataTableRequest request);
@@ -15,6 +19,10 @@ namespace Northwind.Data.ServiceInterfaces
 
         ProductResponse Create(ProductAddRequest request);
         ProductResponse Update(ProductUpdateRequest request);
-        bool Delete(ProductDeleteRequest request);
+        SimpleResponse<bool> Delete(ProductDeleteRequest request);
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     } 
 }

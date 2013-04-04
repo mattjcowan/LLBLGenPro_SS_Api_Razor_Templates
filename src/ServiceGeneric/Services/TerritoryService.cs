@@ -1,65 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Territory'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class TerritoryService : ServiceBase<Territory, ITerritoryServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetTerritoryMetaRequest(TerritoryMetaRequest request);
+        partial void OnAfterGetTerritoryMetaRequest(TerritoryMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostTerritoryDataTableRequest(TerritoryDataTableRequest request);
+        partial void OnAfterPostTerritoryDataTableRequest(TerritoryDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetTerritoryQueryCollectionRequest(TerritoryQueryCollectionRequest request);
+        partial void OnAfterGetTerritoryQueryCollectionRequest(TerritoryQueryCollectionRequest request, TerritoryCollectionResponse response);
+        partial void OnBeforeGetTerritoryPkRequest(TerritoryPkRequest request);
+        partial void OnAfterGetTerritoryPkRequest(TerritoryPkRequest request, TerritoryResponse response);
+        partial void OnBeforeTerritoryAddRequest(TerritoryAddRequest request);
+        partial void OnAfterTerritoryAddRequest(TerritoryAddRequest request, TerritoryResponse response);
+        partial void OnBeforeTerritoryUpdateRequest(TerritoryUpdateRequest request);
+        partial void OnAfterTerritoryUpdateRequest(TerritoryUpdateRequest request, TerritoryResponse response);
+        partial void OnBeforeTerritoryDeleteRequest(TerritoryDeleteRequest request);
+        partial void OnAfterTerritoryDeleteRequest(TerritoryDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Territory> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Territory' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(TerritoryMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetTerritoryMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetTerritoryMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Territory' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(TerritoryDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostTerritoryDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostTerritoryDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Territory' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public TerritoryCollectionResponse Get(TerritoryQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetTerritoryQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetTerritoryQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Territory' based on it's primary key.</summary>
         public TerritoryResponse Get(TerritoryPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Territory { TerritoryId = request.TerritoryId }, "PkRequest");
+
+            OnBeforeGetTerritoryPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetTerritoryPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public TerritoryResponse Any(TerritoryAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeTerritoryAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterTerritoryAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public TerritoryResponse Any(TerritoryUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeTerritoryUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterTerritoryUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(TerritoryDeleteRequest request)
+        public SimpleResponse<bool> Any(TerritoryDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Territory { TerritoryId = request.TerritoryId }, ApplyTo.Delete);
+                
+            OnBeforeTerritoryDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterTerritoryDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Territory matching [TerritoryId = {0}]  does not exist".Fmt(request.TerritoryId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("territories/meta", Verbs = "GET")] // unique constraint filter
+    [Route("territories/meta", Verbs = "GET")]
     public partial class TerritoryMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -139,6 +210,9 @@ namespace Northwind.Data.Services
     {
         public TerritoryResponse() : base() { }
         public TerritoryResponse(Territory category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class TerritoryCollectionResponse : GetCollectionResponse<Territory>
@@ -146,6 +220,9 @@ namespace Northwind.Data.Services
         public TerritoryCollectionResponse(): base(){}
         public TerritoryCollectionResponse(IEnumerable<Territory> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

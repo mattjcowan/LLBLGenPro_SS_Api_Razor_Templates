@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+  <supportedFrameworks>
+    <framework name="LLBLGen Pro Runtime Framework"/>
+  </supportedFrameworks>
+  <!--
+    See here for more information on this file: http://www.llblgen.com/documentation/3.5/SDK/frameworksettingsfileformat.htm
+    And here for consuming the settings: http://www.llblgen.com/documentation/3.5/SDK/definingcustomsettings.htm
+  -->
+  <settingDefinitions>
+    <!-- Project (1) level settings -->
+    <settingDefinition name="RequireAuthenticationOnGetVerb"
+               description="When set to true, all Get services will inherit the [Authenticate] attribute"
+               category="ServiceStack" type="bool" default="false" targetElement="1"/>
+    <settingDefinition name="RequireAuthenticationOnPutVerb"
+               description="When set to true, all Put/Update services will inherit the [Authenticate] attribute"
+               category="ServiceStack" type="bool" default="true" targetElement="1"/>
+    <settingDefinition name="RequireAuthenticationOnPostVerb"
+               description="When set to true, all Post/Create services will inherit the [Authenticate] attribute"
+               category="ServiceStack" type="bool" default="true" targetElement="1"/>
+    <settingDefinition name="RequireAuthenticationOnDeleteVerb"
+               description="When set to true, all Delete services will inherit the [Authenticate] attribute"
+               category="ServiceStack" type="bool" default="true" targetElement="1"/>
+    <settingDefinition name="IncludeSimpleValidationInServiceMethods"
+               description="When set to true, service methods will validate the integrity of the incoming requests prior to processing the method"
+               category="ServiceStack" type="bool" default="true" targetElement="1"/>
+    <!-- Entity (2) level settings -->
+    <!-- ValueType (4) level settings -->
+    <!-- TypedList (8) level settings -->
+    <!-- TypedView (16) level settings -->
+    <!-- SPCall (32) level settings -->
+    <!-- Normal (64) level settings -->
+    <!-- Reserved (128) level settings -->
+    <!-- Navigator returning single value (256) level settings -->
+    <!-- Navigator returning collection (512) level settings -->
+    <!-- TypedList field (1024) level settings -->
+    <!-- TypedView field (2048) level settings -->
+    <!-- SPCall parameter (4096) level settings -->
+    <!-- Field mapped onto related field (forf) (8192) level settings -->
+  </settingDefinitions>
+  <!--
+  <valueLists>
+    <valueList name="">
+      <value valueText=""/>
+    </valueList>
+  </valueLists>
+  -->
+</frameworkSettings>

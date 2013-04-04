@@ -1,73 +1,153 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Shipper'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class ShipperService : ServiceBase<Shipper, IShipperServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetShipperMetaRequest(ShipperMetaRequest request);
+        partial void OnAfterGetShipperMetaRequest(ShipperMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostShipperDataTableRequest(ShipperDataTableRequest request);
+        partial void OnAfterPostShipperDataTableRequest(ShipperDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetShipperQueryCollectionRequest(ShipperQueryCollectionRequest request);
+        partial void OnAfterGetShipperQueryCollectionRequest(ShipperQueryCollectionRequest request, ShipperCollectionResponse response);
+        partial void OnBeforeGetShipperUcShipperNameRequest(ShipperUcShipperNameRequest request);
+        partial void OnAfterGetShipperUcShipperNameRequest(ShipperUcShipperNameRequest request, ShipperResponse response);
+        partial void OnBeforeGetShipperPkRequest(ShipperPkRequest request);
+        partial void OnAfterGetShipperPkRequest(ShipperPkRequest request, ShipperResponse response);
+        partial void OnBeforeShipperAddRequest(ShipperAddRequest request);
+        partial void OnAfterShipperAddRequest(ShipperAddRequest request, ShipperResponse response);
+        partial void OnBeforeShipperUpdateRequest(ShipperUpdateRequest request);
+        partial void OnAfterShipperUpdateRequest(ShipperUpdateRequest request, ShipperResponse response);
+        partial void OnBeforeShipperDeleteRequest(ShipperDeleteRequest request);
+        partial void OnAfterShipperDeleteRequest(ShipperDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Shipper> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Shipper' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(ShipperMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetShipperMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetShipperMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Shipper' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(ShipperDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostShipperDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostShipperDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Shipper' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public ShipperCollectionResponse Get(ShipperQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetShipperQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetShipperQueryCollectionRequest(request, output);
+            return output;
         }
 
 
         //Unique constraint request go first (the order matters in service stack)
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
+        /// <summary>Gets a specific 'Shipper' based on the 'UcShipperName' unique constraint.</summary>
         public ShipperResponse Get(ShipperUcShipperNameRequest request)
         {
-            return Repository.Fetch(request);
+            if(Validator != null)
+                Validator.ValidateAndThrow(new Shipper { CompanyName = request.CompanyName }, "UcShipperName");
+                
+            OnBeforeGetShipperUcShipperNameRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetShipperUcShipperNameRequest(request, output);
+            return output;
         }
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Shipper' based on it's primary key.</summary>
         public ShipperResponse Get(ShipperPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Shipper { ShipperId = request.ShipperId }, "PkRequest");
+
+            OnBeforeGetShipperPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetShipperPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public ShipperResponse Any(ShipperAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeShipperAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterShipperAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public ShipperResponse Any(ShipperUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeShipperUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterShipperUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(ShipperDeleteRequest request)
+        public SimpleResponse<bool> Any(ShipperDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Shipper { ShipperId = request.ShipperId }, ApplyTo.Delete);
+                
+            OnBeforeShipperDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterShipperDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Shipper matching [ShipperId = {0}]  does not exist".Fmt(request.ShipperId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("shippers/meta", Verbs = "GET")] // unique constraint filter
+    [Route("shippers/meta", Verbs = "GET")]
     public partial class ShipperMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -154,6 +234,9 @@ namespace Northwind.Data.Services
     {
         public ShipperResponse() : base() { }
         public ShipperResponse(Shipper category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class ShipperCollectionResponse : GetCollectionResponse<Shipper>
@@ -161,6 +244,9 @@ namespace Northwind.Data.Services
         public ShipperCollectionResponse(): base(){}
         public ShipperCollectionResponse(IEnumerable<Shipper> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

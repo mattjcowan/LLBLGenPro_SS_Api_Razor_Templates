@@ -32,36 +32,82 @@
     ucRoutes.Add(uc.Name, ucRoute);
   }
   
+  var includeValidation = currentProject.GetRealBoolSettingValue("IncludeSimpleValidationInServiceMethods");
+  var authOnGet = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnGetVerb");
+  var authOnPut = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnPutVerb");
+  var authOnPost = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnPostVerb");
+  var authOnDelete = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnDeleteVerb");
 %>using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.ServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
 
 namespace <%=rootNameSpace%>.Services
 {
     #region Service
+    /// <summary>Service class for the entity '<%=entity.Name%>'.</summary>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalAttributes", @"//")%> 
     public partial class <%=entity.Name%>Service : ServiceBase<<%=entity.Name%>, I<%=entity.Name%>ServiceRepository>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
     {
-        //Meta request
-        public EntityMetaDetailsResponse Get(<%=entity.Name%>MetaRequest request)
+        #region Class Extensibility Methods
+        partial void OnBeforeGet<%=entity.Name%>MetaRequest(<%=entity.Name%>MetaRequest request);
+        partial void OnAfterGet<%=entity.Name%>MetaRequest(<%=entity.Name%>MetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePost<%=entity.Name%>DataTableRequest(<%=entity.Name%>DataTableRequest request);
+        partial void OnAfterPost<%=entity.Name%>DataTableRequest(<%=entity.Name%>DataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGet<%=entity.Name%>QueryCollectionRequest(<%=entity.Name%>QueryCollectionRequest request);
+        partial void OnAfterGet<%=entity.Name%>QueryCollectionRequest(<%=entity.Name%>QueryCollectionRequest request, <%=entity.Name%>CollectionResponse response);
+<%foreach(var uc in entity.UniqueConstraints){
+%>        partial void OnBeforeGet<%=entity.Name%><%=uc.Name%>Request(<%=entity.Name%><%=uc.Name%>Request request);
+        partial void OnAfterGet<%=entity.Name%><%=uc.Name%>Request(<%=entity.Name%><%=uc.Name%>Request request, <%=entity.Name%>Response response);
+<%}%>        partial void OnBeforeGet<%=entity.Name%>PkRequest(<%=entity.Name%>PkRequest request);
+        partial void OnAfterGet<%=entity.Name%>PkRequest(<%=entity.Name%>PkRequest request, <%=entity.Name%>Response response);
+        partial void OnBefore<%=entity.Name%>AddRequest(<%=entity.Name%>AddRequest request);
+        partial void OnAfter<%=entity.Name%>AddRequest(<%=entity.Name%>AddRequest request, <%=entity.Name%>Response response);
+        partial void OnBefore<%=entity.Name%>UpdateRequest(<%=entity.Name%>UpdateRequest request);
+        partial void OnAfter<%=entity.Name%>UpdateRequest(<%=entity.Name%>UpdateRequest request, <%=entity.Name%>Response response);
+        partial void OnBefore<%=entity.Name%>DeleteRequest(<%=entity.Name%>DeleteRequest request);
+        partial void OnAfter<%=entity.Name%>DeleteRequest(<%=entity.Name%>DeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        <%if(includeValidation){%>
+        public IValidator<<%=entity.Name%>> Validator { get; set; }<%}%>
+        
+        /// <summary>Gets meta data information for the entity '<%=entity.Name%>' including field metadata and relation metadata.</summary>
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        public EntityMetaDetailsResponse Get(<%=entity.Name%>MetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGet<%=entity.Name%>MetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGet<%=entity.Name%>MetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
-        public DataTableResponse Post(<%=entity.Name%>DataTableRequest request)
+        /// <summary>Fetches '<%=entity.Name%>' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        public DataTableResponse Post(<%=entity.Name%>DataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePost<%=entity.Name%>DataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPost<%=entity.Name%>DataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
-        public <%=entity.Name%>CollectionResponse Get(<%=entity.Name%>QueryCollectionRequest request)
+        /// <summary>Queries '<%=entity.Name%>' entities using sorting, filtering, eager-loading, paging and more.</summary>
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        public <%=entity.Name%>CollectionResponse Get(<%=entity.Name%>QueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGet<%=entity.Name%>QueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGet<%=entity.Name%>QueryCollectionRequest(request, output);
+            return output;
         }
 
 <%if(entity.UniqueConstraints.Count()>0){%>
@@ -69,21 +115,40 @@ namespace <%=rootNameSpace%>.Services
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
 <%foreach(var uc in entity.UniqueConstraints){
-%>        public <%=entity.Name%>Response Get(<%=entity.Name%><%=uc.Name%>Request request)
+%><%if(authOnGet){%>        [Authenticate]
+<%}%>        /// <summary>Gets a specific '<%=entity.Name%>' based on the '<%=uc.Name%>' unique constraint.</summary>
+        public <%=entity.Name%>Response Get(<%=entity.Name%><%=uc.Name%>Request request)
         {
-            return Repository.Fetch(request);
+<%if(includeValidation){%>            if(Validator != null)
+                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=string.Join(", ", uc.FieldsAsString.Split(',').Select(f=>string.Format("{0} = request.{0}", f)).ToArray())%> }, "<%=uc.Name%>");<%}%>
+                
+            OnBeforeGet<%=entity.Name%><%=uc.Name%>Request(request);
+            var output = Repository.Fetch(request);
+            OnAfterGet<%=entity.Name%><%=uc.Name%>Request(request, output);
+            return output;
         }
 <%}}%>
 
-        //Pk request
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        /// <summary>Gets a specific '<%=entity.Name%>' based on it's primary key.</summary>
         public <%=entity.Name%>Response Get(<%=entity.Name%>PkRequest request)
         {
-            return Repository.Fetch(request);
+<%if(includeValidation){%>            if (Validator != null)
+                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=string.Join(", ", pkFields.Select(f=>string.Format("{0} = request.{0}", f)).ToArray())%> }, "PkRequest");<%}%>
+
+            OnBeforeGet<%=entity.Name%>PkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGet<%=entity.Name%>PkRequest(request, output);
+            return output;
         }
 
-        [Authenticate]
-        public <%=entity.Name%>Response Any(<%=entity.Name%>AddRequest request)
+<%if(authOnPost){%>        [Authenticate]
+<%}%>        public <%=entity.Name%>Response Any(<%=entity.Name%>AddRequest request)
         {
+<%if(includeValidation){%>            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);<%}%>
+                
+            OnBefore<%=entity.Name%>AddRequest(request);
 <%if(binaryFields.Count()>0){
 %>            var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
@@ -99,12 +164,19 @@ namespace <%=rootNameSpace%>.Services
               }<%
   }%>
             }
-<%}%>            return Repository.Create(request);
+<%}%>
+            var output = Repository.Create(request);
+            OnAfter<%=entity.Name%>AddRequest(request, output);
+            return output;
         }
 
-        [Authenticate]
-        public <%=entity.Name%>Response Any(<%=entity.Name%>UpdateRequest request)
+<%if(authOnPut){%>        [Authenticate]
+<%}%>        public <%=entity.Name%>Response Any(<%=entity.Name%>UpdateRequest request)
         {
+<%if(includeValidation){%>            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);<%}%>
+                
+            OnBefore<%=entity.Name%>UpdateRequest(request);
 <%if(binaryFields.Count()>0){
 %>            var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
@@ -120,19 +192,39 @@ namespace <%=rootNameSpace%>.Services
               }<%
   }%>
             }
-<%}%>            return Repository.Update(request);
+<%}%>
+            var output = Repository.Update(request);
+            OnAfter<%=entity.Name%>UpdateRequest(request, output);
+            return output;
         }
 
-        [Authenticate]
-        public bool Any(<%=entity.Name%>DeleteRequest request)
+<%if(authOnDelete){%>        [Authenticate]
+<%}%>        public SimpleResponse<bool> Any(<%=entity.Name%>DeleteRequest request)
         {
-            return Repository.Delete(request);
+<%
+var pkDeleteString = string.Join(", ", pkFields.Select(f=>string.Format("{0} = request.{0}", f)).ToArray());
+var pkidx = 0;
+var pkDeleteString2 = string.Join(", ", pkFields.Select(f=>string.Format("{0} = {{" + pkidx++ + "}}", f)).ToArray());
+var pkDeleteString3 = string.Join(", ", pkFields.Select(f=>string.Format("request.{0}", f)).ToArray());
+if(includeValidation){%>            if (Validator != null)
+                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=pkDeleteString%> }, ApplyTo.Delete);<%}%>
+                
+            OnBefore<%=entity.Name%>DeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfter<%=entity.Name%>DeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("<%=entity.Name%> matching [<%=pkDeleteString2%>]  does not exist".Fmt(<%=pkDeleteString3%>));
+            }
+            return output;
         }
+
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>
+
     }
     #endregion
 
     #region Requests
-    [Route("<%=baseRoute%>/meta", Verbs = "GET")] // unique constraint filter
+    [Route("<%=baseRoute%>/meta", Verbs = "GET")]
     public partial class <%=entity.Name%>MetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -221,6 +313,8 @@ namespace <%=rootNameSpace%>.Services
     {
         public <%=entity.Name%>Response() : base() { }
         public <%=entity.Name%>Response(<%=entity.Name%> category) : base(category) { }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcResponseAdditionalMethods", @"//")%>  
     }
 
     public partial class <%=entity.Name%>CollectionResponse : GetCollectionResponse<<%=entity.Name%>>
@@ -228,6 +322,8 @@ namespace <%=rootNameSpace%>.Services
         public <%=entity.Name%>CollectionResponse(): base(){}
         public <%=entity.Name%>CollectionResponse(IEnumerable<<%=entity.Name%>> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcCollectionResponseAdditionalMethods", @"//")%>  
     }
     #endregion
 }

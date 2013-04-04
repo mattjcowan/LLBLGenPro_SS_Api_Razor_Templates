@@ -1,65 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'CustomerDemographic'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class CustomerDemographicService : ServiceBase<CustomerDemographic, ICustomerDemographicServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetCustomerDemographicMetaRequest(CustomerDemographicMetaRequest request);
+        partial void OnAfterGetCustomerDemographicMetaRequest(CustomerDemographicMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostCustomerDemographicDataTableRequest(CustomerDemographicDataTableRequest request);
+        partial void OnAfterPostCustomerDemographicDataTableRequest(CustomerDemographicDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetCustomerDemographicQueryCollectionRequest(CustomerDemographicQueryCollectionRequest request);
+        partial void OnAfterGetCustomerDemographicQueryCollectionRequest(CustomerDemographicQueryCollectionRequest request, CustomerDemographicCollectionResponse response);
+        partial void OnBeforeGetCustomerDemographicPkRequest(CustomerDemographicPkRequest request);
+        partial void OnAfterGetCustomerDemographicPkRequest(CustomerDemographicPkRequest request, CustomerDemographicResponse response);
+        partial void OnBeforeCustomerDemographicAddRequest(CustomerDemographicAddRequest request);
+        partial void OnAfterCustomerDemographicAddRequest(CustomerDemographicAddRequest request, CustomerDemographicResponse response);
+        partial void OnBeforeCustomerDemographicUpdateRequest(CustomerDemographicUpdateRequest request);
+        partial void OnAfterCustomerDemographicUpdateRequest(CustomerDemographicUpdateRequest request, CustomerDemographicResponse response);
+        partial void OnBeforeCustomerDemographicDeleteRequest(CustomerDemographicDeleteRequest request);
+        partial void OnAfterCustomerDemographicDeleteRequest(CustomerDemographicDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<CustomerDemographic> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'CustomerDemographic' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CustomerDemographicMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetCustomerDemographicMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetCustomerDemographicMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'CustomerDemographic' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(CustomerDemographicDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostCustomerDemographicDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostCustomerDemographicDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'CustomerDemographic' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public CustomerDemographicCollectionResponse Get(CustomerDemographicQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetCustomerDemographicQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerDemographicQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'CustomerDemographic' based on it's primary key.</summary>
         public CustomerDemographicResponse Get(CustomerDemographicPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new CustomerDemographic { CustomerTypeId = request.CustomerTypeId }, "PkRequest");
+
+            OnBeforeGetCustomerDemographicPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerDemographicPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CustomerDemographicResponse Any(CustomerDemographicAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeCustomerDemographicAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterCustomerDemographicAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CustomerDemographicResponse Any(CustomerDemographicUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeCustomerDemographicUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterCustomerDemographicUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(CustomerDemographicDeleteRequest request)
+        public SimpleResponse<bool> Any(CustomerDemographicDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new CustomerDemographic { CustomerTypeId = request.CustomerTypeId }, ApplyTo.Delete);
+                
+            OnBeforeCustomerDemographicDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterCustomerDemographicDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("CustomerDemographic matching [CustomerTypeId = {0}]  does not exist".Fmt(request.CustomerTypeId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("customerdemographics/meta", Verbs = "GET")] // unique constraint filter
+    [Route("customerdemographics/meta", Verbs = "GET")]
     public partial class CustomerDemographicMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -133,6 +204,9 @@ namespace Northwind.Data.Services
     {
         public CustomerDemographicResponse() : base() { }
         public CustomerDemographicResponse(CustomerDemographic category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class CustomerDemographicCollectionResponse : GetCollectionResponse<CustomerDemographic>
@@ -140,6 +214,9 @@ namespace Northwind.Data.Services
         public CustomerDemographicCollectionResponse(): base(){}
         public CustomerDemographicCollectionResponse(IEnumerable<CustomerDemographic> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

@@ -27,8 +27,8 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         {
             var response = ExecutePath<CustomerCollectionResponse>(HttpMethods.Get, "/customers?include=orders", new CustomerQueryCollectionRequest());
             Assert.That(response, Is.Not.Null);
-            Assert.That(response.Status, Is.Not.Null);
-            Assert.That(response.Status.Message, Is.EqualTo("Success"));
+            Assert.That(response.ResponseStatus, Is.Not.Null);
+            Assert.That(response.ResponseStatus.Message, Is.EqualTo("Success"));
 
             var entities = response.Result;
             Assert.That(entities, Is.Not.Null);

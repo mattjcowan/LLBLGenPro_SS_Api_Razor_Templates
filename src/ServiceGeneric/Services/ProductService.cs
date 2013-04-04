@@ -1,73 +1,153 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Product'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class ProductService : ServiceBase<Product, IProductServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetProductMetaRequest(ProductMetaRequest request);
+        partial void OnAfterGetProductMetaRequest(ProductMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostProductDataTableRequest(ProductDataTableRequest request);
+        partial void OnAfterPostProductDataTableRequest(ProductDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetProductQueryCollectionRequest(ProductQueryCollectionRequest request);
+        partial void OnAfterGetProductQueryCollectionRequest(ProductQueryCollectionRequest request, ProductCollectionResponse response);
+        partial void OnBeforeGetProductUcProductNameRequest(ProductUcProductNameRequest request);
+        partial void OnAfterGetProductUcProductNameRequest(ProductUcProductNameRequest request, ProductResponse response);
+        partial void OnBeforeGetProductPkRequest(ProductPkRequest request);
+        partial void OnAfterGetProductPkRequest(ProductPkRequest request, ProductResponse response);
+        partial void OnBeforeProductAddRequest(ProductAddRequest request);
+        partial void OnAfterProductAddRequest(ProductAddRequest request, ProductResponse response);
+        partial void OnBeforeProductUpdateRequest(ProductUpdateRequest request);
+        partial void OnAfterProductUpdateRequest(ProductUpdateRequest request, ProductResponse response);
+        partial void OnBeforeProductDeleteRequest(ProductDeleteRequest request);
+        partial void OnAfterProductDeleteRequest(ProductDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Product> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Product' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(ProductMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetProductMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetProductMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Product' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(ProductDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostProductDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostProductDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Product' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public ProductCollectionResponse Get(ProductQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetProductQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetProductQueryCollectionRequest(request, output);
+            return output;
         }
 
 
         //Unique constraint request go first (the order matters in service stack)
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
+        /// <summary>Gets a specific 'Product' based on the 'UcProductName' unique constraint.</summary>
         public ProductResponse Get(ProductUcProductNameRequest request)
         {
-            return Repository.Fetch(request);
+            if(Validator != null)
+                Validator.ValidateAndThrow(new Product { ProductName = request.ProductName }, "UcProductName");
+                
+            OnBeforeGetProductUcProductNameRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetProductUcProductNameRequest(request, output);
+            return output;
         }
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Product' based on it's primary key.</summary>
         public ProductResponse Get(ProductPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Product { ProductId = request.ProductId }, "PkRequest");
+
+            OnBeforeGetProductPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetProductPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public ProductResponse Any(ProductAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeProductAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterProductAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public ProductResponse Any(ProductUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeProductUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterProductUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(ProductDeleteRequest request)
+        public SimpleResponse<bool> Any(ProductDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Product { ProductId = request.ProductId }, ApplyTo.Delete);
+                
+            OnBeforeProductDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterProductDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Product matching [ProductId = {0}]  does not exist".Fmt(request.ProductId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("products/meta", Verbs = "GET")] // unique constraint filter
+    [Route("products/meta", Verbs = "GET")]
     public partial class ProductMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -196,6 +276,9 @@ namespace Northwind.Data.Services
     {
         public ProductResponse() : base() { }
         public ProductResponse(Product category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class ProductCollectionResponse : GetCollectionResponse<Product>
@@ -203,6 +286,9 @@ namespace Northwind.Data.Services
         public ProductCollectionResponse(): base(){}
         public ProductCollectionResponse(IEnumerable<Product> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

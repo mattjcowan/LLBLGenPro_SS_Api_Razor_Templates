@@ -1,9 +1,13 @@
 ﻿using Northwind.Data.Dtos;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceInterfaces
 { 
-  public interface ICustomerServiceRepository: IEntityServiceRepository<Customer>
+    public interface ICustomerServiceRepository: IEntityServiceRepository<Customer>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         EntityMetaDetailsResponse GetEntityMetaDetails(ServiceStack.ServiceInterface.Service service);
         DataTableResponse GetDataTableResponse(CustomerDataTableRequest request);
@@ -15,6 +19,10 @@ namespace Northwind.Data.ServiceInterfaces
 
         CustomerResponse Create(CustomerAddRequest request);
         CustomerResponse Update(CustomerUpdateRequest request);
-        bool Delete(CustomerDeleteRequest request);
+        SimpleResponse<bool> Delete(CustomerDeleteRequest request);
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     } 
 }

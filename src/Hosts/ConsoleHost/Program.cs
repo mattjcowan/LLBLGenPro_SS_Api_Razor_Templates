@@ -17,6 +17,7 @@ using ServiceStack.Razor;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.ServiceInterface.Auth;
+using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
 using SD.LLBLGen.Pro.ORMSupportClasses;
@@ -60,7 +61,7 @@ namespace Northwind.Data.ConsoleHost
     // for more detailed information on the various options you can set for hosting the API.
     class ConsoleAppHost : AppHostHttpListenerBase
     {
-        public ConsoleAppHost() : base("Northwind.Data API (updated on 3/16/2013 2:58:24 PM)", typeof(CommonDtoBase).Assembly) { }
+        public ConsoleAppHost() : base("Northwind.Data API (updated on 4/4/2013 4:25:27 PM)", typeof(CommonDtoBase).Assembly) { }
 
         // THIS IS TO SIMULATE AUTHENTICATION
         private const string UserName = "admin";
@@ -95,6 +96,10 @@ namespace Northwind.Data.ConsoleHost
             userRepository = new InMemoryAuthRepository();
             container.Register<IUserAuthRepository>(userRepository);
             CreateUser(userRepository, 1, UserName, "DisplayName", null, Password);
+
+            //Enable the validation feature and scan the service assembly for validators
+            Plugins.Add(new ValidationFeature());
+            container.RegisterValidators(typeof(Northwind.Data.Services.CategoryService).Assembly);
 
             //Razor
             Plugins.Add(new RazorFormat());

@@ -1,46 +1,94 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Employee'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class EmployeeService : ServiceBase<Employee, IEmployeeServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetEmployeeMetaRequest(EmployeeMetaRequest request);
+        partial void OnAfterGetEmployeeMetaRequest(EmployeeMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostEmployeeDataTableRequest(EmployeeDataTableRequest request);
+        partial void OnAfterPostEmployeeDataTableRequest(EmployeeDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetEmployeeQueryCollectionRequest(EmployeeQueryCollectionRequest request);
+        partial void OnAfterGetEmployeeQueryCollectionRequest(EmployeeQueryCollectionRequest request, EmployeeCollectionResponse response);
+        partial void OnBeforeGetEmployeePkRequest(EmployeePkRequest request);
+        partial void OnAfterGetEmployeePkRequest(EmployeePkRequest request, EmployeeResponse response);
+        partial void OnBeforeEmployeeAddRequest(EmployeeAddRequest request);
+        partial void OnAfterEmployeeAddRequest(EmployeeAddRequest request, EmployeeResponse response);
+        partial void OnBeforeEmployeeUpdateRequest(EmployeeUpdateRequest request);
+        partial void OnAfterEmployeeUpdateRequest(EmployeeUpdateRequest request, EmployeeResponse response);
+        partial void OnBeforeEmployeeDeleteRequest(EmployeeDeleteRequest request);
+        partial void OnAfterEmployeeDeleteRequest(EmployeeDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Employee> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Employee' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(EmployeeMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetEmployeeMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetEmployeeMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Employee' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(EmployeeDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostEmployeeDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostEmployeeDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Employee' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public EmployeeCollectionResponse Get(EmployeeQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetEmployeeQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetEmployeeQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Employee' based on it's primary key.</summary>
         public EmployeeResponse Get(EmployeePkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Employee { EmployeeId = request.EmployeeId }, "PkRequest");
+
+            OnBeforeGetEmployeePkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetEmployeePkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public EmployeeResponse Any(EmployeeAddRequest request)
         {
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeEmployeeAddRequest(request);
             var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
             var fidx = 0;
@@ -53,12 +101,19 @@ namespace Northwind.Data.Services
                 fidx++;
               }
             }
-            return Repository.Create(request);
+
+            var output = Repository.Create(request);
+            OnAfterEmployeeAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public EmployeeResponse Any(EmployeeUpdateRequest request)
         {
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeEmployeeUpdateRequest(request);
             var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
             var fidx = 0;
@@ -71,19 +126,35 @@ namespace Northwind.Data.Services
                 fidx++;
               }
             }
-            return Repository.Update(request);
+
+            var output = Repository.Update(request);
+            OnAfterEmployeeUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(EmployeeDeleteRequest request)
+        public SimpleResponse<bool> Any(EmployeeDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Employee { EmployeeId = request.EmployeeId }, ApplyTo.Delete);
+                
+            OnBeforeEmployeeDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterEmployeeDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Employee matching [EmployeeId = {0}]  does not exist".Fmt(request.EmployeeId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("employees/meta", Verbs = "GET")] // unique constraint filter
+    [Route("employees/meta", Verbs = "GET")]
     public partial class EmployeeMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -255,6 +326,9 @@ namespace Northwind.Data.Services
     {
         public EmployeeResponse() : base() { }
         public EmployeeResponse(Employee category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class EmployeeCollectionResponse : GetCollectionResponse<Employee>
@@ -262,6 +336,9 @@ namespace Northwind.Data.Services
         public EmployeeCollectionResponse(): base(){}
         public EmployeeCollectionResponse(IEnumerable<Employee> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

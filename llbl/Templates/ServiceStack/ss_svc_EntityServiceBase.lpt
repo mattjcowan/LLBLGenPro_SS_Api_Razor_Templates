@@ -16,19 +16,26 @@ using ServiceStack.ServiceInterface.ServiceModel;
 using ServiceStack.Text;
 using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.ServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
 
 namespace <%=rootNameSpace%>.Services
 { 
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBaseAdditionalAttributes", @"//")%> 
     [LogRequestFilter, LogExceptionFilter]
     public abstract partial class ServiceBase: Service
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBaseAdditionalInterfaces", @"//")%>
     {
         public string BaseServiceUri
         {
             get { return base.Request.GetApplicationUrl().TrimEnd('/'); }
         }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBaseAdditionalMethods", @"//")%>   
     }
     
-    public abstract partial class ServiceBase<TDto, TRepository>: ServiceBase 
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalAttributes", @"//")%> 
+    public abstract partial class ServiceBase<TDto, TRepository>: ServiceBase
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%> 
         where TDto: CommonDtoBase
         where TRepository: IEntityServiceRepository<TDto>
     {
@@ -91,6 +98,8 @@ namespace <%=rootNameSpace%>.Services
             }
             return filesInBytes;
         }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>   
     }
 
     public static class ServiceUtilExtensions
@@ -176,6 +185,8 @@ namespace <%=rootNameSpace%>.Services
             var imageSrc = string.Format("data:image/png;base64,{0}", imageBase64);
             return string.Format("<img src=\"{0}\" alt=\"\" style=\"height:{1}px;width:{2}px;\" />", imageSrc, ih, iw);
         }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcUtilExtensionsAdditionalMethods", @"//")%>   
     }
 
     public class LogRequestFilterAttribute : Attribute, IHasRequestFilter

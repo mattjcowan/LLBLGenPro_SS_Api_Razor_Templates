@@ -10,19 +10,32 @@ using ServiceStack.ServiceInterface.ServiceModel;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 { 
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     [LogRequestFilter, LogExceptionFilter]
     public abstract partial class ServiceBase: Service
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         public string BaseServiceUri
         {
             get { return base.Request.GetApplicationUrl().TrimEnd('/'); }
         }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                           
     }
     
-    public abstract partial class ServiceBase<TDto, TRepository>: ServiceBase 
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
+    public abstract partial class ServiceBase<TDto, TRepository>: ServiceBase
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
         where TDto: CommonDtoBase
         where TRepository: IEntityServiceRepository<TDto>
     {
@@ -85,6 +98,9 @@ namespace Northwind.Data.Services
             }
             return filesInBytes;
         }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                           
     }
 
     public static class ServiceUtilExtensions
@@ -170,6 +186,9 @@ namespace Northwind.Data.Services
             var imageSrc = string.Format("data:image/png;base64,{0}", imageBase64);
             return string.Format("<img src=\"{0}\" alt=\"\" style=\"height:{1}px;width:{2}px;\" />", imageSrc, ih, iw);
         }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcUtilExtensionsAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                           
     }
 
     public class LogRequestFilterAttribute : Attribute, IHasRequestFilter

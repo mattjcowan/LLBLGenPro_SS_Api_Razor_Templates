@@ -77,7 +77,6 @@ namespace Northwind.Data.Dtos
   /// <summary>
   /// Represents the paging details provided in the results of collection queries.
   /// </summary>
-  //[Serializable]
   public class PagingDetails
   {
       public PagingDetails(){}

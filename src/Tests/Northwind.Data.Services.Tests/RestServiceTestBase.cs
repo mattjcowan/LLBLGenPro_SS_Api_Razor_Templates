@@ -14,8 +14,11 @@ using ServiceStack.Common.Web;
 using ServiceStack.Logging;
 using ServiceStack.OrmLite;
 using ServiceStack.OrmLite.SqlServer;
+using ServiceStack.ServiceInterface;
+using ServiceStack.ServiceInterface.Auth;
 using ServiceStack.ServiceInterface.ServiceModel;
 using ServiceStack.ServiceInterface.Testing;
+using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
 
@@ -32,8 +35,34 @@ namespace Northwind.Data.Services.Tests
         {
         }
 
+        // THIS IS TO SIMULATE AUTHENTICATION
+        private const string UserName = "admin";
+        private const string Password = "admin";
+        private static InMemoryAuthRepository userRepository;
+
         protected override void Configure(Funq.Container container)
         {
+            //Plugins
+            var authPlugin = new AuthFeature(() => new AuthUserSession(),
+                                         new IAuthProvider[]
+                                             {
+                                                 new BasicAuthProvider(), //Sign-in with Basic Auth
+                                             })
+                {
+                    HtmlRedirect = null
+                    /* prevent redirect to login page, make the user login using basic auth prompt */
+                };
+            authPlugin.Register(base.AppHost);
+
+            //User Repository
+            userRepository = new InMemoryAuthRepository();
+            container.Register<IUserAuthRepository>(userRepository);
+            CreateUser(userRepository, 1, UserName, "DisplayName", null, Password);
+
+            //NEW: Enable the validation feature and scans the service assembly for validators
+            var validationPlugin = new ValidationFeature();
+            validationPlugin.Register(base.AppHost);
+            container.RegisterValidators(typeof(Northwind.Data.Services.CategoryService).Assembly);
 
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
@@ -59,6 +88,26 @@ namespace Northwind.Data.Services.Tests
             container.Register<IDbConnectionFactory>(
                 c => new OrmLiteConnectionFactory(connectionString, true, new SqlServerOrmLiteDialectProvider()));
         }
+
+        private static void CreateUser(IUserAuthRepository repository, int id, string username, string displayName, string email, string password)
+        {
+            string hash;
+            string salt;
+            new SaltedHash().GetHashAndSaltString(password, out hash, out salt);
+
+            repository.CreateUserAuth(new UserAuth
+            {
+                Id = id,
+                DisplayName = displayName,
+                Email = email ?? "as@if{0}.com".Fmt(id),
+                UserName = username,
+                FirstName = "FirstName",
+                LastName = "LastName",
+                PasswordHash = hash,
+                Salt = salt,
+            }, password);
+        }
+
 
         public HttpWebResponse GetWebResponse(string uri, string acceptContentTypes)
         {
@@ -211,25 +260,5 @@ namespace Northwind.Data.Services.Tests
             return result;
         }
 
-    }
-
-    public class DataAccessAdapterFactory : IDataAccessAdapterFactory
-    {
-        private readonly string _connectionString;
-        public DataAccessAdapterFactory(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
-        public IDataAccessAdapter NewDataAccessAdapter()
-        {
-            // Make any change you want here to configure and return an appropriate 
-            // DataAccessAdapter object
-            var adapter = string.IsNullOrEmpty(_connectionString) ?
-                new DataAccessAdapter(null, false, SchemaNameUsage.Clear, null) :
-                new DataAccessAdapter(_connectionString, false, SchemaNameUsage.Clear, null);
-            adapter.CatalogNameUsageSetting = CatalogNameUsage.Clear;
-            return adapter;
-        }
     }
 }

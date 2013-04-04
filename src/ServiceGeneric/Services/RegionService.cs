@@ -1,73 +1,153 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Region'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class RegionService : ServiceBase<Region, IRegionServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetRegionMetaRequest(RegionMetaRequest request);
+        partial void OnAfterGetRegionMetaRequest(RegionMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostRegionDataTableRequest(RegionDataTableRequest request);
+        partial void OnAfterPostRegionDataTableRequest(RegionDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetRegionQueryCollectionRequest(RegionQueryCollectionRequest request);
+        partial void OnAfterGetRegionQueryCollectionRequest(RegionQueryCollectionRequest request, RegionCollectionResponse response);
+        partial void OnBeforeGetRegionUcRegionDescriptionRequest(RegionUcRegionDescriptionRequest request);
+        partial void OnAfterGetRegionUcRegionDescriptionRequest(RegionUcRegionDescriptionRequest request, RegionResponse response);
+        partial void OnBeforeGetRegionPkRequest(RegionPkRequest request);
+        partial void OnAfterGetRegionPkRequest(RegionPkRequest request, RegionResponse response);
+        partial void OnBeforeRegionAddRequest(RegionAddRequest request);
+        partial void OnAfterRegionAddRequest(RegionAddRequest request, RegionResponse response);
+        partial void OnBeforeRegionUpdateRequest(RegionUpdateRequest request);
+        partial void OnAfterRegionUpdateRequest(RegionUpdateRequest request, RegionResponse response);
+        partial void OnBeforeRegionDeleteRequest(RegionDeleteRequest request);
+        partial void OnAfterRegionDeleteRequest(RegionDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Region> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Region' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(RegionMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetRegionMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetRegionMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Region' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(RegionDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostRegionDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostRegionDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Region' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public RegionCollectionResponse Get(RegionQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetRegionQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetRegionQueryCollectionRequest(request, output);
+            return output;
         }
 
 
         //Unique constraint request go first (the order matters in service stack)
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
+        /// <summary>Gets a specific 'Region' based on the 'UcRegionDescription' unique constraint.</summary>
         public RegionResponse Get(RegionUcRegionDescriptionRequest request)
         {
-            return Repository.Fetch(request);
+            if(Validator != null)
+                Validator.ValidateAndThrow(new Region { RegionDescription = request.RegionDescription }, "UcRegionDescription");
+                
+            OnBeforeGetRegionUcRegionDescriptionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetRegionUcRegionDescriptionRequest(request, output);
+            return output;
         }
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Region' based on it's primary key.</summary>
         public RegionResponse Get(RegionPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Region { RegionId = request.RegionId }, "PkRequest");
+
+            OnBeforeGetRegionPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetRegionPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public RegionResponse Any(RegionAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeRegionAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterRegionAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public RegionResponse Any(RegionUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeRegionUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterRegionUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(RegionDeleteRequest request)
+        public SimpleResponse<bool> Any(RegionDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Region { RegionId = request.RegionId }, ApplyTo.Delete);
+                
+            OnBeforeRegionDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterRegionDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Region matching [RegionId = {0}]  does not exist".Fmt(request.RegionId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("regions/meta", Verbs = "GET")] // unique constraint filter
+    [Route("regions/meta", Verbs = "GET")]
     public partial class RegionMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -148,6 +228,9 @@ namespace Northwind.Data.Services
     {
         public RegionResponse() : base() { }
         public RegionResponse(Region category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class RegionCollectionResponse : GetCollectionResponse<Region>
@@ -155,6 +238,9 @@ namespace Northwind.Data.Services
         public RegionCollectionResponse(): base(){}
         public RegionCollectionResponse(IEnumerable<Region> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

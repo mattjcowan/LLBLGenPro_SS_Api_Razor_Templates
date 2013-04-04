@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace <%=rootNameSpace%>.Dtos
 {
-    //[Serializable]
     public partial class EntityCollection : CommonDtoBaseCollection<Entity>
     {
         public EntityCollection() { }
@@ -20,7 +19,6 @@ namespace <%=rootNameSpace%>.Dtos
         public EntityCollection(List<Entity> list) : base(list ?? new List<Entity>()) { }
     }
 
-    //[Serializable]
     public partial class Entity
     {
         public string Name { get; set; }

@@ -1,54 +1,111 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Category'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class CategoryService : ServiceBase<Category, ICategoryServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetCategoryMetaRequest(CategoryMetaRequest request);
+        partial void OnAfterGetCategoryMetaRequest(CategoryMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostCategoryDataTableRequest(CategoryDataTableRequest request);
+        partial void OnAfterPostCategoryDataTableRequest(CategoryDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetCategoryQueryCollectionRequest(CategoryQueryCollectionRequest request);
+        partial void OnAfterGetCategoryQueryCollectionRequest(CategoryQueryCollectionRequest request, CategoryCollectionResponse response);
+        partial void OnBeforeGetCategoryUcCategoryNameRequest(CategoryUcCategoryNameRequest request);
+        partial void OnAfterGetCategoryUcCategoryNameRequest(CategoryUcCategoryNameRequest request, CategoryResponse response);
+        partial void OnBeforeGetCategoryPkRequest(CategoryPkRequest request);
+        partial void OnAfterGetCategoryPkRequest(CategoryPkRequest request, CategoryResponse response);
+        partial void OnBeforeCategoryAddRequest(CategoryAddRequest request);
+        partial void OnAfterCategoryAddRequest(CategoryAddRequest request, CategoryResponse response);
+        partial void OnBeforeCategoryUpdateRequest(CategoryUpdateRequest request);
+        partial void OnAfterCategoryUpdateRequest(CategoryUpdateRequest request, CategoryResponse response);
+        partial void OnBeforeCategoryDeleteRequest(CategoryDeleteRequest request);
+        partial void OnAfterCategoryDeleteRequest(CategoryDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Category> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Category' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CategoryMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetCategoryMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetCategoryMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Category' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(CategoryDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostCategoryDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostCategoryDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Category' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public CategoryCollectionResponse Get(CategoryQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetCategoryQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCategoryQueryCollectionRequest(request, output);
+            return output;
         }
 
 
         //Unique constraint request go first (the order matters in service stack)
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
+        /// <summary>Gets a specific 'Category' based on the 'UcCategoryName' unique constraint.</summary>
         public CategoryResponse Get(CategoryUcCategoryNameRequest request)
         {
-            return Repository.Fetch(request);
+            if(Validator != null)
+                Validator.ValidateAndThrow(new Category { CategoryName = request.CategoryName }, "UcCategoryName");
+                
+            OnBeforeGetCategoryUcCategoryNameRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCategoryUcCategoryNameRequest(request, output);
+            return output;
         }
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Category' based on it's primary key.</summary>
         public CategoryResponse Get(CategoryPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Category { CategoryId = request.CategoryId }, "PkRequest");
+
+            OnBeforeGetCategoryPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCategoryPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CategoryResponse Any(CategoryAddRequest request)
         {
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeCategoryAddRequest(request);
             var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
             var fidx = 0;
@@ -61,12 +118,19 @@ namespace Northwind.Data.Services
                 fidx++;
               }
             }
-            return Repository.Create(request);
+
+            var output = Repository.Create(request);
+            OnAfterCategoryAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CategoryResponse Any(CategoryUpdateRequest request)
         {
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeCategoryUpdateRequest(request);
             var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
             var fidx = 0;
@@ -79,19 +143,35 @@ namespace Northwind.Data.Services
                 fidx++;
               }
             }
-            return Repository.Update(request);
+
+            var output = Repository.Update(request);
+            OnAfterCategoryUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(CategoryDeleteRequest request)
+        public SimpleResponse<bool> Any(CategoryDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Category { CategoryId = request.CategoryId }, ApplyTo.Delete);
+                
+            OnBeforeCategoryDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterCategoryDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Category matching [CategoryId = {0}]  does not exist".Fmt(request.CategoryId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("categories/meta", Verbs = "GET")] // unique constraint filter
+    [Route("categories/meta", Verbs = "GET")]
     public partial class CategoryMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -186,6 +266,9 @@ namespace Northwind.Data.Services
     {
         public CategoryResponse() : base() { }
         public CategoryResponse(Category category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class CategoryCollectionResponse : GetCollectionResponse<Category>
@@ -193,6 +276,9 @@ namespace Northwind.Data.Services
         public CategoryCollectionResponse(): base(){}
         public CategoryCollectionResponse(IEnumerable<Category> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

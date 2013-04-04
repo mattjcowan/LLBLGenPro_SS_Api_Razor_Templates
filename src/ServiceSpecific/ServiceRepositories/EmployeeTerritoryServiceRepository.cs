@@ -12,11 +12,29 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class EmployeeTerritoryServiceRepository : EntityServiceRepositoryBase<EmployeeTerritory, EmployeeTerritoryEntity, EmployeeTerritoryEntityFactory, EmployeeTerritoryFieldIndex>, IEmployeeTerritoryServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeEmployeeTerritoryDeleteRequest(IDataAccessAdapter adapter, EmployeeTerritoryDeleteRequest request, EmployeeTerritoryEntity entity);
+        partial void OnAfterEmployeeTerritoryDeleteRequest(IDataAccessAdapter adapter, EmployeeTerritoryDeleteRequest request, EmployeeTerritoryEntity entity, ref bool deleted);
+        partial void OnBeforeEmployeeTerritoryUpdateRequest(IDataAccessAdapter adapter, EmployeeTerritoryUpdateRequest request);
+        partial void OnAfterEmployeeTerritoryUpdateRequest(IDataAccessAdapter adapter, EmployeeTerritoryUpdateRequest request);
+        partial void OnBeforeEmployeeTerritoryAddRequest(IDataAccessAdapter adapter, EmployeeTerritoryAddRequest request);
+        partial void OnAfterEmployeeTerritoryAddRequest(IDataAccessAdapter adapter, EmployeeTerritoryAddRequest request);
+        partial void OnBeforeFetchEmployeeTerritoryPkRequest(IDataAccessAdapter adapter, EmployeeTerritoryPkRequest request, EmployeeTerritoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchEmployeeTerritoryPkRequest(IDataAccessAdapter adapter, EmployeeTerritoryPkRequest request, EmployeeTerritoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchEmployeeTerritoryQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeTerritoryQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchEmployeeTerritoryQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeTerritoryQueryCollectionRequest request, EntityCollection<EmployeeTerritoryEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -126,20 +144,32 @@ EmployeeTerritoryQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public EmployeeTerritoryCollectionResponse Fetch(EmployeeTerritoryQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<EmployeeTerritoryEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchEmployeeTerritoryQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchEmployeeTerritoryQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new EmployeeTerritoryCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
 
         public EmployeeTerritoryResponse Fetch(EmployeeTerritoryPkRequest request)
         {
@@ -152,8 +182,10 @@ EmployeeTerritoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchEmployeeTerritoryPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchEmployeeTerritoryPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new EmployeeTerritoryResponse(entity.ToDto());
                 }
             }
@@ -168,8 +200,10 @@ EmployeeTerritoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeEmployeeTerritoryAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterEmployeeTerritoryAddRequest(adapter, request);
                     return new EmployeeTerritoryResponse(entity.ToDto());
                 }
             }
@@ -185,26 +219,32 @@ EmployeeTerritoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeEmployeeTerritoryUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterEmployeeTerritoryUpdateRequest(adapter, request);
                     return new EmployeeTerritoryResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(EmployeeTerritoryDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(EmployeeTerritoryDeleteRequest request)
         {
             var entity = new EmployeeTerritoryEntity();
             entity.EmployeeId = request.EmployeeId;
             entity.TerritoryId = request.TerritoryId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeEmployeeTerritoryDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterEmployeeTerritoryDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "employeeterritory-uc-map";
@@ -222,10 +262,21 @@ EmployeeTerritoryQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class EmployeeTerritoryEntityDtoMapperExtensions
+    internal static partial class EmployeeTerritoryEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(EmployeeTerritoryEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(EmployeeTerritoryEntity entity, Hashtable seenObjects, Hashtable parents, EmployeeTerritory dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<EmployeeTerritoryEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<EmployeeTerritoryEntity> entities, EmployeeTerritoryCollection dtos);
+        static partial void OnBeforeDtoToEntity(EmployeeTerritory dto);
+        static partial void OnAfterDtoToEntity(EmployeeTerritory dto, EmployeeTerritoryEntity entity);
+        
         public static EmployeeTerritory ToDto(this EmployeeTerritoryEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -233,6 +284,7 @@ EmployeeTerritoryQueryCollectionRequest
 
         public static EmployeeTerritory ToDto(this EmployeeTerritoryEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new EmployeeTerritory();
             if (entity != null)
             {
@@ -260,22 +312,27 @@ EmployeeTerritoryQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static EmployeeTerritoryCollection ToDtoCollection(this EntityCollection<EmployeeTerritoryEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new EmployeeTerritoryCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static EmployeeTerritoryEntity FromDto(this EmployeeTerritory dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new EmployeeTerritoryEntity();
 
             // Map entity properties
@@ -295,6 +352,7 @@ EmployeeTerritoryQueryCollectionRequest
                 entity.Territory = dto.Territory.FromDto();
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

@@ -1,73 +1,153 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Supplier'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class SupplierService : ServiceBase<Supplier, ISupplierServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetSupplierMetaRequest(SupplierMetaRequest request);
+        partial void OnAfterGetSupplierMetaRequest(SupplierMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostSupplierDataTableRequest(SupplierDataTableRequest request);
+        partial void OnAfterPostSupplierDataTableRequest(SupplierDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetSupplierQueryCollectionRequest(SupplierQueryCollectionRequest request);
+        partial void OnAfterGetSupplierQueryCollectionRequest(SupplierQueryCollectionRequest request, SupplierCollectionResponse response);
+        partial void OnBeforeGetSupplierUcSupplierNameRequest(SupplierUcSupplierNameRequest request);
+        partial void OnAfterGetSupplierUcSupplierNameRequest(SupplierUcSupplierNameRequest request, SupplierResponse response);
+        partial void OnBeforeGetSupplierPkRequest(SupplierPkRequest request);
+        partial void OnAfterGetSupplierPkRequest(SupplierPkRequest request, SupplierResponse response);
+        partial void OnBeforeSupplierAddRequest(SupplierAddRequest request);
+        partial void OnAfterSupplierAddRequest(SupplierAddRequest request, SupplierResponse response);
+        partial void OnBeforeSupplierUpdateRequest(SupplierUpdateRequest request);
+        partial void OnAfterSupplierUpdateRequest(SupplierUpdateRequest request, SupplierResponse response);
+        partial void OnBeforeSupplierDeleteRequest(SupplierDeleteRequest request);
+        partial void OnAfterSupplierDeleteRequest(SupplierDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Supplier> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Supplier' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(SupplierMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetSupplierMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetSupplierMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Supplier' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(SupplierDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostSupplierDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostSupplierDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Supplier' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public SupplierCollectionResponse Get(SupplierQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetSupplierQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetSupplierQueryCollectionRequest(request, output);
+            return output;
         }
 
 
         //Unique constraint request go first (the order matters in service stack)
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
+        /// <summary>Gets a specific 'Supplier' based on the 'UcSupplierName' unique constraint.</summary>
         public SupplierResponse Get(SupplierUcSupplierNameRequest request)
         {
-            return Repository.Fetch(request);
+            if(Validator != null)
+                Validator.ValidateAndThrow(new Supplier { CompanyName = request.CompanyName }, "UcSupplierName");
+                
+            OnBeforeGetSupplierUcSupplierNameRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetSupplierUcSupplierNameRequest(request, output);
+            return output;
         }
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Supplier' based on it's primary key.</summary>
         public SupplierResponse Get(SupplierPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Supplier { SupplierId = request.SupplierId }, "PkRequest");
+
+            OnBeforeGetSupplierPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetSupplierPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public SupplierResponse Any(SupplierAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeSupplierAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterSupplierAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public SupplierResponse Any(SupplierUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeSupplierUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterSupplierUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(SupplierDeleteRequest request)
+        public SimpleResponse<bool> Any(SupplierDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Supplier { SupplierId = request.SupplierId }, ApplyTo.Delete);
+                
+            OnBeforeSupplierDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterSupplierDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Supplier matching [SupplierId = {0}]  does not exist".Fmt(request.SupplierId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("suppliers/meta", Verbs = "GET")] // unique constraint filter
+    [Route("suppliers/meta", Verbs = "GET")]
     public partial class SupplierMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -208,6 +288,9 @@ namespace Northwind.Data.Services
     {
         public SupplierResponse() : base() { }
         public SupplierResponse(Supplier category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class SupplierCollectionResponse : GetCollectionResponse<Supplier>
@@ -215,6 +298,9 @@ namespace Northwind.Data.Services
         public SupplierCollectionResponse(): base(){}
         public SupplierCollectionResponse(IEnumerable<Supplier> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

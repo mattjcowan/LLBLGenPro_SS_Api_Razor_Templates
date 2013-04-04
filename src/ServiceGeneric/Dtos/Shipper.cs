@@ -10,7 +10,6 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  //[Serializable]
   public partial class ShipperCollection : CommonDtoBaseCollection<Shipper>
   {
       public ShipperCollection(){}
@@ -18,7 +17,6 @@ namespace Northwind.Data.Dtos
       public ShipperCollection(List<Shipper> list): base(list ?? new List<Shipper>()){}
   }
 
-  //[Serializable]
   public partial class Shipper : CommonDtoBase<Shipper>
   {
     public Shipper()

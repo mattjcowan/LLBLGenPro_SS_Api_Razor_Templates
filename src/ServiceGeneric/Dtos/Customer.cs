@@ -10,7 +10,6 @@ using System.Xml.Serialization;
 
 namespace Northwind.Data.Dtos
 { 
-  //[Serializable]
   public partial class CustomerCollection : CommonDtoBaseCollection<Customer>
   {
       public CustomerCollection(){}
@@ -18,7 +17,6 @@ namespace Northwind.Data.Dtos
       public CustomerCollection(List<Customer> list): base(list ?? new List<Customer>()){}
   }
 
-  //[Serializable]
   public partial class Customer : CommonDtoBase<Customer>
   {
     public Customer()

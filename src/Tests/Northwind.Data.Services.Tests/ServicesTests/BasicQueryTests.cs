@@ -32,8 +32,8 @@ namespace Northwind.Data.Services.Tests.ServicesTests
 
             var response = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories", new CategoryQueryCollectionRequest());
             Assert.That(response, Is.Not.Null);
-            Assert.That(response.Status, Is.Not.Null);
-            Assert.That(response.Status.Message, Is.EqualTo("Success"));
+            Assert.That(response.ResponseStatus, Is.Not.Null);
+            Assert.That(response.ResponseStatus.Message, Is.EqualTo("Success"));
 
             var categories = response.Result;
             Assert.That(categories, Is.Not.Null);

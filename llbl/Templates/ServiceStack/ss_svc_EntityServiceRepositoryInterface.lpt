@@ -18,10 +18,12 @@
   if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
 %>using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.Services;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
 
 namespace <%=rootNameSpace%>.ServiceInterfaces
 { 
-  public interface I<%=entity.Name%>ServiceRepository: IEntityServiceRepository<<%=entity.Name%>>
+    public interface I<%=entity.Name%>ServiceRepository: IEntityServiceRepository<<%=entity.Name%>>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
     {
         EntityMetaDetailsResponse GetEntityMetaDetails(ServiceStack.ServiceInterface.Service service);
         DataTableResponse GetDataTableResponse(<%=entity.Name%>DataTableRequest request);
@@ -34,6 +36,9 @@ namespace <%=rootNameSpace%>.ServiceInterfaces
 
         <%=entity.Name%>Response Create(<%=entity.Name%>AddRequest request);
         <%=entity.Name%>Response Update(<%=entity.Name%>UpdateRequest request);
-        bool Delete(<%=entity.Name%>DeleteRequest request);
+        SimpleResponse<bool> Delete(<%=entity.Name%>DeleteRequest request);
+    
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>
+
     } 
 }

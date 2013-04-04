@@ -1,65 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'OrderDetail'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class OrderDetailService : ServiceBase<OrderDetail, IOrderDetailServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetOrderDetailMetaRequest(OrderDetailMetaRequest request);
+        partial void OnAfterGetOrderDetailMetaRequest(OrderDetailMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostOrderDetailDataTableRequest(OrderDetailDataTableRequest request);
+        partial void OnAfterPostOrderDetailDataTableRequest(OrderDetailDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetOrderDetailQueryCollectionRequest(OrderDetailQueryCollectionRequest request);
+        partial void OnAfterGetOrderDetailQueryCollectionRequest(OrderDetailQueryCollectionRequest request, OrderDetailCollectionResponse response);
+        partial void OnBeforeGetOrderDetailPkRequest(OrderDetailPkRequest request);
+        partial void OnAfterGetOrderDetailPkRequest(OrderDetailPkRequest request, OrderDetailResponse response);
+        partial void OnBeforeOrderDetailAddRequest(OrderDetailAddRequest request);
+        partial void OnAfterOrderDetailAddRequest(OrderDetailAddRequest request, OrderDetailResponse response);
+        partial void OnBeforeOrderDetailUpdateRequest(OrderDetailUpdateRequest request);
+        partial void OnAfterOrderDetailUpdateRequest(OrderDetailUpdateRequest request, OrderDetailResponse response);
+        partial void OnBeforeOrderDetailDeleteRequest(OrderDetailDeleteRequest request);
+        partial void OnAfterOrderDetailDeleteRequest(OrderDetailDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<OrderDetail> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'OrderDetail' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(OrderDetailMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetOrderDetailMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetOrderDetailMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'OrderDetail' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(OrderDetailDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostOrderDetailDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostOrderDetailDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'OrderDetail' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public OrderDetailCollectionResponse Get(OrderDetailQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetOrderDetailQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetOrderDetailQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'OrderDetail' based on it's primary key.</summary>
         public OrderDetailResponse Get(OrderDetailPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new OrderDetail { OrderId = request.OrderId, ProductId = request.ProductId }, "PkRequest");
+
+            OnBeforeGetOrderDetailPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetOrderDetailPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public OrderDetailResponse Any(OrderDetailAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeOrderDetailAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterOrderDetailAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public OrderDetailResponse Any(OrderDetailUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeOrderDetailUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterOrderDetailUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(OrderDetailDeleteRequest request)
+        public SimpleResponse<bool> Any(OrderDetailDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new OrderDetail { OrderId = request.OrderId, ProductId = request.ProductId }, ApplyTo.Delete);
+                
+            OnBeforeOrderDetailDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterOrderDetailDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("OrderDetail matching [OrderId = {0}, ProductId = {1}]  does not exist".Fmt(request.OrderId, request.ProductId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("orderdetails/meta", Verbs = "GET")] // unique constraint filter
+    [Route("orderdetails/meta", Verbs = "GET")]
     public partial class OrderDetailMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -153,6 +224,9 @@ namespace Northwind.Data.Services
     {
         public OrderDetailResponse() : base() { }
         public OrderDetailResponse(OrderDetail category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class OrderDetailCollectionResponse : GetCollectionResponse<OrderDetail>
@@ -160,6 +234,9 @@ namespace Northwind.Data.Services
         public OrderDetailCollectionResponse(): base(){}
         public OrderDetailCollectionResponse(IEnumerable<OrderDetail> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

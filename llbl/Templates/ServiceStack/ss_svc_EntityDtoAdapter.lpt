@@ -31,7 +31,6 @@ using System.Xml.Serialization;
 
 namespace <%=rootNameSpace%>.Dtos
 { 
-  //[Serializable]
   public partial class <%=entity.Name%>Collection : CommonDtoBaseCollection<<%=entity.Name%>>
   {
       public <%=entity.Name%>Collection(){}
@@ -39,7 +38,6 @@ namespace <%=rootNameSpace%>.Dtos
       public <%=entity.Name%>Collection(List<<%=entity.Name%>> list): base(list ?? new List<<%=entity.Name%>>()){}
   }
 
-  //[Serializable]
   public partial class <%=entity.Name%> : <%if(entity.IsSubType){%><%=entity.GetSuperType().Name%><%}else{%>CommonDtoBase<<%=entity.Name%>><%}%>
   {
     public <%=entity.Name%>()

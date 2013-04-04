@@ -247,35 +247,26 @@ namespace Northwind.Data.ServiceRepositories
             return metaDetails;
         }
 
-        internal EntityCollection<TEntity> Fetch(string sortExpression, string includeExpressions,
-                                                 string filterExpression,
-                                                 string relationExpression, string selectExpression, int pageNumber,
+        internal EntityCollection<TEntity> Fetch(IDataAccessAdapter adapter, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields,
+            IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber,
                                                  int pageSize, int limit, out int totalItemCount)
         {
-            var entitySortExpression = ConvertStringToSortExpression(sortExpression);
-            var excludedIncludedFields = ConvertStringToExcludedIncludedFields(selectExpression);
-            var prefetchPath = ConvertStringToPrefetchPath(includeExpressions, selectExpression);
-            var predicateBucket = ConvertStringToRelationPredicateBucket(filterExpression, relationExpression);
-
             var entities = new EntityCollection<TEntity>(new TEntityFactory());
-            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            totalItemCount = adapter.GetDbCount(entities, predicateBucket);
+            if (limit > 0)
             {
-                totalItemCount = adapter.GetDbCount(entities, predicateBucket);
-                if (limit > 0)
-                {
-                    adapter.FetchEntityCollection(entities, predicateBucket, limit,
-                                                  entitySortExpression, prefetchPath,
-                                                  excludedIncludedFields);
-                }
-                else
-                {
-                    adapter.FetchEntityCollection(entities, predicateBucket, 0,
-                                                  entitySortExpression, prefetchPath,
-                                                  excludedIncludedFields, pageNumber, pageSize);
-                }
+                adapter.FetchEntityCollection(entities, predicateBucket, limit,
+                                              sortExpression, prefetchPath,
+                                              excludedIncludedFields);
+            }
+            else
+            {
+                adapter.FetchEntityCollection(entities, predicateBucket, 0,
+                                              sortExpression, prefetchPath,
+                                              excludedIncludedFields, pageNumber, pageSize);
             }
             return entities;
-        }        
+        }      
 
         internal void FixupLimitAndPagingOnRequest(GetCollectionRequest request)
         {

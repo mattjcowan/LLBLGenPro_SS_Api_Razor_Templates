@@ -42,7 +42,6 @@ namespace <[RootNamespace]>.Dtos
   }
   
   /// <summary>Common base class which is the base class for all generated dtos which aren't a subtype of another dto.</summary>
-  //[Serializable]
   public abstract partial class CommonDtoBase
   {
     /// <summary>Method called from the constructor</summary>
@@ -63,7 +62,6 @@ namespace <[RootNamespace]>.Dtos
   }
   
   /// <summary>Common base class which is the base class for all generated dtos which aren't a subtype of another dto.</summary>
-  //[Serializable]
   public abstract partial class CommonDtoBase<TDto>: CommonDtoBase
   {   
     /// <summary>Initializes a new instance of the <see cref="CommonDtoBase"/> class.</summary>

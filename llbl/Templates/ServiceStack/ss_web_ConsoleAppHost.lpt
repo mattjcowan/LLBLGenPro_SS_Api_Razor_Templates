@@ -23,6 +23,7 @@ using ServiceStack.Razor;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.ServiceInterface.Auth;
+using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
 using SD.LLBLGen.Pro.ORMSupportClasses;
@@ -101,6 +102,10 @@ namespace <%=rootNameSpace%>.ConsoleHost
             userRepository = new InMemoryAuthRepository();
             container.Register<IUserAuthRepository>(userRepository);
             CreateUser(userRepository, 1, UserName, "DisplayName", null, Password);
+
+            //Enable the validation feature and scan the service assembly for validators
+            Plugins.Add(new ValidationFeature());
+            container.RegisterValidators(typeof(Northwind.Data.Services.CategoryService).Assembly);
 
             //Razor
             Plugins.Add(new RazorFormat());

@@ -1,65 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'EmployeeTerritory'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class EmployeeTerritoryService : ServiceBase<EmployeeTerritory, IEmployeeTerritoryServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetEmployeeTerritoryMetaRequest(EmployeeTerritoryMetaRequest request);
+        partial void OnAfterGetEmployeeTerritoryMetaRequest(EmployeeTerritoryMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostEmployeeTerritoryDataTableRequest(EmployeeTerritoryDataTableRequest request);
+        partial void OnAfterPostEmployeeTerritoryDataTableRequest(EmployeeTerritoryDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetEmployeeTerritoryQueryCollectionRequest(EmployeeTerritoryQueryCollectionRequest request);
+        partial void OnAfterGetEmployeeTerritoryQueryCollectionRequest(EmployeeTerritoryQueryCollectionRequest request, EmployeeTerritoryCollectionResponse response);
+        partial void OnBeforeGetEmployeeTerritoryPkRequest(EmployeeTerritoryPkRequest request);
+        partial void OnAfterGetEmployeeTerritoryPkRequest(EmployeeTerritoryPkRequest request, EmployeeTerritoryResponse response);
+        partial void OnBeforeEmployeeTerritoryAddRequest(EmployeeTerritoryAddRequest request);
+        partial void OnAfterEmployeeTerritoryAddRequest(EmployeeTerritoryAddRequest request, EmployeeTerritoryResponse response);
+        partial void OnBeforeEmployeeTerritoryUpdateRequest(EmployeeTerritoryUpdateRequest request);
+        partial void OnAfterEmployeeTerritoryUpdateRequest(EmployeeTerritoryUpdateRequest request, EmployeeTerritoryResponse response);
+        partial void OnBeforeEmployeeTerritoryDeleteRequest(EmployeeTerritoryDeleteRequest request);
+        partial void OnAfterEmployeeTerritoryDeleteRequest(EmployeeTerritoryDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<EmployeeTerritory> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'EmployeeTerritory' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(EmployeeTerritoryMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetEmployeeTerritoryMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetEmployeeTerritoryMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'EmployeeTerritory' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(EmployeeTerritoryDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostEmployeeTerritoryDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostEmployeeTerritoryDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'EmployeeTerritory' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public EmployeeTerritoryCollectionResponse Get(EmployeeTerritoryQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetEmployeeTerritoryQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetEmployeeTerritoryQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'EmployeeTerritory' based on it's primary key.</summary>
         public EmployeeTerritoryResponse Get(EmployeeTerritoryPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new EmployeeTerritory { EmployeeId = request.EmployeeId, TerritoryId = request.TerritoryId }, "PkRequest");
+
+            OnBeforeGetEmployeeTerritoryPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetEmployeeTerritoryPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public EmployeeTerritoryResponse Any(EmployeeTerritoryAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeEmployeeTerritoryAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterEmployeeTerritoryAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public EmployeeTerritoryResponse Any(EmployeeTerritoryUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeEmployeeTerritoryUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterEmployeeTerritoryUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(EmployeeTerritoryDeleteRequest request)
+        public SimpleResponse<bool> Any(EmployeeTerritoryDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new EmployeeTerritory { EmployeeId = request.EmployeeId, TerritoryId = request.TerritoryId }, ApplyTo.Delete);
+                
+            OnBeforeEmployeeTerritoryDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterEmployeeTerritoryDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("EmployeeTerritory matching [EmployeeId = {0}, TerritoryId = {1}]  does not exist".Fmt(request.EmployeeId, request.TerritoryId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("employeeterritories/meta", Verbs = "GET")] // unique constraint filter
+    [Route("employeeterritories/meta", Verbs = "GET")]
     public partial class EmployeeTerritoryMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -135,6 +206,9 @@ namespace Northwind.Data.Services
     {
         public EmployeeTerritoryResponse() : base() { }
         public EmployeeTerritoryResponse(EmployeeTerritory category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class EmployeeTerritoryCollectionResponse : GetCollectionResponse<EmployeeTerritory>
@@ -142,6 +216,9 @@ namespace Northwind.Data.Services
         public EmployeeTerritoryCollectionResponse(): base(){}
         public EmployeeTerritoryCollectionResponse(IEnumerable<EmployeeTerritory> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

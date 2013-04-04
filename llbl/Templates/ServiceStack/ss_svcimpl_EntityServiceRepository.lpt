@@ -43,11 +43,30 @@ using <%=rootNameSpace%>.FactoryClasses;
 using <%=rootNameSpace%>.HelperClasses;
 using <%=rootNameSpace%>.ServiceInterfaces;
 using <%=rootNameSpace%>.Services;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
 
 namespace <%=rootNameSpace%>.ServiceRepositories
 { 
     public partial class <%=entity.Name%>ServiceRepository : EntityServiceRepositoryBase<<%=entity.Name%>, <%=entity.Name%>Entity, <%=entity.Name%>EntityFactory, <%=entity.Name%>FieldIndex>, I<%=entity.Name%>ServiceRepository
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
     {
+        #region Class Extensibility Methods
+        partial void OnBefore<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity);
+        partial void OnAfter<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity, ref bool deleted);
+        partial void OnBefore<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
+        partial void OnAfter<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
+        partial void OnBefore<%=entity.Name%>AddRequest(IDataAccessAdapter adapter, <%=entity.Name%>AddRequest request);
+        partial void OnAfter<%=entity.Name%>AddRequest(IDataAccessAdapter adapter, <%=entity.Name%>AddRequest request);
+        partial void OnBeforeFetch<%=entity.Name%>PkRequest(IDataAccessAdapter adapter, <%=entity.Name%>PkRequest request, <%=entity.Name%>Entity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetch<%=entity.Name%>PkRequest(IDataAccessAdapter adapter, <%=entity.Name%>PkRequest request, <%=entity.Name%>Entity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+<%foreach(var uc in entity.UniqueConstraints){
+%>        partial void OnBeforeFetch<%=entity.Name%><%=uc.Name%>Request(IDataAccessAdapter adapter, <%=entity.Name%><%=uc.Name%>Request request, <%=entity.Name%>Entity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetch<%=entity.Name%><%=uc.Name%>Request(IDataAccessAdapter adapter, <%=entity.Name%><%=uc.Name%>Request request, <%=entity.Name%>Entity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+<%}%>
+        partial void OnBeforeFetch<%=entity.Name%>QueryCollectionRequest(IDataAccessAdapter adapter, <%=entity.Name%>QueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetch<%=entity.Name%>QueryCollectionRequest(IDataAccessAdapter adapter, <%=entity.Name%>QueryCollectionRequest request, EntityCollection<<%=entity.Name%>Entity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -177,20 +196,32 @@ namespace <%=rootNameSpace%>.ServiceRepositories
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public <%=entity.Name%>CollectionResponse Fetch(<%=entity.Name%>QueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<<%=entity.Name%>Entity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetch<%=entity.Name%>QueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetch<%=entity.Name%>QueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new <%=entity.Name%>CollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
 <%foreach(var uc in entity.UniqueConstraints){
 %>        public <%=entity.Name%>Response Fetch(<%=entity.Name%><%=uc.Name%>Request request)
         {
@@ -203,14 +234,18 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if (adapter.FetchEntityUsingUniqueConstraint(entity, entity.ConstructFilterForUC<%foreach(var ucField in uc.FieldsAsString.Split(',')){%><%=ucField%><%}%>(), prefetchPath, null, excludedIncludedFields))
+                var predicate = entity.ConstructFilterForUC<%foreach(var ucField in uc.FieldsAsString.Split(',')){%><%=ucField%><%}%>();
+                OnBeforeFetch<%=entity.Name%><%=uc.Name%>Request(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
+                if (adapter.FetchEntityUsingUniqueConstraint(entity, predicate, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetch<%=entity.Name%><%=uc.Name%>Request(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
                     return new <%=entity.Name%>Response(entity.ToDto());
                 }
             }
 
             throw new NullReferenceException();
         }
+        
 <%}%>
         public <%=entity.Name%>Response Fetch(<%=entity.Name%>PkRequest request)
         {
@@ -223,8 +258,10 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetch<%=entity.Name%>PkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetch<%=entity.Name%>PkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new <%=entity.Name%>Response(entity.ToDto());
                 }
             }
@@ -239,8 +276,10 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBefore<%=entity.Name%>AddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfter<%=entity.Name%>AddRequest(adapter, request);
                     return new <%=entity.Name%>Response(entity.ToDto());
                 }
             }
@@ -256,26 +295,32 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBefore<%=entity.Name%>UpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfter<%=entity.Name%>UpdateRequest(adapter, request);
                     return new <%=entity.Name%>Response(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(<%=entity.Name%>DeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(<%=entity.Name%>DeleteRequest request)
         {
             var entity = new <%=entity.Name%>Entity();
 <%  foreach(var field in entityFields.Where(f => f.IsPartOfIdentifyingFields)){
 %>            entity.<%=field.Name%> = request.<%=field.Name%>;
 <%}%>
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBefore<%=entity.Name%>DeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfter<%=entity.Name%>DeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "<%=entity.Name.ToLower()%>-uc-map";
@@ -300,10 +345,20 @@ namespace <%=rootNameSpace%>.ServiceRepositories
             }
             set { }
         }
+    
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>
+
     }
 
-    internal static class <%=entity.Name%>EntityDtoMapperExtensions
+    internal static partial class <%=entity.Name%>EntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(<%=entity.Name%>Entity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(<%=entity.Name%>Entity entity, Hashtable seenObjects, Hashtable parents, <%=entity.Name%> dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<<%=entity.Name%>Entity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<<%=entity.Name%>Entity> entities, <%=entity.Name%>Collection dtos);
+        static partial void OnBeforeDtoToEntity(<%=entity.Name%> dto);
+        static partial void OnAfterDtoToEntity(<%=entity.Name%> dto, <%=entity.Name%>Entity entity);
+        
         public static <%=entity.Name%> ToDto(this <%=entity.Name%>Entity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -311,6 +366,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
         public static <%=entity.Name%> ToDto(this <%=entity.Name%>Entity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new <%=entity.Name%>();
             if (entity != null)
             {
@@ -363,22 +419,27 @@ namespace <%=rootNameSpace%>.ServiceRepositories
   }
 %>
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static <%=entity.Name%>Collection ToDtoCollection(this EntityCollection<<%=entity.Name%>Entity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new <%=entity.Name%>Collection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static <%=entity.Name%>Entity FromDto(this <%=entity.Name%> dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new <%=entity.Name%>Entity();
 
             // Map entity properties
@@ -429,6 +490,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
     }
   }
 %>
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

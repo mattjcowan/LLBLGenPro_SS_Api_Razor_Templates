@@ -12,11 +12,29 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class CustomerCustomerDemoServiceRepository : EntityServiceRepositoryBase<CustomerCustomerDemo, CustomerCustomerDemoEntity, CustomerCustomerDemoEntityFactory, CustomerCustomerDemoFieldIndex>, ICustomerCustomerDemoServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeCustomerCustomerDemoDeleteRequest(IDataAccessAdapter adapter, CustomerCustomerDemoDeleteRequest request, CustomerCustomerDemoEntity entity);
+        partial void OnAfterCustomerCustomerDemoDeleteRequest(IDataAccessAdapter adapter, CustomerCustomerDemoDeleteRequest request, CustomerCustomerDemoEntity entity, ref bool deleted);
+        partial void OnBeforeCustomerCustomerDemoUpdateRequest(IDataAccessAdapter adapter, CustomerCustomerDemoUpdateRequest request);
+        partial void OnAfterCustomerCustomerDemoUpdateRequest(IDataAccessAdapter adapter, CustomerCustomerDemoUpdateRequest request);
+        partial void OnBeforeCustomerCustomerDemoAddRequest(IDataAccessAdapter adapter, CustomerCustomerDemoAddRequest request);
+        partial void OnAfterCustomerCustomerDemoAddRequest(IDataAccessAdapter adapter, CustomerCustomerDemoAddRequest request);
+        partial void OnBeforeFetchCustomerCustomerDemoPkRequest(IDataAccessAdapter adapter, CustomerCustomerDemoPkRequest request, CustomerCustomerDemoEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchCustomerCustomerDemoPkRequest(IDataAccessAdapter adapter, CustomerCustomerDemoPkRequest request, CustomerCustomerDemoEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchCustomerCustomerDemoQueryCollectionRequest(IDataAccessAdapter adapter, CustomerCustomerDemoQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchCustomerCustomerDemoQueryCollectionRequest(IDataAccessAdapter adapter, CustomerCustomerDemoQueryCollectionRequest request, EntityCollection<CustomerCustomerDemoEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -126,20 +144,32 @@ CustomerCustomerDemoQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public CustomerCustomerDemoCollectionResponse Fetch(CustomerCustomerDemoQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<CustomerCustomerDemoEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchCustomerCustomerDemoQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchCustomerCustomerDemoQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new CustomerCustomerDemoCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
 
         public CustomerCustomerDemoResponse Fetch(CustomerCustomerDemoPkRequest request)
         {
@@ -152,8 +182,10 @@ CustomerCustomerDemoQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchCustomerCustomerDemoPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchCustomerCustomerDemoPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new CustomerCustomerDemoResponse(entity.ToDto());
                 }
             }
@@ -168,8 +200,10 @@ CustomerCustomerDemoQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeCustomerCustomerDemoAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterCustomerCustomerDemoAddRequest(adapter, request);
                     return new CustomerCustomerDemoResponse(entity.ToDto());
                 }
             }
@@ -185,26 +219,32 @@ CustomerCustomerDemoQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeCustomerCustomerDemoUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterCustomerCustomerDemoUpdateRequest(adapter, request);
                     return new CustomerCustomerDemoResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(CustomerCustomerDemoDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(CustomerCustomerDemoDeleteRequest request)
         {
             var entity = new CustomerCustomerDemoEntity();
             entity.CustomerId = request.CustomerId;
             entity.CustomerTypeId = request.CustomerTypeId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeCustomerCustomerDemoDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterCustomerCustomerDemoDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "customercustomerdemo-uc-map";
@@ -222,10 +262,21 @@ CustomerCustomerDemoQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class CustomerCustomerDemoEntityDtoMapperExtensions
+    internal static partial class CustomerCustomerDemoEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(CustomerCustomerDemoEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(CustomerCustomerDemoEntity entity, Hashtable seenObjects, Hashtable parents, CustomerCustomerDemo dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<CustomerCustomerDemoEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<CustomerCustomerDemoEntity> entities, CustomerCustomerDemoCollection dtos);
+        static partial void OnBeforeDtoToEntity(CustomerCustomerDemo dto);
+        static partial void OnAfterDtoToEntity(CustomerCustomerDemo dto, CustomerCustomerDemoEntity entity);
+        
         public static CustomerCustomerDemo ToDto(this CustomerCustomerDemoEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -233,6 +284,7 @@ CustomerCustomerDemoQueryCollectionRequest
 
         public static CustomerCustomerDemo ToDto(this CustomerCustomerDemoEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new CustomerCustomerDemo();
             if (entity != null)
             {
@@ -260,22 +312,27 @@ CustomerCustomerDemoQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static CustomerCustomerDemoCollection ToDtoCollection(this EntityCollection<CustomerCustomerDemoEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new CustomerCustomerDemoCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static CustomerCustomerDemoEntity FromDto(this CustomerCustomerDemo dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new CustomerCustomerDemoEntity();
 
             // Map entity properties
@@ -295,6 +352,7 @@ CustomerCustomerDemoQueryCollectionRequest
                 entity.CustomerDemographic = dto.CustomerDemographic.FromDto();
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

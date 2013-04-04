@@ -12,11 +12,29 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class OrderDetailServiceRepository : EntityServiceRepositoryBase<OrderDetail, OrderDetailEntity, OrderDetailEntityFactory, OrderDetailFieldIndex>, IOrderDetailServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeOrderDetailDeleteRequest(IDataAccessAdapter adapter, OrderDetailDeleteRequest request, OrderDetailEntity entity);
+        partial void OnAfterOrderDetailDeleteRequest(IDataAccessAdapter adapter, OrderDetailDeleteRequest request, OrderDetailEntity entity, ref bool deleted);
+        partial void OnBeforeOrderDetailUpdateRequest(IDataAccessAdapter adapter, OrderDetailUpdateRequest request);
+        partial void OnAfterOrderDetailUpdateRequest(IDataAccessAdapter adapter, OrderDetailUpdateRequest request);
+        partial void OnBeforeOrderDetailAddRequest(IDataAccessAdapter adapter, OrderDetailAddRequest request);
+        partial void OnAfterOrderDetailAddRequest(IDataAccessAdapter adapter, OrderDetailAddRequest request);
+        partial void OnBeforeFetchOrderDetailPkRequest(IDataAccessAdapter adapter, OrderDetailPkRequest request, OrderDetailEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchOrderDetailPkRequest(IDataAccessAdapter adapter, OrderDetailPkRequest request, OrderDetailEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchOrderDetailQueryCollectionRequest(IDataAccessAdapter adapter, OrderDetailQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchOrderDetailQueryCollectionRequest(IDataAccessAdapter adapter, OrderDetailQueryCollectionRequest request, EntityCollection<OrderDetailEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -129,20 +147,32 @@ OrderDetailQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public OrderDetailCollectionResponse Fetch(OrderDetailQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<OrderDetailEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchOrderDetailQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchOrderDetailQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new OrderDetailCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
 
         public OrderDetailResponse Fetch(OrderDetailPkRequest request)
         {
@@ -155,8 +185,10 @@ OrderDetailQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchOrderDetailPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchOrderDetailPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new OrderDetailResponse(entity.ToDto());
                 }
             }
@@ -171,8 +203,10 @@ OrderDetailQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeOrderDetailAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterOrderDetailAddRequest(adapter, request);
                     return new OrderDetailResponse(entity.ToDto());
                 }
             }
@@ -188,26 +222,32 @@ OrderDetailQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeOrderDetailUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterOrderDetailUpdateRequest(adapter, request);
                     return new OrderDetailResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(OrderDetailDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(OrderDetailDeleteRequest request)
         {
             var entity = new OrderDetailEntity();
             entity.OrderId = request.OrderId;
             entity.ProductId = request.ProductId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeOrderDetailDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterOrderDetailDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "orderdetail-uc-map";
@@ -225,10 +265,21 @@ OrderDetailQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class OrderDetailEntityDtoMapperExtensions
+    internal static partial class OrderDetailEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(OrderDetailEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(OrderDetailEntity entity, Hashtable seenObjects, Hashtable parents, OrderDetail dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<OrderDetailEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<OrderDetailEntity> entities, OrderDetailCollection dtos);
+        static partial void OnBeforeDtoToEntity(OrderDetail dto);
+        static partial void OnAfterDtoToEntity(OrderDetail dto, OrderDetailEntity entity);
+        
         public static OrderDetail ToDto(this OrderDetailEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -236,6 +287,7 @@ OrderDetailQueryCollectionRequest
 
         public static OrderDetail ToDto(this OrderDetailEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new OrderDetail();
             if (entity != null)
             {
@@ -266,22 +318,27 @@ OrderDetailQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static OrderDetailCollection ToDtoCollection(this EntityCollection<OrderDetailEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new OrderDetailCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static OrderDetailEntity FromDto(this OrderDetail dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new OrderDetailEntity();
 
             // Map entity properties
@@ -304,6 +361,7 @@ OrderDetailQueryCollectionRequest
                 entity.Product = dto.Product.FromDto();
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

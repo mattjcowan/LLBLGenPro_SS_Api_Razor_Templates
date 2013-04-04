@@ -14,7 +14,6 @@ namespace Northwind.Data.Dtos
 {
     #region Get Request/Response
   
-    //[Serializable]
     public abstract partial class GetRequest
     {
         protected GetRequest()
@@ -27,7 +26,6 @@ namespace Northwind.Data.Dtos
         public string Select { get; set; }
     }
 
-    //[Serializable]
     public abstract partial class GetRequest<TDto, TResponse> : GetRequest, IReturn<TResponse>
         where TResponse : GetResponse<TDto>
     {
@@ -36,7 +34,6 @@ namespace Northwind.Data.Dtos
         }
     }
 
-    //[Serializable]
     public abstract partial class GetCollectionRequest
     {
         protected GetCollectionRequest()
@@ -61,7 +58,6 @@ namespace Northwind.Data.Dtos
         public string Relations { get; set; }
     }
 
-    //[Serializable]
     public abstract partial class GetCollectionRequest<TDto, TResponse> : GetCollectionRequest, IReturn<TResponse>
         where TResponse: GetCollectionResponse<TDto>
     {
@@ -71,7 +67,6 @@ namespace Northwind.Data.Dtos
         }
     }
 
-    //[Serializable]
     public abstract partial class GetResponse<TDto>
     {
         protected GetResponse()
@@ -81,21 +76,18 @@ namespace Northwind.Data.Dtos
 
         protected GetResponse(TDto dto)
         {
-            Status = new ResponseStatus { Message = "Success" };
             Result = dto;
         }
 
         public TDto Result { get; set; }
 
-        public ResponseStatus Status { get; set; }
+        public ResponseStatus ResponseStatus { get; set; }
     }
     
-    //[Serializable]
     public abstract partial class GetCollectionResponse<TDto>
     {
         protected GetCollectionResponse()
         {
-            Status = new ResponseStatus { Message = "Success" };
         }
 
         protected GetCollectionResponse(IEnumerable<TDto> collection, int pageNumber, int pageSize, int totalItemCount): this()
@@ -109,14 +101,13 @@ namespace Northwind.Data.Dtos
 
         public PagingDetails Paging { get; set; }
 
-        public ResponseStatus Status { get; set; }
+        public ResponseStatus ResponseStatus { get; set; }
     }
   
     #endregion
 
     #region DataTable Response
   
-    //[Serializable]
     public partial class DataTableResponse
     {
         public DataTableResponse()
@@ -137,12 +128,10 @@ namespace Northwind.Data.Dtos
 
     #region Simple Request/Response
   
-    //[Serializable]
     public class SimpleRequest<TResponse> : GetRequest<TResponse, SimpleResponse<TResponse>>
     {
     }
 
-    //[Serializable]
     public class SimpleResponse<TDto> : GetResponse<TDto>
     {
     }
@@ -151,7 +140,6 @@ namespace Northwind.Data.Dtos
 
     #region Miscellaneous
   
-    //[Serializable]
     public partial class EntityMetaDetailsResponse
     {
         public Link[] Fields { get; set; }
@@ -159,7 +147,6 @@ namespace Northwind.Data.Dtos
         public Link[] Relations { get; set; }
     }
   
-    //[Serializable]
     public partial class Link
     {
         public Link()

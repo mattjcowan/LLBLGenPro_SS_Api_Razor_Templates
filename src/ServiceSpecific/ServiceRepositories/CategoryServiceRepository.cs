@@ -12,11 +12,31 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class CategoryServiceRepository : EntityServiceRepositoryBase<Category, CategoryEntity, CategoryEntityFactory, CategoryFieldIndex>, ICategoryServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeCategoryDeleteRequest(IDataAccessAdapter adapter, CategoryDeleteRequest request, CategoryEntity entity);
+        partial void OnAfterCategoryDeleteRequest(IDataAccessAdapter adapter, CategoryDeleteRequest request, CategoryEntity entity, ref bool deleted);
+        partial void OnBeforeCategoryUpdateRequest(IDataAccessAdapter adapter, CategoryUpdateRequest request);
+        partial void OnAfterCategoryUpdateRequest(IDataAccessAdapter adapter, CategoryUpdateRequest request);
+        partial void OnBeforeCategoryAddRequest(IDataAccessAdapter adapter, CategoryAddRequest request);
+        partial void OnAfterCategoryAddRequest(IDataAccessAdapter adapter, CategoryAddRequest request);
+        partial void OnBeforeFetchCategoryPkRequest(IDataAccessAdapter adapter, CategoryPkRequest request, CategoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchCategoryPkRequest(IDataAccessAdapter adapter, CategoryPkRequest request, CategoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnBeforeFetchCategoryUcCategoryNameRequest(IDataAccessAdapter adapter, CategoryUcCategoryNameRequest request, CategoryEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchCategoryUcCategoryNameRequest(IDataAccessAdapter adapter, CategoryUcCategoryNameRequest request, CategoryEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchCategoryQueryCollectionRequest(IDataAccessAdapter adapter, CategoryQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchCategoryQueryCollectionRequest(IDataAccessAdapter adapter, CategoryQueryCollectionRequest request, EntityCollection<CategoryEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -121,20 +141,32 @@ CategoryQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public CategoryCollectionResponse Fetch(CategoryQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<CategoryEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchCategoryQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchCategoryQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new CategoryCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
         public CategoryResponse Fetch(CategoryUcCategoryNameRequest request)
         {
             var entity = new CategoryEntity();
@@ -145,14 +177,18 @@ CategoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if (adapter.FetchEntityUsingUniqueConstraint(entity, entity.ConstructFilterForUCCategoryName(), prefetchPath, null, excludedIncludedFields))
+                var predicate = entity.ConstructFilterForUCCategoryName();
+                OnBeforeFetchCategoryUcCategoryNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
+                if (adapter.FetchEntityUsingUniqueConstraint(entity, predicate, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchCategoryUcCategoryNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
                     return new CategoryResponse(entity.ToDto());
                 }
             }
 
             throw new NullReferenceException();
         }
+        
 
         public CategoryResponse Fetch(CategoryPkRequest request)
         {
@@ -164,8 +200,10 @@ CategoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchCategoryPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchCategoryPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new CategoryResponse(entity.ToDto());
                 }
             }
@@ -180,8 +218,10 @@ CategoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeCategoryAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterCategoryAddRequest(adapter, request);
                     return new CategoryResponse(entity.ToDto());
                 }
             }
@@ -197,25 +237,31 @@ CategoryQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeCategoryUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterCategoryUpdateRequest(adapter, request);
                     return new CategoryResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(CategoryDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(CategoryDeleteRequest request)
         {
             var entity = new CategoryEntity();
             entity.CategoryId = request.CategoryId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeCategoryDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterCategoryDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "category-uc-map";
@@ -237,10 +283,21 @@ CategoryQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class CategoryEntityDtoMapperExtensions
+    internal static partial class CategoryEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(CategoryEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(CategoryEntity entity, Hashtable seenObjects, Hashtable parents, Category dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<CategoryEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<CategoryEntity> entities, CategoryCollection dtos);
+        static partial void OnBeforeDtoToEntity(Category dto);
+        static partial void OnAfterDtoToEntity(Category dto, CategoryEntity entity);
+        
         public static Category ToDto(this CategoryEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -248,6 +305,7 @@ CategoryQueryCollectionRequest
 
         public static Category ToDto(this CategoryEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new Category();
             if (entity != null)
             {
@@ -272,22 +330,27 @@ CategoryQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static CategoryCollection ToDtoCollection(this EntityCollection<CategoryEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new CategoryCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static CategoryEntity FromDto(this Category dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new CategoryEntity();
 
             // Map entity properties
@@ -305,6 +368,7 @@ CategoryQueryCollectionRequest
                     entity.Products.Add(relatedDto.FromDto());
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

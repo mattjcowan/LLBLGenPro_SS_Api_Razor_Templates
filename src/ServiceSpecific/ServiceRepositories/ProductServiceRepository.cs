@@ -12,11 +12,31 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class ProductServiceRepository : EntityServiceRepositoryBase<Product, ProductEntity, ProductEntityFactory, ProductFieldIndex>, IProductServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeProductDeleteRequest(IDataAccessAdapter adapter, ProductDeleteRequest request, ProductEntity entity);
+        partial void OnAfterProductDeleteRequest(IDataAccessAdapter adapter, ProductDeleteRequest request, ProductEntity entity, ref bool deleted);
+        partial void OnBeforeProductUpdateRequest(IDataAccessAdapter adapter, ProductUpdateRequest request);
+        partial void OnAfterProductUpdateRequest(IDataAccessAdapter adapter, ProductUpdateRequest request);
+        partial void OnBeforeProductAddRequest(IDataAccessAdapter adapter, ProductAddRequest request);
+        partial void OnAfterProductAddRequest(IDataAccessAdapter adapter, ProductAddRequest request);
+        partial void OnBeforeFetchProductPkRequest(IDataAccessAdapter adapter, ProductPkRequest request, ProductEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchProductPkRequest(IDataAccessAdapter adapter, ProductPkRequest request, ProductEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnBeforeFetchProductUcProductNameRequest(IDataAccessAdapter adapter, ProductUcProductNameRequest request, ProductEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchProductUcProductNameRequest(IDataAccessAdapter adapter, ProductUcProductNameRequest request, ProductEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchProductQueryCollectionRequest(IDataAccessAdapter adapter, ProductQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchProductQueryCollectionRequest(IDataAccessAdapter adapter, ProductQueryCollectionRequest request, EntityCollection<ProductEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -140,20 +160,32 @@ ProductQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public ProductCollectionResponse Fetch(ProductQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<ProductEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchProductQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchProductQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new ProductCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
         public ProductResponse Fetch(ProductUcProductNameRequest request)
         {
             var entity = new ProductEntity();
@@ -164,14 +196,18 @@ ProductQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if (adapter.FetchEntityUsingUniqueConstraint(entity, entity.ConstructFilterForUCProductName(), prefetchPath, null, excludedIncludedFields))
+                var predicate = entity.ConstructFilterForUCProductName();
+                OnBeforeFetchProductUcProductNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
+                if (adapter.FetchEntityUsingUniqueConstraint(entity, predicate, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchProductUcProductNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
                     return new ProductResponse(entity.ToDto());
                 }
             }
 
             throw new NullReferenceException();
         }
+        
 
         public ProductResponse Fetch(ProductPkRequest request)
         {
@@ -183,8 +219,10 @@ ProductQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchProductPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchProductPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new ProductResponse(entity.ToDto());
                 }
             }
@@ -199,8 +237,10 @@ ProductQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeProductAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterProductAddRequest(adapter, request);
                     return new ProductResponse(entity.ToDto());
                 }
             }
@@ -216,25 +256,31 @@ ProductQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeProductUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterProductUpdateRequest(adapter, request);
                     return new ProductResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(ProductDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(ProductDeleteRequest request)
         {
             var entity = new ProductEntity();
             entity.ProductId = request.ProductId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeProductDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterProductDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "product-uc-map";
@@ -256,10 +302,21 @@ ProductQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class ProductEntityDtoMapperExtensions
+    internal static partial class ProductEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(ProductEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(ProductEntity entity, Hashtable seenObjects, Hashtable parents, Product dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<ProductEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<ProductEntity> entities, ProductCollection dtos);
+        static partial void OnBeforeDtoToEntity(Product dto);
+        static partial void OnAfterDtoToEntity(Product dto, ProductEntity entity);
+        
         public static Product ToDto(this ProductEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -267,6 +324,7 @@ ProductQueryCollectionRequest
 
         public static Product ToDto(this ProductEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new Product();
             if (entity != null)
             {
@@ -307,22 +365,27 @@ ProductQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static ProductCollection ToDtoCollection(this EntityCollection<ProductEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new ProductCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static ProductEntity FromDto(this Product dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new ProductEntity();
 
             // Map entity properties
@@ -356,6 +419,7 @@ ProductQueryCollectionRequest
                 entity.Supplier = dto.Supplier.FromDto();
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

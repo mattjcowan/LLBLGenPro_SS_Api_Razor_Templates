@@ -12,11 +12,31 @@ using Northwind.Data.FactoryClasses;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.ServiceRepositories
 { 
     public partial class RegionServiceRepository : EntityServiceRepositoryBase<Region, RegionEntity, RegionEntityFactory, RegionFieldIndex>, IRegionServiceRepository
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
+        #region Class Extensibility Methods
+        partial void OnBeforeRegionDeleteRequest(IDataAccessAdapter adapter, RegionDeleteRequest request, RegionEntity entity);
+        partial void OnAfterRegionDeleteRequest(IDataAccessAdapter adapter, RegionDeleteRequest request, RegionEntity entity, ref bool deleted);
+        partial void OnBeforeRegionUpdateRequest(IDataAccessAdapter adapter, RegionUpdateRequest request);
+        partial void OnAfterRegionUpdateRequest(IDataAccessAdapter adapter, RegionUpdateRequest request);
+        partial void OnBeforeRegionAddRequest(IDataAccessAdapter adapter, RegionAddRequest request);
+        partial void OnAfterRegionAddRequest(IDataAccessAdapter adapter, RegionAddRequest request);
+        partial void OnBeforeFetchRegionPkRequest(IDataAccessAdapter adapter, RegionPkRequest request, RegionEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchRegionPkRequest(IDataAccessAdapter adapter, RegionPkRequest request, RegionEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnBeforeFetchRegionUcRegionDescriptionRequest(IDataAccessAdapter adapter, RegionUcRegionDescriptionRequest request, RegionEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchRegionUcRegionDescriptionRequest(IDataAccessAdapter adapter, RegionUcRegionDescriptionRequest request, RegionEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchRegionQueryCollectionRequest(IDataAccessAdapter adapter, RegionQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchRegionQueryCollectionRequest(IDataAccessAdapter adapter, RegionQueryCollectionRequest request, EntityCollection<RegionEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
         protected override EntityType EntityType
         {
@@ -120,20 +140,32 @@ RegionQueryCollectionRequest
             response.iTotalDisplayRecords = entities.Paging.TotalCount;
             return response;
         }
-
+    
         public RegionCollectionResponse Fetch(RegionQueryCollectionRequest request)
         {
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var entities = base.Fetch(request.Sort, request.Include, request.Filter,
-                                      request.Relations, request.Select, request.PageNumber,
-                                      request.PageSize, request.Limit, out totalItemCount);
+            var sortExpression = ConvertStringToSortExpression(request.Sort);
+            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
+            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+
+            EntityCollection<RegionEntity> entities;
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetchRegionQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                OnAfterFetchRegionQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
             var response = new RegionCollectionResponse(entities.ToDtoCollection(), request.PageNumber,
                                                           request.PageSize, totalItemCount);
-            return response;
+            return response;            
         }
-    
+
         public RegionResponse Fetch(RegionUcRegionDescriptionRequest request)
         {
             var entity = new RegionEntity();
@@ -144,14 +176,18 @@ RegionQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if (adapter.FetchEntityUsingUniqueConstraint(entity, entity.ConstructFilterForUCRegionDescription(), prefetchPath, null, excludedIncludedFields))
+                var predicate = entity.ConstructFilterForUCRegionDescription();
+                OnBeforeFetchRegionUcRegionDescriptionRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
+                if (adapter.FetchEntityUsingUniqueConstraint(entity, predicate, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchRegionUcRegionDescriptionRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
                     return new RegionResponse(entity.ToDto());
                 }
             }
 
             throw new NullReferenceException();
         }
+        
 
         public RegionResponse Fetch(RegionPkRequest request)
         {
@@ -163,8 +199,10 @@ RegionQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeFetchRegionPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                 if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
                 {
+                    OnAfterFetchRegionPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new RegionResponse(entity.ToDto());
                 }
             }
@@ -179,8 +217,10 @@ RegionQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                if(adapter.SaveEntity(entity, true))
+                OnBeforeRegionAddRequest(adapter, request);
+                if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterRegionAddRequest(adapter, request);
                     return new RegionResponse(entity.ToDto());
                 }
             }
@@ -196,25 +236,31 @@ RegionQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
+                OnBeforeRegionUpdateRequest(adapter, request);
                 if (adapter.SaveEntity(entity, true))
                 {
+                    OnAfterRegionUpdateRequest(adapter, request);
                     return new RegionResponse(entity.ToDto());
                 }
             }
 
             throw new InvalidOperationException();
         }
-
-        public bool Delete(RegionDeleteRequest request)
+        
+        public SimpleResponse<bool> Delete(RegionDeleteRequest request)
         {
             var entity = new RegionEntity();
             entity.RegionId = request.RegionId;
 
 
+            var deleted = false;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                return adapter.DeleteEntity(entity);
+                OnBeforeRegionDeleteRequest(adapter, request, entity);
+                deleted = adapter.DeleteEntity(entity);
+                OnAfterRegionDeleteRequest(adapter, request, entity, ref deleted);
             }
+            return new SimpleResponse<bool> { Result = deleted };
         }
 
         private const string UcMapCacheKey = "region-uc-map";
@@ -236,10 +282,21 @@ RegionQueryCollectionRequest
             }
             set { }
         }
+    
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
 
-    internal static class RegionEntityDtoMapperExtensions
+    internal static partial class RegionEntityDtoMapperExtensions
     {
+        static partial void OnBeforeEntityToDto(RegionEntity entity, Hashtable seenObjects, Hashtable parents);
+        static partial void OnAfterEntityToDto(RegionEntity entity, Hashtable seenObjects, Hashtable parents, Region dto);
+        static partial void OnBeforeEntityCollectionToDtoCollection(EntityCollection<RegionEntity> entities);
+        static partial void OnAfterEntityCollectionToDtoCollection(EntityCollection<RegionEntity> entities, RegionCollection dtos);
+        static partial void OnBeforeDtoToEntity(Region dto);
+        static partial void OnAfterDtoToEntity(Region dto, RegionEntity entity);
+        
         public static Region ToDto(this RegionEntity entity)
         {
             return entity.ToDto(new Hashtable(), new Hashtable());
@@ -247,6 +304,7 @@ RegionQueryCollectionRequest
 
         public static Region ToDto(this RegionEntity entity, Hashtable seenObjects, Hashtable parents)
         {
+            OnBeforeEntityToDto(entity, seenObjects, parents);
             var dto = new Region();
             if (entity != null)
             {
@@ -269,22 +327,27 @@ RegionQueryCollectionRequest
                 }
 
             }
+            
+            OnAfterEntityToDto(entity, seenObjects, parents, dto);
             return dto;
         }
-
+        
         public static RegionCollection ToDtoCollection(this EntityCollection<RegionEntity> entities)
         {
+            OnBeforeEntityCollectionToDtoCollection(entities);
             var seenObjects = new Hashtable();
             var collection = new RegionCollection();
             foreach (var entity in entities)
             {
                 collection.Add(entity.ToDto(seenObjects, new Hashtable()));
             }
+            OnAfterEntityCollectionToDtoCollection(entities, collection);
             return collection;
         }
 
         public static RegionEntity FromDto(this Region dto)
         {
+            OnBeforeDtoToEntity(dto);
             var entity = new RegionEntity();
 
             // Map entity properties
@@ -300,6 +363,7 @@ RegionQueryCollectionRequest
                     entity.Territories.Add(relatedDto.FromDto());
             }
 
+            OnAfterDtoToEntity(dto, entity);
             return entity;
         }
 

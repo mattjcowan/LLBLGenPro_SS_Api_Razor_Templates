@@ -1,73 +1,153 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Customer'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class CustomerService : ServiceBase<Customer, ICustomerServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetCustomerMetaRequest(CustomerMetaRequest request);
+        partial void OnAfterGetCustomerMetaRequest(CustomerMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostCustomerDataTableRequest(CustomerDataTableRequest request);
+        partial void OnAfterPostCustomerDataTableRequest(CustomerDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetCustomerQueryCollectionRequest(CustomerQueryCollectionRequest request);
+        partial void OnAfterGetCustomerQueryCollectionRequest(CustomerQueryCollectionRequest request, CustomerCollectionResponse response);
+        partial void OnBeforeGetCustomerUcCompanyNameRequest(CustomerUcCompanyNameRequest request);
+        partial void OnAfterGetCustomerUcCompanyNameRequest(CustomerUcCompanyNameRequest request, CustomerResponse response);
+        partial void OnBeforeGetCustomerPkRequest(CustomerPkRequest request);
+        partial void OnAfterGetCustomerPkRequest(CustomerPkRequest request, CustomerResponse response);
+        partial void OnBeforeCustomerAddRequest(CustomerAddRequest request);
+        partial void OnAfterCustomerAddRequest(CustomerAddRequest request, CustomerResponse response);
+        partial void OnBeforeCustomerUpdateRequest(CustomerUpdateRequest request);
+        partial void OnAfterCustomerUpdateRequest(CustomerUpdateRequest request, CustomerResponse response);
+        partial void OnBeforeCustomerDeleteRequest(CustomerDeleteRequest request);
+        partial void OnAfterCustomerDeleteRequest(CustomerDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Customer> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Customer' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CustomerMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetCustomerMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetCustomerMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Customer' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(CustomerDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostCustomerDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostCustomerDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Customer' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public CustomerCollectionResponse Get(CustomerQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetCustomerQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerQueryCollectionRequest(request, output);
+            return output;
         }
 
 
         //Unique constraint request go first (the order matters in service stack)
         //If the PK constraint was first, it could be used by ServiceStack instead
         //of the UC route (this is how Route order is controlled)
+        /// <summary>Gets a specific 'Customer' based on the 'UcCompanyName' unique constraint.</summary>
         public CustomerResponse Get(CustomerUcCompanyNameRequest request)
         {
-            return Repository.Fetch(request);
+            if(Validator != null)
+                Validator.ValidateAndThrow(new Customer { CompanyName = request.CompanyName }, "UcCompanyName");
+                
+            OnBeforeGetCustomerUcCompanyNameRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerUcCompanyNameRequest(request, output);
+            return output;
         }
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Customer' based on it's primary key.</summary>
         public CustomerResponse Get(CustomerPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Customer { CustomerId = request.CustomerId }, "PkRequest");
+
+            OnBeforeGetCustomerPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetCustomerPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CustomerResponse Any(CustomerAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeCustomerAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterCustomerAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public CustomerResponse Any(CustomerUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeCustomerUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterCustomerUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(CustomerDeleteRequest request)
+        public SimpleResponse<bool> Any(CustomerDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Customer { CustomerId = request.CustomerId }, ApplyTo.Delete);
+                
+            OnBeforeCustomerDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterCustomerDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Customer matching [CustomerId = {0}]  does not exist".Fmt(request.CustomerId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("customers/meta", Verbs = "GET")] // unique constraint filter
+    [Route("customers/meta", Verbs = "GET")]
     public partial class CustomerMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -202,6 +282,9 @@ namespace Northwind.Data.Services
     {
         public CustomerResponse() : base() { }
         public CustomerResponse(Customer category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class CustomerCollectionResponse : GetCollectionResponse<Customer>
@@ -209,6 +292,9 @@ namespace Northwind.Data.Services
         public CustomerCollectionResponse(): base(){}
         public CustomerCollectionResponse(IEnumerable<Customer> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

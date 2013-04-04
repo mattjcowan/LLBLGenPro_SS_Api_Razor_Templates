@@ -1,65 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.Text;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
 
 namespace Northwind.Data.Services
 {
     #region Service
+    /// <summary>Service class for the entity 'Order'.</summary>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class OrderService : ServiceBase<Order, IOrderServiceRepository>
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
-        //Meta request
+        #region Class Extensibility Methods
+        partial void OnBeforeGetOrderMetaRequest(OrderMetaRequest request);
+        partial void OnAfterGetOrderMetaRequest(OrderMetaRequest request, EntityMetaDetailsResponse response);
+        partial void OnBeforePostOrderDataTableRequest(OrderDataTableRequest request);
+        partial void OnAfterPostOrderDataTableRequest(OrderDataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGetOrderQueryCollectionRequest(OrderQueryCollectionRequest request);
+        partial void OnAfterGetOrderQueryCollectionRequest(OrderQueryCollectionRequest request, OrderCollectionResponse response);
+        partial void OnBeforeGetOrderPkRequest(OrderPkRequest request);
+        partial void OnAfterGetOrderPkRequest(OrderPkRequest request, OrderResponse response);
+        partial void OnBeforeOrderAddRequest(OrderAddRequest request);
+        partial void OnAfterOrderAddRequest(OrderAddRequest request, OrderResponse response);
+        partial void OnBeforeOrderUpdateRequest(OrderUpdateRequest request);
+        partial void OnAfterOrderUpdateRequest(OrderUpdateRequest request, OrderResponse response);
+        partial void OnBeforeOrderDeleteRequest(OrderDeleteRequest request);
+        partial void OnAfterOrderDeleteRequest(OrderDeleteRequest request, SimpleResponse<bool> deleted);
+        #endregion
+    
+        
+        public IValidator<Order> Validator { get; set; }
+        
+        /// <summary>Gets meta data information for the entity 'Order' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(OrderMetaRequest request)
         {
-            return Repository.GetEntityMetaDetails(this);
+            OnBeforeGetOrderMetaRequest(request);
+            var output = Repository.GetEntityMetaDetails(this);
+            OnAfterGetOrderMetaRequest(request, output);
+            return output;
         }
 
-        //DataTable request
+        /// <summary>Fetches 'Order' entities matching the request formatted specifically for the datatables.net jquery plugin.</summary>
         public DataTableResponse Post(OrderDataTableRequest request)
         {
-            return Repository.GetDataTableResponse(request);
+            OnBeforePostOrderDataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPostOrderDataTableRequest(request, output);
+            return output;
         }
 
-        //Collection/query request
+        /// <summary>Queries 'Order' entities using sorting, filtering, eager-loading, paging and more.</summary>
         public OrderCollectionResponse Get(OrderQueryCollectionRequest request)
         {
-            return Repository.Fetch(request);
+            OnBeforeGetOrderQueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetOrderQueryCollectionRequest(request, output);
+            return output;
         }
 
 
 
-        //Pk request
+        /// <summary>Gets a specific 'Order' based on it's primary key.</summary>
         public OrderResponse Get(OrderPkRequest request)
         {
-            return Repository.Fetch(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Order { OrderId = request.OrderId }, "PkRequest");
+
+            OnBeforeGetOrderPkRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGetOrderPkRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public OrderResponse Any(OrderAddRequest request)
         {
-            return Repository.Create(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Post);
+                
+            OnBeforeOrderAddRequest(request);
+
+            var output = Repository.Create(request);
+            OnAfterOrderAddRequest(request, output);
+            return output;
         }
 
         [Authenticate]
         public OrderResponse Any(OrderUpdateRequest request)
         {
-            return Repository.Update(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(request, ApplyTo.Put);
+                
+            OnBeforeOrderUpdateRequest(request);
+
+            var output = Repository.Update(request);
+            OnAfterOrderUpdateRequest(request, output);
+            return output;
         }
 
         [Authenticate]
-        public bool Any(OrderDeleteRequest request)
+        public SimpleResponse<bool> Any(OrderDeleteRequest request)
         {
-            return Repository.Delete(request);
+            if (Validator != null)
+                Validator.ValidateAndThrow(new Order { OrderId = request.OrderId }, ApplyTo.Delete);
+                
+            OnBeforeOrderDeleteRequest(request);
+            var output = Repository.Delete(request);
+            OnAfterOrderDeleteRequest(request, output);
+            if (!output.Result) {
+                throw HttpError.NotFound("Order matching [OrderId = {0}]  does not exist".Fmt(request.OrderId));
+            }
+            return output;
         }
+
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END 
+
     }
     #endregion
 
     #region Requests
-    [Route("orders/meta", Verbs = "GET")] // unique constraint filter
+    [Route("orders/meta", Verbs = "GET")]
     public partial class OrderMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
@@ -205,6 +276,9 @@ namespace Northwind.Data.Services
     {
         public OrderResponse() : base() { }
         public OrderResponse(Order category) : base(category) { }
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class OrderCollectionResponse : GetCollectionResponse<Order>
@@ -212,6 +286,9 @@ namespace Northwind.Data.Services
         public OrderCollectionResponse(): base(){}
         public OrderCollectionResponse(IEnumerable<Order> collection, int pageNumber, int pageSize, int totalItemCount) : 
             base(collection, pageNumber, pageSize, totalItemCount){}
+        
+	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

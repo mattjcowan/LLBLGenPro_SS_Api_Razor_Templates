@@ -5,11 +5,16 @@
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
 %>using <%=rootNameSpace%>.Dtos;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
 
 namespace <%=rootNameSpace%>.ServiceInterfaces
 {
     public interface IEntityServiceRepository<TDto>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
         where TDto : CommonDtoBase
     {
+    
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>
+
     }
 }
