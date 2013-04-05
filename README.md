@@ -26,7 +26,8 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
   **Example**: two sample responses for non-existent categorie (PK and UC)
   
   [/categories/99999][10-xml] ([xml][10-xml], [json][10-json])
-  [/categories/uc/categoryname/non-existent-category][11-xml] ([xml][11-xml], [json][11-json])
+
+  [/categories/uc/categoryname/non-existent][11-xml] ([xml][11-xml], [json][11-json])
 
 - Added simple validation to the auto-generated services, for all CREATE/UPDATE/DELETE methods
   The validation gathers up the errors and sends them back with the response.
@@ -128,5 +129,5 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
 [9-json]: http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=json
 [10-xml]: http://northwind.mattjcowan.com/categories/9999?format=xml
 [10-json]: http://northwind.mattjcowan.com/categories/9999?format=json
-[11-xml]: http://northwind.mattjcowan.com/categories/uc/categoryname/non-existent-category?format=xml
-[11-json]: http://northwind.mattjcowan.com/categories/uc/categoryname/non-existent-category?format=json
+[11-xml]: http://northwind.mattjcowan.com/categories/uc/categoryname/non-existent?format=xml
+[11-json]: http://northwind.mattjcowan.com/categories/uc/categoryname/non-existent?format=json
