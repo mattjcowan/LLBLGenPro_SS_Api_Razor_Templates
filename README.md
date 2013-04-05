@@ -33,16 +33,16 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
   
   **Example**: The following code is in response to a DELETE request with an invalid category id at URL: /categories/0
       
-      { "responseStatus" : { "errorCode" : "ValidationException",
-            "errors" : [ { "errorCode" : "GreaterThanOrEqual",
-                  "fieldName" : "CategoryId",
-                  "message" : "'Category Id' must be greater than or equal to '1'."
-                } ],
-            "message" : "Validation failed: \r\n -- 'Category Id' must be greater than or equal to '1'.",
-            "stackTrace" : null
-          },
-        "result" : false
-      }
+        { "responseStatus" : { "errorCode" : "ValidationException",
+              "errors" : [ { "errorCode" : "GreaterThanOrEqual",
+                    "fieldName" : "CategoryId",
+                    "message" : "'Category Id' must be greater than or equal to '1'."
+                  } ],
+              "message" : "Validation failed: \r\n -- 'Category Id' must be greater than or equal to '1'.",
+              "stackTrace" : null
+            },
+          "result" : false
+        }
 
 - Added partial methods throughout the generated code allowing anyone the ability to easily customize the code using partial classes
 
