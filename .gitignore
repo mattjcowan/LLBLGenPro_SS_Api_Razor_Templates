@@ -160,3 +160,6 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+/cligenerate.bat
+/cligenerate.log
