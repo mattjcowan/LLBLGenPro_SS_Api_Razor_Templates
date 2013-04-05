@@ -30,7 +30,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
 
         [Test]
         [ExpectedException(typeof(WebServiceException))]
-        public void Throws_Error_OnDelete_WithoutAuthentication()
+        public void Throws_Error_OnDelete_401_WithoutAuthentication()
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
 
         [Test]
         [ExpectedException(typeof(WebServiceException))]
-        public void Throws_Error_OnDelete_WithAuthentication_AndBadParameter()
+        public void Throws_Error_OnDelete_400_WithAuthentication_AndBadParameter()
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
                 Assert.That(responseStatus.Message, Is.Not.Null.And.Not.Empty);
                 Assert.That(responseStatus.Message, Is.StringStarting("Validation failed:"));
                 Assert.That(fieldErrors.Count, Is.EqualTo(1));
-                Assert.That(fieldErrors[0].ErrorCode, Is.EqualTo("GreaterThan"));
+                Assert.That(fieldErrors[0].ErrorCode, Is.StringStarting("GreaterThan"));
                 Assert.That(fieldErrors[0].FieldName, Is.EqualTo("CategoryId"));
 
                 throw;
@@ -93,14 +93,11 @@ namespace Northwind.Data.Services.Tests.ServicesTests
 
         [Test]
         [ExpectedException(typeof(WebServiceException))]
-        public void Throws_Error_OnDelete_WithAuthentication_AndBadParameter_UsingUrlMethod()
+        public void Throws_Error_OnDelete_400_WithAuthentication_AndBadParameter_UsingUrlMethod()
         {
             try
             {
                 var client = base.NewJsonServiceClient(true);
-
-                // as you can see though in the exception, it's easier when you deserialize the request immediately
-                //client.Post<SimpleRequest<bool>>("/categories/0/delete", null);
                 client.Post<object>("/categories/0/delete", null);
             }
             catch (WebServiceException webEx)
@@ -122,8 +119,41 @@ namespace Northwind.Data.Services.Tests.ServicesTests
                 Assert.That(responseStatus.Message, Is.Not.Null.And.Not.Empty);
                 Assert.That(responseStatus.Message, Is.StringStarting("Validation failed:"));
                 Assert.That(fieldErrors.Count, Is.EqualTo(1));
-                Assert.That(fieldErrors[0].ErrorCode, Is.EqualTo("GreaterThan"));
+                Assert.That(fieldErrors[0].ErrorCode, Is.StringStarting("GreaterThan"));
                 Assert.That(fieldErrors[0].FieldName, Is.EqualTo("CategoryId"));
+
+                throw;
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(WebServiceException))]
+        public void Throws_Error_OnDelete_404_WithAuthentication_AndNonExistingCategory()
+        {
+            try
+            {
+                var client = base.NewJsonServiceClient(true);
+                var response = client.Delete(new CategoryDeleteRequest { CategoryId = int.MaxValue });
+            }
+            catch (WebServiceException webEx)
+            {
+                var statusCode = webEx.StatusCode;
+                var statusDescription = webEx.StatusDescription;
+
+                Assert.That(statusCode, Is.EqualTo(404));
+                Assert.That(statusDescription, Is.EqualTo("NullReferenceException"));
+
+                // because we specified <object> as the response, the body is not yet deserialized
+                // you can use JsonObject to parse the response, but it's easier when you know and can use the type
+                var webExBody = JsonSerializer.DeserializeFromString<SimpleResponse<bool>>(webEx.ResponseBody);
+                var errorCode = webExBody.ResponseStatus.ErrorCode;
+                var responseStatus = webExBody.ResponseStatus;
+                var fieldErrors = webExBody.ResponseStatus.Errors;
+                Assert.That(errorCode, Is.EqualTo("NullReferenceException"));
+                Assert.That(responseStatus, Is.Not.Null);
+                Assert.That(responseStatus.Message, Is.Not.Null.And.Not.Empty);
+                Assert.That(responseStatus.Message, Is.StringStarting("Category matching"));
+                Assert.That(fieldErrors.Count, Is.EqualTo(0));
 
                 throw;
             }

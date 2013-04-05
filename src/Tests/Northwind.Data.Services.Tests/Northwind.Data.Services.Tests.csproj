@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="RestServiceTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesTests\BasicQueryTests.cs" />
     <Compile Include="ServicesTests\ConnectivityTests.cs" />
@@ -87,7 +86,6 @@
     <Compile Include="ServicesTests\IncludeQueryTests.cs" />
     <Compile Include="ServicesTests\SortQueryTests.cs" />
     <Compile Include="TestAppHost.cs" />
-    <Compile Include="TestBase2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -15,10 +15,8 @@ using DTOs = Northwind.Data.Services;
 namespace Northwind.Data.Services.Tests.ServicesTests
 {
     [TestFixture]
-    public class ConnectivityTests : RestServiceTestBase
+    public class ConnectivityTests : ServiceTestBase
     {
-        public const string LIVE_URL = "http://northwind.mattjcowan.com";
-
         [SetUp]
         public override void OnBeforeEachTest()
         {
@@ -33,7 +31,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Sample1_WithDtos_Recommended()
         {
-            var client = new JsonServiceClient(LIVE_URL);
+            var client = base.NewJsonServiceClient();
 
             // method 1: Dtos all the way
             var response1 = client.Get(new DTOs.EntitiesRequest());
@@ -44,7 +42,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
             AssertResponseIsValid(response2);
 
             // method 2: Dtos response, specify method, path / and request as object
-            var response3 = client.Send<DTOs.EntityCollectionResponse>("GET", "/entities", null);
+            var response3 = ((JsonServiceClient) client).Send<DTOs.EntityCollectionResponse>("GET", "/entities", null);
             AssertResponseIsValid(response3);
 
             Assert.That(response1.Result.Count, Is.EqualTo(response2.Result.Count));
@@ -54,7 +52,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Sample2_WithoutDtos()
         {
-            var client = new JsonServiceClient(LIVE_URL);
+            var client = base.NewJsonServiceClient();
             var webResponse = client.Get<HttpWebResponse>("/entities");
 
             using (var stream = webResponse.GetResponseStream())
@@ -76,7 +74,7 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Sample3_RawHttpRequests()
         {
-            const string uri = (LIVE_URL + "/entities");
+            var uri = (base.BaseUri + "/entities");
 
             // json from url
             var jsonString = uri.GetJsonFromUrl();

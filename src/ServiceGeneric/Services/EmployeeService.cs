@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Employee'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class EmployeeService : ServiceBase<Employee, IEmployeeServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetEmployeeMetaRequest(EmployeeMetaRequest request);
         partial void OnAfterGetEmployeeMetaRequest(EmployeeMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostEmployeeDataTableRequest(EmployeeDataTableRequest request);
@@ -40,6 +42,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Employee> Validator { get; set; }
+    
+        public EmployeeService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Employee' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(EmployeeMetaRequest request)
@@ -79,6 +86,8 @@ namespace Northwind.Data.Services
             OnBeforeGetEmployeePkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetEmployeePkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Employee matching [EmployeeId = {0}]  does not exist".Fmt(request.EmployeeId));
             return output;
         }
 
@@ -141,9 +150,8 @@ namespace Northwind.Data.Services
             OnBeforeEmployeeDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterEmployeeDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Employee matching [EmployeeId = {0}]  does not exist".Fmt(request.EmployeeId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Employee matching [EmployeeId = {0}]  does not exist".Fmt(request.EmployeeId));
             return output;
         }
 
@@ -328,7 +336,7 @@ namespace Northwind.Data.Services
         public EmployeeResponse(Employee category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class EmployeeCollectionResponse : GetCollectionResponse<Employee>
@@ -338,7 +346,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

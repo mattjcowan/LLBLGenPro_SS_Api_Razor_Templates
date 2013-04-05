@@ -39,6 +39,7 @@
   var authOnDelete = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnDeleteVerb");
 %>using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -58,6 +59,7 @@ namespace <%=rootNameSpace%>.Services
 <%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGet<%=entity.Name%>MetaRequest(<%=entity.Name%>MetaRequest request);
         partial void OnAfterGet<%=entity.Name%>MetaRequest(<%=entity.Name%>MetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePost<%=entity.Name%>DataTableRequest(<%=entity.Name%>DataTableRequest request);
@@ -79,6 +81,11 @@ namespace <%=rootNameSpace%>.Services
     
         <%if(includeValidation){%>
         public IValidator<<%=entity.Name%>> Validator { get; set; }<%}%>
+    
+        public <%=entity.Name%>Service()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity '<%=entity.Name%>' including field metadata and relation metadata.</summary>
 <%if(authOnGet){%>        [Authenticate]
@@ -119,12 +126,19 @@ namespace <%=rootNameSpace%>.Services
 <%}%>        /// <summary>Gets a specific '<%=entity.Name%>' based on the '<%=uc.Name%>' unique constraint.</summary>
         public <%=entity.Name%>Response Get(<%=entity.Name%><%=uc.Name%>Request request)
         {
-<%if(includeValidation){%>            if(Validator != null)
-                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=string.Join(", ", uc.FieldsAsString.Split(',').Select(f=>string.Format("{0} = request.{0}", f)).ToArray())%> }, "<%=uc.Name%>");<%}%>
+<%
+var pkGetUcString = string.Join(", ", uc.FieldsAsString.Split(',').Select(f=>string.Format("{0} = request.{0}", f)).ToArray());
+var pkidxuc = 0;
+var pkGetUcString2 = string.Join(", ", uc.FieldsAsString.Split(',').Select(f=>string.Format("{0} = {{" + pkidxuc++ + "}}", f)).ToArray());
+var pkGetUcString3 = string.Join(", ", uc.FieldsAsString.Split(',').Select(f=>string.Format("request.{0}", f)).ToArray());
+if(includeValidation){%>            if(Validator != null)
+                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=pkGetUcString%> }, "<%=uc.Name%>");<%}%>
                 
             OnBeforeGet<%=entity.Name%><%=uc.Name%>Request(request);
             var output = Repository.Fetch(request);
             OnAfterGet<%=entity.Name%><%=uc.Name%>Request(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "<%=entity.Name%> matching [<%=pkGetUcString2%>]  does not exist".Fmt(<%=pkGetUcString3%>));
             return output;
         }
 <%}}%>
@@ -133,12 +147,19 @@ namespace <%=rootNameSpace%>.Services
 <%}%>        /// <summary>Gets a specific '<%=entity.Name%>' based on it's primary key.</summary>
         public <%=entity.Name%>Response Get(<%=entity.Name%>PkRequest request)
         {
-<%if(includeValidation){%>            if (Validator != null)
-                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=string.Join(", ", pkFields.Select(f=>string.Format("{0} = request.{0}", f)).ToArray())%> }, "PkRequest");<%}%>
+<%
+var pkGetString = string.Join(", ", pkFields.Select(f=>string.Format("{0} = request.{0}", f)).ToArray());
+var pkidx = 0;
+var pkGetString2 = string.Join(", ", pkFields.Select(f=>string.Format("{0} = {{" + pkidx++ + "}}", f)).ToArray());
+var pkGetString3 = string.Join(", ", pkFields.Select(f=>string.Format("request.{0}", f)).ToArray());
+if(includeValidation){%>            if (Validator != null)
+                Validator.ValidateAndThrow(new <%=entity.Name%> { <%=pkGetString%> }, "PkRequest");<%}%>
 
             OnBeforeGet<%=entity.Name%>PkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGet<%=entity.Name%>PkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "<%=entity.Name%> matching [<%=pkGetString2%>]  does not exist".Fmt(<%=pkGetString3%>));
             return output;
         }
 
@@ -203,8 +224,8 @@ namespace <%=rootNameSpace%>.Services
         {
 <%
 var pkDeleteString = string.Join(", ", pkFields.Select(f=>string.Format("{0} = request.{0}", f)).ToArray());
-var pkidx = 0;
-var pkDeleteString2 = string.Join(", ", pkFields.Select(f=>string.Format("{0} = {{" + pkidx++ + "}}", f)).ToArray());
+var pkidx2 = 0;
+var pkDeleteString2 = string.Join(", ", pkFields.Select(f=>string.Format("{0} = {{" + pkidx2++ + "}}", f)).ToArray());
 var pkDeleteString3 = string.Join(", ", pkFields.Select(f=>string.Format("request.{0}", f)).ToArray());
 if(includeValidation){%>            if (Validator != null)
                 Validator.ValidateAndThrow(new <%=entity.Name%> { <%=pkDeleteString%> }, ApplyTo.Delete);<%}%>
@@ -212,9 +233,8 @@ if(includeValidation){%>            if (Validator != null)
             OnBefore<%=entity.Name%>DeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfter<%=entity.Name%>DeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("<%=entity.Name%> matching [<%=pkDeleteString2%>]  does not exist".Fmt(<%=pkDeleteString3%>));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "<%=entity.Name%> matching [<%=pkDeleteString2%>]  does not exist".Fmt(<%=pkDeleteString3%>));
             return output;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'EmployeeTerritory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class EmployeeTerritoryService : ServiceBase<EmployeeTerritory, IEmployeeTerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetEmployeeTerritoryMetaRequest(EmployeeTerritoryMetaRequest request);
         partial void OnAfterGetEmployeeTerritoryMetaRequest(EmployeeTerritoryMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostEmployeeTerritoryDataTableRequest(EmployeeTerritoryDataTableRequest request);
@@ -40,6 +42,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<EmployeeTerritory> Validator { get; set; }
+    
+        public EmployeeTerritoryService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'EmployeeTerritory' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(EmployeeTerritoryMetaRequest request)
@@ -79,6 +86,8 @@ namespace Northwind.Data.Services
             OnBeforeGetEmployeeTerritoryPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetEmployeeTerritoryPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "EmployeeTerritory matching [EmployeeId = {0}, TerritoryId = {1}]  does not exist".Fmt(request.EmployeeId, request.TerritoryId));
             return output;
         }
 
@@ -117,9 +126,8 @@ namespace Northwind.Data.Services
             OnBeforeEmployeeTerritoryDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterEmployeeTerritoryDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("EmployeeTerritory matching [EmployeeId = {0}, TerritoryId = {1}]  does not exist".Fmt(request.EmployeeId, request.TerritoryId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "EmployeeTerritory matching [EmployeeId = {0}, TerritoryId = {1}]  does not exist".Fmt(request.EmployeeId, request.TerritoryId));
             return output;
         }
 
@@ -208,7 +216,7 @@ namespace Northwind.Data.Services
         public EmployeeTerritoryResponse(EmployeeTerritory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class EmployeeTerritoryCollectionResponse : GetCollectionResponse<EmployeeTerritory>
@@ -218,7 +226,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

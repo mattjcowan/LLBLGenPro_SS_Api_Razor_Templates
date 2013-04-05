@@ -89,28 +89,33 @@ foreach(var pkField in pkFields){if(!string.IsNullOrEmpty(valFieldDict[pkField])
                 {<%
 foreach(var f in entityFields.Where(x => !x.IsPartOfIdentifyingFields)){if(!string.IsNullOrEmpty(valFieldDict[f.Name])){%>
                     <%=valFieldDict[f.Name]%>;<%}}%>
-
+<%
+if(1==2){/*disabling relation validation at this point*/%>
                     //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
+                    //TODO: Performance impact is too large at the moment, commenting out validators on relations
+                    //TODO: Also, to avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
                     //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
                     //      previously validated objects for each type of validator (TBD).
-<%foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+<%
+  foreach(var relationshipInfo in allRelationshipInfosToTraverse)
   {
     if(relationshipInfo.NavigatorIsHidden) continue;
     switch(relationshipInfo.RelationshipType)
     {
       case EntityRelationshipType.ManyToOne:
       case EntityRelationshipType.OneToOne:
-%>                    if(!ParentValidators.Contains("<%=relationshipInfo.RelatedEntity.Name%>Validator")) 
-                      RuleFor(x => x.<%=relationshipInfo.Navigator%>).SetValidator(new <%=relationshipInfo.RelatedEntity.Name%>Validator(new List<string>( ParentValidators ) { { "<%=entity.Name%>Validator" } })).When(x => x.<%=relationshipInfo.Navigator%> != null);
+%>                    //if(!ParentValidators.Contains("<%=relationshipInfo.RelatedEntity.Name%>Validator")) 
+                      //RuleFor(x => x.<%=relationshipInfo.Navigator%>).SetValidator(new <%=relationshipInfo.RelatedEntity.Name%>Validator(new List<string>( ParentValidators ) { { "<%=entity.Name%>Validator" } })).When(x => x.<%=relationshipInfo.Navigator%> != null);
 <%          break;
       case EntityRelationshipType.OneToMany:
       case EntityRelationshipType.ManyToMany:
-%>                    if(!ParentValidators.Contains("<%=relationshipInfo.RelatedEntity.Name%>Validator")) 
-                      RuleFor(x => x.<%=relationshipInfo.Navigator%>).SetCollectionValidator(new <%=relationshipInfo.RelatedEntity.Name%>Validator(new List<string>( ParentValidators ) { { "<%=entity.Name%>Validator" } })).When(x => x.<%=relationshipInfo.Navigator%> != null);
+%>                    //if(!ParentValidators.Contains("<%=relationshipInfo.RelatedEntity.Name%>Validator")) 
+                      //RuleFor(x => x.<%=relationshipInfo.Navigator%>).SetCollectionValidator(new <%=relationshipInfo.RelatedEntity.Name%>Validator(new List<string>( ParentValidators ) { { "<%=entity.Name%>Validator" } })).When(x => x.<%=relationshipInfo.Navigator%> != null);
 <%          break;
     }
-  }%>                });
+  }
+}
+%>                });
 
 <%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAfterRules", @"//")%>
 

@@ -57,15 +57,6 @@ namespace Northwind.Data.Validators
             //Common Validation rules for POST and PUT requests (CREATE and UPDATE)
             RuleSet(ApplyTo.Post | ApplyTo.Put, () =>
                 {
-
-                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
-                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
-                    //      previously validated objects for each type of validator (TBD).
-                    if(!ParentValidators.Contains("CustomerValidator")) 
-                      RuleFor(x => x.Customer).SetValidator(new CustomerValidator(new List<string>( ParentValidators ) { { "CustomerCustomerDemoValidator" } })).When(x => x.Customer != null);
-                    if(!ParentValidators.Contains("CustomerDemographicValidator")) 
-                      RuleFor(x => x.CustomerDemographic).SetValidator(new CustomerDemographicValidator(new List<string>( ParentValidators ) { { "CustomerCustomerDemoValidator" } })).When(x => x.CustomerDemographic != null);
                 });
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAfterRules 
@@ -74,7 +65,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                     
 
     }
 }

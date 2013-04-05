@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Customer'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class CustomerService : ServiceBase<Customer, ICustomerServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetCustomerMetaRequest(CustomerMetaRequest request);
         partial void OnAfterGetCustomerMetaRequest(CustomerMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostCustomerDataTableRequest(CustomerDataTableRequest request);
@@ -42,6 +44,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Customer> Validator { get; set; }
+    
+        public CustomerService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Customer' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CustomerMetaRequest request)
@@ -83,6 +90,8 @@ namespace Northwind.Data.Services
             OnBeforeGetCustomerUcCompanyNameRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetCustomerUcCompanyNameRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Customer matching [CompanyName = {0}]  does not exist".Fmt(request.CompanyName));
             return output;
         }
 
@@ -96,6 +105,8 @@ namespace Northwind.Data.Services
             OnBeforeGetCustomerPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetCustomerPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Customer matching [CustomerId = {0}]  does not exist".Fmt(request.CustomerId));
             return output;
         }
 
@@ -134,9 +145,8 @@ namespace Northwind.Data.Services
             OnBeforeCustomerDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterCustomerDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Customer matching [CustomerId = {0}]  does not exist".Fmt(request.CustomerId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Customer matching [CustomerId = {0}]  does not exist".Fmt(request.CustomerId));
             return output;
         }
 
@@ -284,7 +294,7 @@ namespace Northwind.Data.Services
         public CustomerResponse(Customer category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class CustomerCollectionResponse : GetCollectionResponse<Customer>
@@ -294,7 +304,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

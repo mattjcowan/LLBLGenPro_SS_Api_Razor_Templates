@@ -12,7 +12,7 @@ using DTOs = Northwind.Data.Services;
 namespace Northwind.Data.Services.Tests.ServicesTests
 {
     [TestFixture]
-    public class PagingQueryTests: RestServiceTestBase
+    public class PagingQueryTests : ServiceTestBase
     {
         [SetUp]
         public override void OnBeforeEachTest()
@@ -26,8 +26,9 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_customers_paged()
         {
-            var response1 = ExecutePath<CustomerCollectionResponse>(HttpMethods.Get, "/customers?sort=customerid&pageNumber=1&pageSize=5", new CustomerQueryCollectionRequest());
-            var response2 = ExecutePath<CustomerCollectionResponse>(HttpMethods.Get, "/customers?sort=customerid&pageNumber=2&pageSize=5", new CustomerQueryCollectionRequest());
+            var client = base.NewJsonServiceClient(false);
+            var response1 = client.Get(new CustomerQueryCollectionRequest { Sort = "customerid", PageNumber = 1, PageSize = 5 });
+            var response2 = client.Get(new CustomerQueryCollectionRequest { Sort = "customerid", PageNumber = 2, PageSize = 5 });
 
             var f1 = response1.Result.First();
             var f2 = response2.Result.First();

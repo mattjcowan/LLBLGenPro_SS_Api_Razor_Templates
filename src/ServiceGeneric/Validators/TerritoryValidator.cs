@@ -56,15 +56,6 @@ namespace Northwind.Data.Validators
                 {
                     RuleFor(y => y.TerritoryDescription).NotEmpty().Length(1, 50);
                     RuleFor(y => y.RegionId).GreaterThanOrEqualTo(0);
-
-                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
-                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
-                    //      previously validated objects for each type of validator (TBD).
-                    if(!ParentValidators.Contains("EmployeeTerritoryValidator")) 
-                      RuleFor(x => x.EmployeeTerritories).SetCollectionValidator(new EmployeeTerritoryValidator(new List<string>( ParentValidators ) { { "TerritoryValidator" } })).When(x => x.EmployeeTerritories != null);
-                    if(!ParentValidators.Contains("RegionValidator")) 
-                      RuleFor(x => x.Region).SetValidator(new RegionValidator(new List<string>( ParentValidators ) { { "TerritoryValidator" } })).When(x => x.Region != null);
                 });
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAfterRules 
@@ -73,7 +64,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                     
 
     }
 }

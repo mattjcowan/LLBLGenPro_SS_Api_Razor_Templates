@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -12,7 +14,7 @@ using DTOs = Northwind.Data.Services;
 namespace Northwind.Data.Services.Tests.ServicesTests
 {
     [TestFixture]
-    public class BasicQueryTests: RestServiceTestBase
+    public class BasicQueryTests: ServiceTestBase
     {
         [SetUp]
         public override void OnBeforeEachTest()
@@ -23,17 +25,61 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         }
 
         [Test]
+        public void Can_GET_all_categories_using_url()
+        {
+            //See ConnectivityTests for the DTO way to do it
+            //Shorthand version of the below
+            var client = base.NewJsonServiceClient(); 
+            var responseStr = (base.BaseUri + "/categories").GetJsonFromUrl();
+
+            // to parse, you can either use JsonObject (when you have no access to a typed api), or deserialize to a compatible class
+            var response = JsonSerializer.DeserializeFromString<CategoryCollectionResponse>(responseStr);
+  
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.ResponseStatus, Is.Null);
+
+            var categories = response.Result;
+            Assert.That(categories, Is.Not.Null);
+            Assert.That(categories.Count, Is.Positive);
+        }
+
+        [Test]
+        public void Can_GET_all_categories_using_web_response()
+        {
+            //See ConnectivityTests for the DTO way to do it
+            //Shorthand version of the below
+            var client = base.NewJsonServiceClient();
+            var webResponse = client.Get<HttpWebResponse>("/categories");
+
+            var dtoStr = string.Empty;
+            using (var stream = webResponse.GetResponseStream())
+            using (var sr = new StreamReader(stream))
+            {
+                dtoStr = sr.ReadToEnd();
+            }
+
+            // to parse, you can either use JsonObject (when you have no access to a typed api), or deserialize to a compatible class
+            var response = JsonSerializer.DeserializeFromString<CategoryCollectionResponse>(dtoStr);
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.ResponseStatus, Is.Null);
+
+            var categories = response.Result;
+            Assert.That(categories, Is.Not.Null);
+            Assert.That(categories.Count, Is.Positive);
+        }
+
+
+        [Test]
         public void Can_GET_all_categories()
         {
             //See ConnectivityTests for the DTO way to do it
             //Shorthand version of the below
-            //var client = new JsonServiceClient(LIVE_URL);
-            //var response = client.Get(new CategoryQueryCollectionRequest());
+            var client = base.NewJsonServiceClient();
+            var response = client.Get(new CategoryQueryCollectionRequest());
 
-            var response = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories", new CategoryQueryCollectionRequest());
             Assert.That(response, Is.Not.Null);
-            Assert.That(response.ResponseStatus, Is.Not.Null);
-            Assert.That(response.ResponseStatus.Message, Is.EqualTo("Success"));
+            Assert.That(response.ResponseStatus, Is.Null);
 
             var categories = response.Result;
             Assert.That(categories, Is.Not.Null);
@@ -43,11 +89,11 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_category_using_pk()
         {
-            var response = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories", new CategoryQueryCollectionRequest());
+            var client = base.NewJsonServiceClient();
+            var response = client.Get(new CategoryQueryCollectionRequest());
             var category1 = response.Result.First();
 
-            // Shorthand with live site: var response2 = client.Get(new CategoryPkRequest { CategoryId = category1.CategoryId });
-            var response2 = ExecutePath<CategoryResponse>(HttpMethods.Get, "/categories/{0}".FormatWith(category1.CategoryId), null);
+            var response2 = client.Get(new CategoryPkRequest { CategoryId = category1.CategoryId });
             var category2 = response2.Result;
 
             Assert.That(category2.CategoryId, Is.EqualTo(category1.CategoryId));
@@ -57,11 +103,12 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_category_using_uniqueconstraint()
         {
-            var response = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories", new CategoryQueryCollectionRequest());
+
+            var client = base.NewJsonServiceClient();
+            var response = client.Get(new CategoryQueryCollectionRequest());
             var category1 = response.Result.First();
 
-            // Shorthand with live site: var response2 = client.Get(new DTOs.CategoryUcCategoryNameRequest { CategoryName = category1.CategoryName });
-            var response2 = ExecutePath<CategoryResponse>(HttpMethods.Get, "/categories/uc/categoryname/{0}".FormatWith(category1.CategoryName), null);
+            var response2 = client.Get(new CategoryUcCategoryNameRequest { CategoryName = category1.CategoryName });
             var category2 = response2.Result;
 
             Assert.That(category2.CategoryId, Is.EqualTo(category1.CategoryId));

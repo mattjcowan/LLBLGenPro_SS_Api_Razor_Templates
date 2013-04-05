@@ -13,7 +13,7 @@ using DTOs = Northwind.Data.Services;
 namespace Northwind.Data.Services.Tests.ServicesTests
 {
     [TestFixture]
-    public class FilterQueryTests: RestServiceTestBase
+    public class FilterQueryTests: ServiceTestBase
     {
         [SetUp]
         public override void OnBeforeEachTest()
@@ -26,25 +26,23 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_categories_with_compound_filter()
         {
+            var client = base.NewJsonServiceClient(false);
+
             var filter1 = "description:lk:*and*";
-            var response1 = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories?select=categoryid&filter=" + filter1, new CategoryQueryCollectionRequest());
+            var response1 = client.Get(new CategoryQueryCollectionRequest { Select = "categoryid", Filter = filter1});
             var categoryIds1 = response1.Result.Select(c => c.CategoryId).ToArray();
-            //Trace.WriteLine("categoryIds1: " + JsonSerializer.SerializeToString(categoryIds1));
 
             var filter2 = "categoryname:eq:condiments";
-            var response2 = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories?select=categoryid&filter=" + filter2, new CategoryQueryCollectionRequest());
+            var response2 = client.Get(new CategoryQueryCollectionRequest { Select = "categoryid", Filter = filter2 });
             var categoryIds2 = response2.Result.Select(c => c.CategoryId).ToArray();
-            //Trace.WriteLine("categoryIds2: " + JsonSerializer.SerializeToString(categoryIds2));
 
             var filter3 = "categoryname:neq:beverages";
-            var response3 = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories?select=categoryid&filter=" + filter3, new CategoryQueryCollectionRequest());
+            var response3 = client.Get(new CategoryQueryCollectionRequest { Select = "categoryid", Filter = filter3 });
             var categoryIds3 = response3.Result.Select(c => c.CategoryId).ToArray();
-            //Trace.WriteLine("categoryIds3: " + JsonSerializer.SerializeToString(categoryIds3));
 
             var filter4 = "(|(" + filter1 + ")(^(" + filter2 + ")(" + filter3 + ")))";
-            var response4 = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories?select=categoryid&filter=" + filter4, new CategoryQueryCollectionRequest());
+            var response4 = client.Get(new CategoryQueryCollectionRequest { Select = "categoryid", Filter = filter4 });
             var categoryIds4 = response4.Result.Select(c => c.CategoryId).ToArray();
-            //Trace.WriteLine("categoryIds4: " + JsonSerializer.SerializeToString(categoryIds4));
 
             Assert.That(categoryIds1.Length, Is.Positive);
             Assert.That(categoryIds2.Length, Is.Positive);
@@ -52,7 +50,6 @@ namespace Northwind.Data.Services.Tests.ServicesTests
             Assert.That(categoryIds4.Length, Is.Positive);
 
             var commonCats23 = categoryIds2.Where(categoryIds3.Contains).ToArray();
-            //Trace.WriteLine("commonCats23: " + JsonSerializer.SerializeToString(commonCats23));
 
             //Only meaningful IF 2 clauses in OR have items NOT in common
             Assert.That(categoryIds1.All(categoryIds4.Contains), Is.True);

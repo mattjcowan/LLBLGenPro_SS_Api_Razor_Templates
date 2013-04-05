@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Order'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class OrderService : ServiceBase<Order, IOrderServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetOrderMetaRequest(OrderMetaRequest request);
         partial void OnAfterGetOrderMetaRequest(OrderMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostOrderDataTableRequest(OrderDataTableRequest request);
@@ -40,6 +42,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Order> Validator { get; set; }
+    
+        public OrderService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Order' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(OrderMetaRequest request)
@@ -79,6 +86,8 @@ namespace Northwind.Data.Services
             OnBeforeGetOrderPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetOrderPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Order matching [OrderId = {0}]  does not exist".Fmt(request.OrderId));
             return output;
         }
 
@@ -117,9 +126,8 @@ namespace Northwind.Data.Services
             OnBeforeOrderDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterOrderDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Order matching [OrderId = {0}]  does not exist".Fmt(request.OrderId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Order matching [OrderId = {0}]  does not exist".Fmt(request.OrderId));
             return output;
         }
 
@@ -278,7 +286,7 @@ namespace Northwind.Data.Services
         public OrderResponse(Order category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class OrderCollectionResponse : GetCollectionResponse<Order>
@@ -288,7 +296,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

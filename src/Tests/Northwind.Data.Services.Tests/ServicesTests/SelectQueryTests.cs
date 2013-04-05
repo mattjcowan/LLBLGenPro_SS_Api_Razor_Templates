@@ -12,7 +12,7 @@ using DTOs = Northwind.Data.Services;
 namespace Northwind.Data.Services.Tests.ServicesTests
 {
     [TestFixture]
-    public class SelectQueryTests: RestServiceTestBase
+    public class SelectQueryTests : ServiceTestBase
     {
         [SetUp]
         public override void OnBeforeEachTest()
@@ -25,7 +25,8 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_select_fields_for_categories()
         {
-            var response = ExecutePath<CategoryCollectionResponse>(HttpMethods.Get, "/categories?select=categoryid,description", new CategoryQueryCollectionRequest());
+            var client = base.NewJsonServiceClient(false);
+            var response = client.Get(new CategoryQueryCollectionRequest { Select = "categoryid,description" });
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Result, Is.Not.Null);

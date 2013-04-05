@@ -60,13 +60,6 @@ namespace Northwind.Data.Validators
                 {
                     RuleFor(y => y.CompanyName).NotEmpty().Length(1, 40);
                     RuleFor(y => y.Phone).Length(0, 24).Unless(y => y.Phone == null);
-
-                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
-                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
-                    //      previously validated objects for each type of validator (TBD).
-                    if(!ParentValidators.Contains("OrderValidator")) 
-                      RuleFor(x => x.Orders).SetCollectionValidator(new OrderValidator(new List<string>( ParentValidators ) { { "ShipperValidator" } })).When(x => x.Orders != null);
                 });
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAfterRules 
@@ -75,7 +68,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                     
 
     }
 }

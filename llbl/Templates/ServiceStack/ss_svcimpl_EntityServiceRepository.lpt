@@ -51,6 +51,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 <%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
     {
         #region Class Extensibility Methods
+        partial void OnCreateRepository();
         partial void OnBefore<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity);
         partial void OnAfter<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity, ref bool deleted);
         partial void OnBefore<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
@@ -68,9 +69,15 @@ namespace <%=rootNameSpace%>.ServiceRepositories
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
+        
         protected override EntityType EntityType
         {
             get { return EntityType.<%=entity.Name%>Entity; }
+        }
+    
+        public <%=entity.Name%>ServiceRepository()
+        {
+            OnCreateRepository();
         }
 
         // Description for parameters: http://datatables.net/usage/server-side
@@ -242,8 +249,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
                     return new <%=entity.Name%>Response(entity.ToDto());
                 }
             }
-
-            throw new NullReferenceException();
+            return new <%=entity.Name%>Response(null);
         }
         
 <%}%>
@@ -265,8 +271,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
                     return new <%=entity.Name%>Response(entity.ToDto());
                 }
             }
-
-            throw new NullReferenceException();
+            return new <%=entity.Name%>Response(null);
         }
 
         public <%=entity.Name%>Response Create(<%=entity.Name%>AddRequest request)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'OrderDetail'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class OrderDetailService : ServiceBase<OrderDetail, IOrderDetailServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetOrderDetailMetaRequest(OrderDetailMetaRequest request);
         partial void OnAfterGetOrderDetailMetaRequest(OrderDetailMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostOrderDetailDataTableRequest(OrderDetailDataTableRequest request);
@@ -40,6 +42,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<OrderDetail> Validator { get; set; }
+    
+        public OrderDetailService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'OrderDetail' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(OrderDetailMetaRequest request)
@@ -79,6 +86,8 @@ namespace Northwind.Data.Services
             OnBeforeGetOrderDetailPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetOrderDetailPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "OrderDetail matching [OrderId = {0}, ProductId = {1}]  does not exist".Fmt(request.OrderId, request.ProductId));
             return output;
         }
 
@@ -117,9 +126,8 @@ namespace Northwind.Data.Services
             OnBeforeOrderDetailDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterOrderDetailDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("OrderDetail matching [OrderId = {0}, ProductId = {1}]  does not exist".Fmt(request.OrderId, request.ProductId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "OrderDetail matching [OrderId = {0}, ProductId = {1}]  does not exist".Fmt(request.OrderId, request.ProductId));
             return output;
         }
 
@@ -226,7 +234,7 @@ namespace Northwind.Data.Services
         public OrderDetailResponse(OrderDetail category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class OrderDetailCollectionResponse : GetCollectionResponse<OrderDetail>
@@ -236,7 +244,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

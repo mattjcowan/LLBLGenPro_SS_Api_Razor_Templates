@@ -12,7 +12,7 @@ using DTOs = Northwind.Data.Services;
 namespace Northwind.Data.Services.Tests.ServicesTests
 {
     [TestFixture]
-    public class IncludeQueryTests: RestServiceTestBase
+    public class IncludeQueryTests: ServiceTestBase
     {
         [SetUp]
         public override void OnBeforeEachTest()
@@ -25,10 +25,11 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_customers_with_orders()
         {
-            var response = ExecutePath<CustomerCollectionResponse>(HttpMethods.Get, "/customers?include=orders", new CustomerQueryCollectionRequest());
+            var client = base.NewJsonServiceClient(false);
+            var response = client.Get(new CustomerQueryCollectionRequest { Include = "orders" });
+
             Assert.That(response, Is.Not.Null);
-            Assert.That(response.ResponseStatus, Is.Not.Null);
-            Assert.That(response.ResponseStatus.Message, Is.EqualTo("Success"));
+            Assert.That(response.ResponseStatus, Is.Null);
 
             var entities = response.Result;
             Assert.That(entities, Is.Not.Null);
@@ -41,10 +42,11 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_product_using_pk_with_related_all()
         {
-            var response = ExecutePath<ProductCollectionResponse>(HttpMethods.Get, "/products?include=category,supplier,orderdetails", new ProductQueryCollectionRequest());
+            var client = base.NewJsonServiceClient(false);
+            var response = client.Get(new ProductQueryCollectionRequest { Include = "category,supplier,orderdetails" });
             var product = response.Result.First(p => p.Category != null && p.Supplier != null && p.OrderDetails.Count > 0);
 
-            var response2 = ExecutePath<ProductResponse>(HttpMethods.Get, "/products/{0}?include=category,supplier,orderdetails".FormatWith(product.ProductId), null);
+            var response2 = client.Get(new ProductPkRequest { ProductId = product.ProductId, Include = "category,supplier,orderdetails" });
             var product2 = response2.Result;
 
             Assert.That(product.ProductId, Is.EqualTo(product2.ProductId));
@@ -56,10 +58,11 @@ namespace Northwind.Data.Services.Tests.ServicesTests
         [Test]
         public void Can_GET_product_using_uniqueconstraint_with_related_all()
         {
-            var response = ExecutePath<ProductCollectionResponse>(HttpMethods.Get, "/products?include=category,supplier,orderdetails", new ProductQueryCollectionRequest());
+            var client = base.NewJsonServiceClient(false);
+            var response = client.Get(new ProductQueryCollectionRequest { Include = "category,supplier,orderdetails" });
             var product = response.Result.First(p => p.Category != null && p.Supplier != null && p.OrderDetails.Count > 0);
 
-            var response2 = ExecutePath<ProductResponse>(HttpMethods.Get, "/products/uc/productname/{0}?include=category,supplier,orderdetails".FormatWith(product.ProductName), null);
+            var response2 = client.Get(new ProductUcProductNameRequest { ProductName = product.ProductName, Include = "category,supplier,orderdetails" });
             var product2 = response2.Result;
 
             Assert.That(product.ProductId, Is.EqualTo(product2.ProductId));

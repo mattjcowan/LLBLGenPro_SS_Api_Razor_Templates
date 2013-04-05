@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Territory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class TerritoryService : ServiceBase<Territory, ITerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetTerritoryMetaRequest(TerritoryMetaRequest request);
         partial void OnAfterGetTerritoryMetaRequest(TerritoryMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostTerritoryDataTableRequest(TerritoryDataTableRequest request);
@@ -40,6 +42,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Territory> Validator { get; set; }
+    
+        public TerritoryService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Territory' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(TerritoryMetaRequest request)
@@ -79,6 +86,8 @@ namespace Northwind.Data.Services
             OnBeforeGetTerritoryPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetTerritoryPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Territory matching [TerritoryId = {0}]  does not exist".Fmt(request.TerritoryId));
             return output;
         }
 
@@ -117,9 +126,8 @@ namespace Northwind.Data.Services
             OnBeforeTerritoryDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterTerritoryDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Territory matching [TerritoryId = {0}]  does not exist".Fmt(request.TerritoryId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Territory matching [TerritoryId = {0}]  does not exist".Fmt(request.TerritoryId));
             return output;
         }
 
@@ -212,7 +220,7 @@ namespace Northwind.Data.Services
         public TerritoryResponse(Territory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class TerritoryCollectionResponse : GetCollectionResponse<Territory>
@@ -222,7 +230,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

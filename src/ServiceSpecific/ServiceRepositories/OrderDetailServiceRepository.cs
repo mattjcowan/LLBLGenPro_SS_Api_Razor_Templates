@@ -22,6 +22,7 @@ namespace Northwind.Data.ServiceRepositories
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateRepository();
         partial void OnBeforeOrderDetailDeleteRequest(IDataAccessAdapter adapter, OrderDetailDeleteRequest request, OrderDetailEntity entity);
         partial void OnAfterOrderDetailDeleteRequest(IDataAccessAdapter adapter, OrderDetailDeleteRequest request, OrderDetailEntity entity, ref bool deleted);
         partial void OnBeforeOrderDetailUpdateRequest(IDataAccessAdapter adapter, OrderDetailUpdateRequest request);
@@ -36,9 +37,15 @@ namespace Northwind.Data.ServiceRepositories
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
+        
         protected override EntityType EntityType
         {
             get { return EntityType.OrderDetailEntity; }
+        }
+    
+        public OrderDetailServiceRepository()
+        {
+            OnCreateRepository();
         }
 
         // Description for parameters: http://datatables.net/usage/server-side
@@ -192,8 +199,7 @@ OrderDetailQueryCollectionRequest
                     return new OrderDetailResponse(entity.ToDto());
                 }
             }
-
-            throw new NullReferenceException();
+            return new OrderDetailResponse(null);
         }
 
         public OrderDetailResponse Create(OrderDetailAddRequest request)

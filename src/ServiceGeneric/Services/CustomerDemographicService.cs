@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'CustomerDemographic'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class CustomerDemographicService : ServiceBase<CustomerDemographic, ICustomerDemographicServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetCustomerDemographicMetaRequest(CustomerDemographicMetaRequest request);
         partial void OnAfterGetCustomerDemographicMetaRequest(CustomerDemographicMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostCustomerDemographicDataTableRequest(CustomerDemographicDataTableRequest request);
@@ -40,6 +42,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<CustomerDemographic> Validator { get; set; }
+    
+        public CustomerDemographicService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'CustomerDemographic' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CustomerDemographicMetaRequest request)
@@ -79,6 +86,8 @@ namespace Northwind.Data.Services
             OnBeforeGetCustomerDemographicPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetCustomerDemographicPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "CustomerDemographic matching [CustomerTypeId = {0}]  does not exist".Fmt(request.CustomerTypeId));
             return output;
         }
 
@@ -117,9 +126,8 @@ namespace Northwind.Data.Services
             OnBeforeCustomerDemographicDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterCustomerDemographicDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("CustomerDemographic matching [CustomerTypeId = {0}]  does not exist".Fmt(request.CustomerTypeId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "CustomerDemographic matching [CustomerTypeId = {0}]  does not exist".Fmt(request.CustomerTypeId));
             return output;
         }
 
@@ -206,7 +214,7 @@ namespace Northwind.Data.Services
         public CustomerDemographicResponse(CustomerDemographic category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class CustomerDemographicCollectionResponse : GetCollectionResponse<CustomerDemographic>
@@ -216,7 +224,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

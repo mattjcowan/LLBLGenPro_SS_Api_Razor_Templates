@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Region'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class RegionService : ServiceBase<Region, IRegionServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetRegionMetaRequest(RegionMetaRequest request);
         partial void OnAfterGetRegionMetaRequest(RegionMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostRegionDataTableRequest(RegionDataTableRequest request);
@@ -42,6 +44,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Region> Validator { get; set; }
+    
+        public RegionService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Region' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(RegionMetaRequest request)
@@ -83,6 +90,8 @@ namespace Northwind.Data.Services
             OnBeforeGetRegionUcRegionDescriptionRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetRegionUcRegionDescriptionRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Region matching [RegionDescription = {0}]  does not exist".Fmt(request.RegionDescription));
             return output;
         }
 
@@ -96,6 +105,8 @@ namespace Northwind.Data.Services
             OnBeforeGetRegionPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetRegionPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Region matching [RegionId = {0}]  does not exist".Fmt(request.RegionId));
             return output;
         }
 
@@ -134,9 +145,8 @@ namespace Northwind.Data.Services
             OnBeforeRegionDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterRegionDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Region matching [RegionId = {0}]  does not exist".Fmt(request.RegionId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Region matching [RegionId = {0}]  does not exist".Fmt(request.RegionId));
             return output;
         }
 
@@ -230,7 +240,7 @@ namespace Northwind.Data.Services
         public RegionResponse(Region category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class RegionCollectionResponse : GetCollectionResponse<Region>
@@ -240,7 +250,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

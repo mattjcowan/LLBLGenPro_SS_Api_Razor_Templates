@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Shipper'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class ShipperService : ServiceBase<Shipper, IShipperServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetShipperMetaRequest(ShipperMetaRequest request);
         partial void OnAfterGetShipperMetaRequest(ShipperMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostShipperDataTableRequest(ShipperDataTableRequest request);
@@ -42,6 +44,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Shipper> Validator { get; set; }
+    
+        public ShipperService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Shipper' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(ShipperMetaRequest request)
@@ -83,6 +90,8 @@ namespace Northwind.Data.Services
             OnBeforeGetShipperUcShipperNameRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetShipperUcShipperNameRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Shipper matching [CompanyName = {0}]  does not exist".Fmt(request.CompanyName));
             return output;
         }
 
@@ -96,6 +105,8 @@ namespace Northwind.Data.Services
             OnBeforeGetShipperPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetShipperPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Shipper matching [ShipperId = {0}]  does not exist".Fmt(request.ShipperId));
             return output;
         }
 
@@ -134,9 +145,8 @@ namespace Northwind.Data.Services
             OnBeforeShipperDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterShipperDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Shipper matching [ShipperId = {0}]  does not exist".Fmt(request.ShipperId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Shipper matching [ShipperId = {0}]  does not exist".Fmt(request.ShipperId));
             return output;
         }
 
@@ -236,7 +246,7 @@ namespace Northwind.Data.Services
         public ShipperResponse(Shipper category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class ShipperCollectionResponse : GetCollectionResponse<Shipper>
@@ -246,7 +256,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

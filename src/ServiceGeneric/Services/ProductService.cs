@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Product'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class ProductService : ServiceBase<Product, IProductServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetProductMetaRequest(ProductMetaRequest request);
         partial void OnAfterGetProductMetaRequest(ProductMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostProductDataTableRequest(ProductDataTableRequest request);
@@ -42,6 +44,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Product> Validator { get; set; }
+    
+        public ProductService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Product' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(ProductMetaRequest request)
@@ -83,6 +90,8 @@ namespace Northwind.Data.Services
             OnBeforeGetProductUcProductNameRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetProductUcProductNameRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Product matching [ProductName = {0}]  does not exist".Fmt(request.ProductName));
             return output;
         }
 
@@ -96,6 +105,8 @@ namespace Northwind.Data.Services
             OnBeforeGetProductPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetProductPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Product matching [ProductId = {0}]  does not exist".Fmt(request.ProductId));
             return output;
         }
 
@@ -134,9 +145,8 @@ namespace Northwind.Data.Services
             OnBeforeProductDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterProductDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Product matching [ProductId = {0}]  does not exist".Fmt(request.ProductId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Product matching [ProductId = {0}]  does not exist".Fmt(request.ProductId));
             return output;
         }
 
@@ -278,7 +288,7 @@ namespace Northwind.Data.Services
         public ProductResponse(Product category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class ProductCollectionResponse : GetCollectionResponse<Product>
@@ -288,7 +298,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

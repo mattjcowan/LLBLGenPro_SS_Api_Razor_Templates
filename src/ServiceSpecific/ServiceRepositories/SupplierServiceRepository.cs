@@ -22,6 +22,7 @@ namespace Northwind.Data.ServiceRepositories
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateRepository();
         partial void OnBeforeSupplierDeleteRequest(IDataAccessAdapter adapter, SupplierDeleteRequest request, SupplierEntity entity);
         partial void OnAfterSupplierDeleteRequest(IDataAccessAdapter adapter, SupplierDeleteRequest request, SupplierEntity entity, ref bool deleted);
         partial void OnBeforeSupplierUpdateRequest(IDataAccessAdapter adapter, SupplierUpdateRequest request);
@@ -38,9 +39,15 @@ namespace Northwind.Data.ServiceRepositories
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
+        
         protected override EntityType EntityType
         {
             get { return EntityType.SupplierEntity; }
+        }
+    
+        public SupplierServiceRepository()
+        {
+            OnCreateRepository();
         }
 
         // Description for parameters: http://datatables.net/usage/server-side
@@ -194,8 +201,7 @@ SupplierQueryCollectionRequest
                     return new SupplierResponse(entity.ToDto());
                 }
             }
-
-            throw new NullReferenceException();
+            return new SupplierResponse(null);
         }
         
 
@@ -216,8 +222,7 @@ SupplierQueryCollectionRequest
                     return new SupplierResponse(entity.ToDto());
                 }
             }
-
-            throw new NullReferenceException();
+            return new SupplierResponse(null);
         }
 
         public SupplierResponse Create(SupplierAddRequest request)

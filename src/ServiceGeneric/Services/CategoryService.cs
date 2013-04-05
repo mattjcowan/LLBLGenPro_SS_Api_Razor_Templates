@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.FluentValidation;
 using ServiceStack.Logging;
@@ -16,12 +17,13 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Category'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END                                    
     public partial class CategoryService : ServiceBase<Category, ICategoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
         #region Class Extensibility Methods
+        partial void OnCreateService();
         partial void OnBeforeGetCategoryMetaRequest(CategoryMetaRequest request);
         partial void OnAfterGetCategoryMetaRequest(CategoryMetaRequest request, EntityMetaDetailsResponse response);
         partial void OnBeforePostCategoryDataTableRequest(CategoryDataTableRequest request);
@@ -42,6 +44,11 @@ namespace Northwind.Data.Services
     
         
         public IValidator<Category> Validator { get; set; }
+    
+        public CategoryService()
+        {
+            OnCreateService();
+        }
         
         /// <summary>Gets meta data information for the entity 'Category' including field metadata and relation metadata.</summary>
         public EntityMetaDetailsResponse Get(CategoryMetaRequest request)
@@ -83,6 +90,8 @@ namespace Northwind.Data.Services
             OnBeforeGetCategoryUcCategoryNameRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetCategoryUcCategoryNameRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Category matching [CategoryName = {0}]  does not exist".Fmt(request.CategoryName));
             return output;
         }
 
@@ -96,6 +105,8 @@ namespace Northwind.Data.Services
             OnBeforeGetCategoryPkRequest(request);
             var output = Repository.Fetch(request);
             OnAfterGetCategoryPkRequest(request, output);
+            if (output.Result == null)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Category matching [CategoryId = {0}]  does not exist".Fmt(request.CategoryId));
             return output;
         }
 
@@ -158,9 +169,8 @@ namespace Northwind.Data.Services
             OnBeforeCategoryDeleteRequest(request);
             var output = Repository.Delete(request);
             OnAfterCategoryDeleteRequest(request, output);
-            if (!output.Result) {
-                throw HttpError.NotFound("Category matching [CategoryId = {0}]  does not exist".Fmt(request.CategoryId));
-            }
+            if (!output.Result)
+                throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "Category matching [CategoryId = {0}]  does not exist".Fmt(request.CategoryId));
             return output;
         }
 
@@ -268,7 +278,7 @@ namespace Northwind.Data.Services
         public CategoryResponse(Category category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
 
     public partial class CategoryCollectionResponse : GetCollectionResponse<Category>
@@ -278,7 +288,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
     }
     #endregion
 }

@@ -66,19 +66,6 @@ namespace Northwind.Data.Validators
                     RuleFor(y => y.Extension).Length(0, 4).Unless(y => y.Extension == null);
                     RuleFor(y => y.Notes).Length(0, 1073741823).Unless(y => y.Notes == null);
                     RuleFor(y => y.PhotoPath).Length(0, 255).Unless(y => y.PhotoPath == null);
-
-                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
-                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
-                    //      previously validated objects for each type of validator (TBD).
-                    if(!ParentValidators.Contains("EmployeeValidator")) 
-                      RuleFor(x => x.ReportsTo).SetValidator(new EmployeeValidator(new List<string>( ParentValidators ) { { "EmployeeValidator" } })).When(x => x.ReportsTo != null);
-                    if(!ParentValidators.Contains("EmployeeValidator")) 
-                      RuleFor(x => x.Employees).SetCollectionValidator(new EmployeeValidator(new List<string>( ParentValidators ) { { "EmployeeValidator" } })).When(x => x.Employees != null);
-                    if(!ParentValidators.Contains("EmployeeTerritoryValidator")) 
-                      RuleFor(x => x.EmployeeTerritories).SetCollectionValidator(new EmployeeTerritoryValidator(new List<string>( ParentValidators ) { { "EmployeeValidator" } })).When(x => x.EmployeeTerritories != null);
-                    if(!ParentValidators.Contains("OrderValidator")) 
-                      RuleFor(x => x.Orders).SetCollectionValidator(new OrderValidator(new List<string>( ParentValidators ) { { "EmployeeValidator" } })).When(x => x.Orders != null);
                 });
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAfterRules 
@@ -87,7 +74,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                     
 
     }
 }

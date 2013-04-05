@@ -60,17 +60,6 @@ namespace Northwind.Data.Validators
                 {
                     RuleFor(y => y.ProductName).NotEmpty().Length(1, 40);
                     RuleFor(y => y.QuantityPerUnit).Length(0, 20).Unless(y => y.QuantityPerUnit == null);
-
-                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
-                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
-                    //      previously validated objects for each type of validator (TBD).
-                    if(!ParentValidators.Contains("CategoryValidator")) 
-                      RuleFor(x => x.Category).SetValidator(new CategoryValidator(new List<string>( ParentValidators ) { { "ProductValidator" } })).When(x => x.Category != null);
-                    if(!ParentValidators.Contains("OrderDetailValidator")) 
-                      RuleFor(x => x.OrderDetails).SetCollectionValidator(new OrderDetailValidator(new List<string>( ParentValidators ) { { "ProductValidator" } })).When(x => x.OrderDetails != null);
-                    if(!ParentValidators.Contains("SupplierValidator")) 
-                      RuleFor(x => x.Supplier).SetValidator(new SupplierValidator(new List<string>( ParentValidators ) { { "ProductValidator" } })).When(x => x.Supplier != null);
                 });
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAfterRules 
@@ -79,7 +68,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                     
 
     }
 }

@@ -60,19 +60,6 @@ namespace Northwind.Data.Validators
                     RuleFor(y => y.ShipRegion).Length(0, 15).Unless(y => y.ShipRegion == null);
                     RuleFor(y => y.ShipPostalCode).Length(0, 10).Unless(y => y.ShipPostalCode == null);
                     RuleFor(y => y.ShipCountry).Length(0, 15).Unless(y => y.ShipCountry == null);
-
-                    //Setup validators on relations (to avoid recursion issues, we will not process any validator types that have already been run)
-                    //TODO: To avoid recursion issues, the unfortunate consequence at this time is that some objects may not get validated if they
-                    //      have the same validator of a parent object in the graph. We will need to fix this at some point by tracking
-                    //      previously validated objects for each type of validator (TBD).
-                    if(!ParentValidators.Contains("CustomerValidator")) 
-                      RuleFor(x => x.Customer).SetValidator(new CustomerValidator(new List<string>( ParentValidators ) { { "OrderValidator" } })).When(x => x.Customer != null);
-                    if(!ParentValidators.Contains("EmployeeValidator")) 
-                      RuleFor(x => x.Employee).SetValidator(new EmployeeValidator(new List<string>( ParentValidators ) { { "OrderValidator" } })).When(x => x.Employee != null);
-                    if(!ParentValidators.Contains("OrderDetailValidator")) 
-                      RuleFor(x => x.OrderDetails).SetCollectionValidator(new OrderDetailValidator(new List<string>( ParentValidators ) { { "OrderValidator" } })).When(x => x.OrderDetails != null);
-                    if(!ParentValidators.Contains("ShipperValidator")) 
-                      RuleFor(x => x.Shipper).SetValidator(new ShipperValidator(new List<string>( ParentValidators ) { { "OrderValidator" } })).When(x => x.Shipper != null);
                 });
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAfterRules 
@@ -81,7 +68,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                     
 
     }
 }
