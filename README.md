@@ -12,9 +12,47 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 
 ## CHANGE LOG ##
 
-### Update - March 16, 2013 ###
+For all examples below, you may want to use Chrome or a browser that can show you the results (or use Fiddler). 
+Chrome is nice in the sense that it always displays the reponse from the server, regardless of status code (200, 400, 401, 404, 500, etc...) and regardless of the content type (JS, XML, etc...).
 
-For the "json" examples below, you may want to use Chrome or a browser that can show you the results (or use Fiddler). IE will have you download the JS.
+### Update - April 4, 2013 ###
+
+The goal for this release was to give developers working with these templates and the generated code a means to further extend the code without impacting the code generation process and future releases of the templates.
+
+Please use the "Issues" section of the GitHub project to file desired enhancements and/or point out issues with the code.
+
+- Primary Key and Unique Constraint requests now respond with a 404 status and a clean response for non-existent records
+  
+  **Example**: two sample responses for non-existent categorie (PK and UC)
+  
+  [/categories/99999][10-xml] ([xml][10-xml], [json][10-json])
+  [/categories/uc/categoryname/non-existent-category][11-xml] ([xml][11-xml], [json][11-json])
+
+- Added simple validation to the auto-generated services, for all CREATE/UPDATE/DELETE methods
+  The validation gathers up the errors and sends them back with the response.
+  
+  **Example**: The following code is in response to a DELETE request with an invalid category id at URL: /categories/0
+      
+      { "responseStatus" : { "errorCode" : "ValidationException",
+            "errors" : [ { "errorCode" : "GreaterThanOrEqual",
+                  "fieldName" : "CategoryId",
+                  "message" : "'Category Id' must be greater than or equal to '1'."
+                } ],
+            "message" : "Validation failed: \r\n -- 'Category Id' must be greater than or equal to '1'.",
+            "stackTrace" : null
+          },
+        "result" : false
+      }
+
+- Added partial methods throughout the generated code allowing anyone the ability to easily customize the code using partial classes
+
+- Added LLBLGen user regions throughout the generated code allowing developers to easily add bits of code where needed to extend existing functionality
+
+- Added some new settings in LLBLGen designer to specify where the Authenticate attributes should be generated
+  
+  - You can observe these settings by navigating to Project > Settings > LLBLGen Pro Runtime Framework > ServiceStack
+
+### Update - March 16, 2013 ###
 
 - Cleaned up XML output (nice and tidy now :-))
 
@@ -88,3 +126,7 @@ For the "json" examples below, you may want to use Chrome or a browser that can 
 [8-json]: http://northwind.mattjcowan.com/products?filter=(^(supplierid:neq:14)(categoryid:neq:4)(supplier.country:eq:japan))&format=json
 [9-xml]: http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=xml
 [9-json]: http://northwind.mattjcowan.com/products?filter=orderdetails.order.orderDate:bt:"07/04/1996":"07/05/1996"&format=json
+[10-xml]: http://northwind.mattjcowan.com/categories/9999?format=xml
+[10-json]: http://northwind.mattjcowan.com/categories/9999?format=json
+[11-xml]: http://northwind.mattjcowan.com/categories/uc/categoryname/non-existent-category?format=xml
+[11-json]: http://northwind.mattjcowan.com/categories/uc/categoryname/non-existent-category?format=json
