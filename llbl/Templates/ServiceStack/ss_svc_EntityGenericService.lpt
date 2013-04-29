@@ -81,7 +81,7 @@ namespace <%=rootNameSpace%>.Services
     #endregion
 
     #region Requests
-    [Route("entities/meta")] // unique constraint filter
+    [Route("/entities/meta")] // unique constraint filter
     public partial class EntitiesMetaRequest : IReturn<EntityCollectionResponse>
     {
         
@@ -89,7 +89,7 @@ namespace <%=rootNameSpace%>.Services
 
     }
 
-    [Route("entities")]
+    [Route("/entities")]
     [DefaultView("Entities")]
     public partial class EntitiesRequest : IReturn<EntityCollectionResponse>
     {
