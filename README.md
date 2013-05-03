@@ -15,6 +15,12 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 For all examples below, you may want to use Chrome or a browser that can show you the results (or use Fiddler). 
 Chrome is nice in the sense that it always displays the reponse from the server, regardless of status code (200, 400, 401, 404, 500, etc...) and regardless of the content type (JS, XML, etc...).
 
+### Update - May 3, 2013 ###
+
+Added a new LLBLGen Preset and some additional templates to make the project compatible with the newly released LLBLGen V4 release.
+
+If you are using LLBLGen V4, please pick the "MJC.Presets.Adapter.ServiceStack.V4" preset when generating the code.
+
 ### Update - April 4, 2013 ###
 
 The goal for this release was to give developers working with these templates and the generated code a means to further extend the code without impacting the code generation process and future releases of the templates.

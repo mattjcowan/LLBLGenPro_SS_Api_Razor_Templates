@@ -50,5 +50,8 @@
 		<templateBinding templateID="MJC_SS_Web_NotFoundCshtml" filename="ServiceStack\ss_web_NotFoundCshtml.lpt" templateLanguage="C#" />
 		<templateBinding templateID="MJC_SS_Web_Packages" filename="ServiceStack\ss_web_PackagesConfig.template" templateLanguage="TDL" />
 		<templateBinding templateID="MJC_SS_Web_VsNet2010ServiceStackConsoleHostAdapterTemplate" filename="ServiceStack\ss_web_VsNet2010ServiceStackConsoleHostAdapter.lpt" templateLanguage="C#" />
+		<templateBinding templateID="MJC_SS_V4_SvcImpl_VsNetServiceStackImplAdapterTemplate" filename="ServiceStack\ss_v4_svcimpl_VsNetServiceStackImplAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="MJC_SS_V4_Web_VsNetServiceStackConsoleHostAdapterTemplate" filename="ServiceStack\ss_v4_web_VsNetServiceStackConsoleHostAdapter.lpt" templateLanguage="C#" />
+		<templateBinding templateID="MJC_SS_V4_Svc_VsNetServiceStackAdapterTemplate" filename="ServiceStack\ss_v4_svc_VsNet2010ServiceStackAdapter.template" templateLanguage="TDL" />
 	</language>
 </templateBindings>

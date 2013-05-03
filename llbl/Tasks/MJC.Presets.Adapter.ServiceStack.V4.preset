@@ -1,0 +1,642 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="MJC.Presets.Adapter.ServiceStack.V4" lastModifiedOn="2013-05-03T09:22:38.5337621-05:00" createdBy="" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+  <supportedPlatforms>
+    <platform name=".NET 4.0" />
+    <platform name=".NET 4.5" />
+  </supportedPlatforms>
+  <supportedTemplateGroups>
+    <templateGroup name="Adapter" />
+  </supportedTemplateGroups>
+  <supportedFrameworks>
+    <framework name="LLBLGen Pro Runtime Framework" />
+  </supportedFrameworks>
+  <taskPresets>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack" requiresCleanCache="false">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.Services" additionalDestinationFolder="ServiceGeneric" requiresCleanCache="true">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.DirectoryCreators" requiresCleanCache="false">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.PropertiesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Properties" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.DtosDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Dtos" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceInterfacesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="ServiceInterfaces" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServicesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Services" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ValidatorsDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Validators" />
+            </parameters>
+          </taskPreset>
+        </taskGroupPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.PagedListClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos" />
+            <parameter name="filenameFormat" value="PagedList.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_PagedListTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.EntityClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos" />
+            <parameter name="filenameFormat" value="Entity.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityClassTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonDtoBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos" />
+            <parameter name="filenameFormat" value="CommonDtoBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CommonDtoBaseTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.DtoClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityDtoTemplate" />
+            <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.IEntityServiceRepositoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceInterfaces" />
+            <parameter name="filenameFormat" value="IEntityServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_IEntityServiceRepositoryTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.EntityServiceRepositoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceInterfaces" />
+            <parameter name="filenameFormat" value="I[elementName]ServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityServiceRepositoryInterfaceTemplate" />
+            <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonServiceContractsGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos" />
+            <parameter name="filenameFormat" value="CommonServiceContracts.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CommonServiceContractsTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services" />
+            <parameter name="filenameFormat" value="ServiceBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityServiceBaseTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.EntityServiceClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services" />
+            <parameter name="filenameFormat" value="EntityService.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityGenericServiceTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services" />
+            <parameter name="filenameFormat" value="[elementName]Service.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityServiceTemplate" />
+            <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ValidatorClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Validators" />
+            <parameter name="filenameFormat" value="[elementName]Validator.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_EntityValidatorTemplate" />
+            <parameter name="emitType" value="allEntities" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.AssemblyInfoFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Properties" />
+            <parameter name="templateID" value="MJC_SS_Svc_AssemblyInfoTemplate" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.PackagesConfigFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="packages.config" />
+            <parameter name="templateID" value="MJC_SS_Svc_Packages" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="MJC.Presets.Adapter.ServiceStack.GenerateVSNetProject">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="[projectName].Services.[extension]proj" />
+            <parameter name="templateID" value="MJC_SS_V4_Svc_VsNetServiceStackAdapterTemplate" />
+            <parameter name="clearFileCacheAfterwards" value="true" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations" additionalDestinationFolder="ServiceSpecific" requiresCleanCache="true">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.DirectoryCreators" requiresCleanCache="false">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.HelpersDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Helpers" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.ServiceRepositoriesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="ServiceRepositories" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.PropertiesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Properties" />
+            </parameters>
+          </taskPreset>
+        </taskGroupPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.IDataAccessAdapterFactory">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="IDataAccessAdapterFactory.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_IDataAccessAdapterFactoryTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.FilterParserFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Helpers" />
+            <parameter name="filenameFormat" value="FilterParser.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_FilterParserTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.StringTokenizerFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Helpers" />
+            <parameter name="filenameFormat" value="StringTokenizer.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_StringTokenizerTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.EntityServiceRepository">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceRepositories" />
+            <parameter name="filenameFormat" value="[elementName]ServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_EntityServiceRepositoryTemplate" />
+            <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.EntityServiceRepositoryBase">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceRepositories" />
+            <parameter name="filenameFormat" value="EntityServiceRepositoryBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_EntityServiceRepositoryBaseTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.AssemblyInfoFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Properties" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_AssemblyInfoTemplate" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.PackagesConfigFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="packages.config" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_Packages" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.GenerateVSNetProject">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="[projectName].ServiceRepositories.[extension]proj" />
+            <parameter name="templateID" value="MJC_SS_V4_SvcImpl_VsNetServiceStackImplAdapterTemplate" />
+            <parameter name="clearFileCacheAfterwards" value="true" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost" additionalDestinationFolder="Hosts\ConsoleHost" requiresCleanCache="true">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.DirectoryCreators" requiresCleanCache="false">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.PropertiesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Properties" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.CssDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Css" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.JsDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Js" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ViewsDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views" />
+            </parameters>
+          </taskPreset>
+        </taskGroupPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ConsoleAppHost">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="Program.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Web_ConsoleAppHost" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.AppConfig">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="app.config" />
+            <parameter name="templateID" value="MJC_SS_Web_AppConfigTemplate" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.WebConfig">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="web.config" />
+            <parameter name="templateID" value="MJC_SS_Web_AppConfigTemplate" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.AssemblyInfoFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Properties" />
+            <parameter name="templateID" value="MJC_SS_Web_AssemblyInfoTemplate" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.PackagesConfigFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="packages.config" />
+            <parameter name="templateID" value="MJC_SS_Web_Packages" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.DefaultCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="Default.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_DefaultCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.NotFoundCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="NotFound.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_NotFoundCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.CssPlugins">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Css" />
+            <parameter name="filenameFormat" value="plugins.css" />
+            <parameter name="templateID" value="MJC_SS_Web_CssPlugins" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.CssStyles">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Css" />
+            <parameter name="filenameFormat" value="styles.css" />
+            <parameter name="templateID" value="MJC_SS_Web_CssStyles" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.JsPlugins">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Js" />
+            <parameter name="filenameFormat" value="plugins.js" />
+            <parameter name="templateID" value="MJC_SS_Web_JsPlugins" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.JsScripts">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Js" />
+            <parameter name="filenameFormat" value="scripts.js" />
+            <parameter name="templateID" value="MJC_SS_Web_JsScripts" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.AnalyticsPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="_Analytics.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_AnalyticsPartialCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.EntityNavPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="_EntityNav.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_EntityNavPartialCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.LayoutsMasterpageCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="_Layout.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_LayoutsMasterpageCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.EntitiesDashboardCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="Entities.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_EntitiesDashboardCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.EntitiesDetailsCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="[elementName]View.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_EntitiesDetailsCshtml" />
+            <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.GenerateVSNetProject">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="ConsoleHost.[extension]proj" />
+            <parameter name="templateID" value="MJC_SS_V4_Web_VsNetServiceStackConsoleHostAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+    </taskGroupPreset>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="SD.Presets.Adapter.General" requiresCleanCache="false">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskGroupPreset name="SD.Tasks.Adapter.DatabaseGeneric" additionalDestinationFolder="DbGeneric" requiresCleanCache="true">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskPreset name="SD.Tasks.Adapter.DbGenericProjectDirectoryCreator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.EntityCollectionClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.ConstantsEnumsFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.FieldInfoProviderClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.TypeDefaultValueClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.InheritanceInfoProviderClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.LinqMetaDataClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\Linq" />
+            <parameter name="templateID" value="SD_LinqMetaDataAdapter" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.QuerySpecFactoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+            <parameter name="templateID" value="SD_QueryFactoryAdapter" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.EntityRelationsClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\RelationClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.DynamicRelationClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\RelationClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.CommonBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.EntityClassesGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\EntityClasses" />
+            <parameter name="templateID" value="SD_EntityAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.EntityFactoryClassesGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+            <parameter name="templateID" value="SD_EntityFactoriesAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.EntityFieldFactoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+            <parameter name="templateID" value="SD_EntityFieldFactoryAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.EntityFieldsFactoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+            <parameter name="templateID" value="SD_EntityFieldsFactoryAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.TvfCallFactoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+            <parameter name="elementFilter" value="TvfCalls.Any()" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.ResultsetFieldsClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+            <parameter name="templateID" value="SD_ResultsetFieldsAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.FieldCreationClassesGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+            <parameter name="templateID" value="SD_FieldCreationClassesAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.TypedListClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\TypedListClasses" />
+            <parameter name="templateID" value="SD_TypedListAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.TypedViewClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\TypedViewClasses" />
+            <parameter name="templateID" value="SD_TypedViewAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.Webservices.WebserviceHelperClassGenerator" isEnabled="false">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.ValidatorClassesGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[dbgenericSubFolder]\ValidatorClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.VsNetDbGenericProjectFileCreator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="templateID" value="SD_VsNetAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+      <taskGroupPreset name="SD.Tasks.Adapter.DatabaseSpecific" additionalDestinationFolder="DbSpecific" forSpecificDatabase="All" requiresCleanCache="false">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.PersistenceInfoProviderClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.ActionProceduresClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+            <parameter name="templateID" value="SD_ActionProceduresAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Generic.RetrievalProceduresClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+            <parameter name="templateID" value="SD_RetrievalProceduresAdapterTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.DataAccessAdapterClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.VsNetDbSpecificProjectFileCreator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]" />
+            <parameter name="templateID" value="SD_VsNetDBSpecificAdapterTemplate" />
+            <parameter name="binRootFolder" value="[driverShortName]\[dbspecificSubFolder]\" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+      <taskGroupPreset name="SD.Tasks.Adapter.Webservices.SchemaImporter" requiresCleanCache="false">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskPreset name="SD.Tasks.Adapter.Webservices.SchemaImporter.SchemaImporterClassGenerator" isEnabled="false">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Adapter.Webservices.SchemaImporter.ProjectCreator" isEnabled="false">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        </taskPreset>
+      </taskGroupPreset>
+    </taskGroupPreset>
+  </taskPresets>
+</preset>
