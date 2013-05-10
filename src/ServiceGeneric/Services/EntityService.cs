@@ -83,28 +83,28 @@ namespace Northwind.Data.Services
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                                                                                                                                                                         
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
     }
     #endregion
 
     #region Requests
-    [Route("entities/meta")] // unique constraint filter
+    [Route("/entities/meta")] // unique constraint filter
     public partial class EntitiesMetaRequest : IReturn<EntityCollectionResponse>
     {
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntitiesMetaRequestAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
 
     }
 
-    [Route("entities")]
+    [Route("/entities")]
     [DefaultView("Entities")]
     public partial class EntitiesRequest : IReturn<EntityCollectionResponse>
     {
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntitiesRequestAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
 
     }
     #endregion
@@ -116,7 +116,7 @@ namespace Northwind.Data.Services
         public EntityResponse(Entity entity) : base(entity) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntityResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
 
     }
 
@@ -127,7 +127,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcEntityCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
 
     }
     #endregion

@@ -1,0 +1,647 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Northwind.Data.EntityClasses;
+using Northwind.Data.FactoryClasses;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+using ServiceStack.Text;
+
+namespace Northwind.Data.Helpers
+{
+    public static class RepositoryHelper
+    {
+        #region SortExpression
+
+        private static SortExpression ConvertStringToSortExpression(string sortStr, Func<string, IEntityField2> fieldGetter)
+        {
+            var sortExpression = new SortExpression();
+            if (!string.IsNullOrEmpty(sortStr))
+            {
+                var sortClauses = sortStr.Split(new[] { ';', ',' }, StringSplitOptions.None);
+                foreach (var sortClause in sortClauses)
+                {
+                    var sortClauseElements = sortClause.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    var sortField = fieldGetter(sortClauseElements[0]);
+                    if (sortField == null)
+                        continue;
+
+                    sortExpression.Add(new SortClause(
+                                           sortField, null,
+                                           sortClauseElements.Length > 1 &&
+                                           sortClauseElements[1].Equals("desc",
+                                                                        StringComparison.OrdinalIgnoreCase)
+                                               ? SortOperator.Descending
+                                               : SortOperator.Ascending
+                                           ));
+                }
+            }
+            return sortExpression;
+        }
+
+        internal static SortExpression ConvertStringToSortExpression(EntityType entityType, string sortStr)
+        {
+            return ConvertStringToSortExpression(sortStr, s => GetField(entityType, s));
+        }
+
+        internal static SortExpression ConvertStringToSortExpression(TypedListType typedListType, string sortStr)
+        {
+            return ConvertStringToSortExpression(sortStr, s => GetField(typedListType, s));
+        }
+
+        internal static SortExpression ConvertStringToSortExpression(TypedViewType typedViewType, string sortStr)
+        {
+            return ConvertStringToSortExpression(sortStr, s => GetField(typedViewType, s));
+        }
+
+        #endregion
+
+        #region ExcludedIncludedFields
+
+        internal static string[] ConvertStringToExcludedIncludedFields(string selectStr)
+        {
+            if (string.IsNullOrWhiteSpace(selectStr))
+                return null;
+
+            var fieldNames = selectStr
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(s => s.IndexOf('.') == -1)
+                .ToArray();
+
+            return fieldNames.Length > 0 ? fieldNames : null;
+        }
+
+        internal static ExcludeIncludeFieldsList ConvertStringToExcludedIncludedFields(EntityType entityType,
+                                                                                       string selectStr)
+        {
+            if (string.IsNullOrWhiteSpace(selectStr))
+                return null;
+
+            var fieldNames = selectStr
+                .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
+                .Where(s => s.IndexOf('.') == -1)
+                .ToArray();
+
+            return ConvertEntityTypeFieldNamesToExcludedIncludedFields(entityType, fieldNames);
+        }
+
+        private static ExcludeIncludeFieldsList ConvertEntityTypeFieldNamesToExcludedIncludedFields(
+            EntityType entityType, IEnumerable<string> fieldNames)
+        {
+            if (fieldNames == null)
+                return null;
+
+            var fieldMap = GetEntityTypeFieldMap(entityType);
+            if (fieldMap == null)
+                return null;
+
+            var fields = new IncludeFieldsList();
+            foreach (var fieldName in fieldNames)
+            {
+                var field = fieldMap.FirstOrDefault(f => f.Key.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+                if (!fields.Contains(field.Value))
+                    fields.Add(field.Value);
+            }
+            return fields.Count > 0 ? fields : null;
+        }
+
+        #endregion
+
+        #region String to PrefetchPath Conversion methods
+
+        internal static IPrefetchPath2 ConvertStringToPrefetchPath(EntityType entityType, string prefetchStr, string selectStr)
+        {
+            if (string.IsNullOrWhiteSpace(prefetchStr))
+                return null;
+
+            // Break up the selectStr into a dictionary of keys and values
+            // where the key is the path (i.e.: products.supplier)
+            // and the value is the field name (i.e.: companyname)
+            var prefetchFieldKeysAndNames = (selectStr ?? "")
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(s => s.IndexOf('.') > 0)
+                .Select(s => s.Trim('.').ToLowerInvariant());
+            var prefetchFieldNamesDictionary = new Dictionary<string, List<string>>();
+            foreach (var s in prefetchFieldKeysAndNames)
+            {
+                var key = s.Substring(0, s.LastIndexOf('.'));
+                var value = s.Substring(s.LastIndexOf('.') + 1);
+                if (prefetchFieldNamesDictionary.ContainsKey(key))
+                    prefetchFieldNamesDictionary[key].AddIfNotExists(value);
+                else
+                    prefetchFieldNamesDictionary.Add(key, new List<string>(new[] { value }));
+            }
+
+            var prefetchStrs = prefetchStr.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var nodeLeaves =
+                prefetchStrs.Select(n => n.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
+            var rootNode = new PrefetchElementStringRepresentation { Name = "root", MaxNumberOfItemsToReturn = 0 };
+            foreach (var nodeLeaf in nodeLeaves)
+                BuildTreeNode(rootNode, nodeLeaf, 0);
+
+            var prefetch = new PrefetchPath2(entityType);
+            foreach (var prefetchRepresentation in rootNode.Children)
+            {
+                ExcludeIncludeFieldsList prefetchPathElementIncludeFieldList;
+                IPrefetchPathElement2 prefetchPathElement =
+                    ConvertPrefetchRepresentationToPrefetchPathElement(entityType, prefetchRepresentation,
+                                                                       prefetchFieldNamesDictionary,
+                                                                       prefetchRepresentation.Name.ToLowerInvariant(),
+                                                                       out prefetchPathElementIncludeFieldList);
+                if (prefetchPathElement != null)
+                    prefetch.Add(prefetchPathElement, prefetchPathElementIncludeFieldList);
+            }
+            return prefetch.Count > 0 ? prefetch : null;
+        }
+
+        private static IPrefetchPathElement2 ConvertPrefetchRepresentationToPrefetchPathElement(EntityType parentEntityType,
+                                                                                         PrefetchElementStringRepresentation
+                                                                                             prefetchRepresentation,
+                                                                                         Dictionary
+                                                                                             <string, List<string>>
+                                                                                             prefetchFieldNamesDictionary,
+                                                                                         string fieldNamesKey,
+                                                                                         out ExcludeIncludeFieldsList
+                                                                                             includeFieldList)
+        {
+            includeFieldList = null;
+
+            if (prefetchRepresentation == null)
+                return null;
+
+            var includeMap = GetEntityTypeIncludeMap(parentEntityType);
+
+            IPrefetchPathElement2 newElement = null;
+            var rr =
+                includeMap.FirstOrDefault(
+                    rm => rm.Key.Equals(prefetchRepresentation.Name, StringComparison.InvariantCultureIgnoreCase));
+            if (!rr.Equals(default(KeyValuePair<string, IPrefetchPathElement2>)))
+            {
+                newElement = rr.Value;
+
+                foreach (var childRepresentation in prefetchRepresentation.Children)
+                {
+                    ExcludeIncludeFieldsList subElementIncludeFieldList;
+                    var subElement =
+                        ConvertPrefetchRepresentationToPrefetchPathElement((EntityType)newElement.ToFetchEntityType,
+                                                                           childRepresentation,
+                                                                           prefetchFieldNamesDictionary,
+                                                                           string.Concat(fieldNamesKey, ".",
+                                                                                         childRepresentation.Name
+                                                                                                            .ToLowerInvariant
+                                                                                             ()),
+                                                                           out subElementIncludeFieldList);
+                    if (subElement != null)
+                        newElement.SubPath.Add(subElement, subElementIncludeFieldList);
+                }
+            }
+
+            if (newElement != null)
+            {
+                // Determin if there is a max amount of records to return for this prefetch element
+                if (newElement.MaxAmountOfItemsToReturn < prefetchRepresentation.MaxNumberOfItemsToReturn)
+                    newElement.MaxAmountOfItemsToReturn = prefetchRepresentation.MaxNumberOfItemsToReturn;
+
+                // Determine if there are field name restrictions applied to the prefetched item
+                if (prefetchFieldNamesDictionary.ContainsKey(fieldNamesKey))
+                {
+                    includeFieldList = ConvertEntityTypeFieldNamesToExcludedIncludedFields(
+                        (EntityType)newElement.ToFetchEntityType, prefetchFieldNamesDictionary[fieldNamesKey]);
+                }
+            }
+
+            return newElement;
+        }
+
+        // Define other methods and classes here
+        private static void BuildTreeNode(PrefetchElementStringRepresentation iteratorNode, string[] nodeLeaf, int index)
+        {
+            if (index >= nodeLeaf.Length)
+                return; // we're done
+
+            var nodeStr = nodeLeaf[index];
+            var nodeStrArr = nodeStr.Split(':');
+            var name = nodeStrArr[0];
+            var max = 0;
+            if (nodeStrArr.Length == 2) int.TryParse(nodeStrArr[1], out max);
+
+            var n = iteratorNode.Children.FirstOrDefault(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (n == null)
+            {
+                n = new PrefetchElementStringRepresentation { Name = name, MaxNumberOfItemsToReturn = max };
+                iteratorNode.Children.Add(n);
+            }
+            else if (n.MaxNumberOfItemsToReturn < max)
+            {
+                n.MaxNumberOfItemsToReturn = max;
+            }
+            BuildTreeNode(n, nodeLeaf, ++index);
+        }
+
+        private class PrefetchElementStringRepresentation
+        {
+            public PrefetchElementStringRepresentation()
+            {
+                Children = new List<PrefetchElementStringRepresentation>();
+            }
+
+            public string Name { get; set; }
+            public int MaxNumberOfItemsToReturn { get; set; }
+            public IList<PrefetchElementStringRepresentation> Children { get; private set; }
+        }
+
+        #endregion
+
+        #region String to Relation Conversion methods
+
+        internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(TypedListType typedListType, IRelationPredicateBucket predicateBucket, string filterStr)
+        {
+            if (string.IsNullOrEmpty(filterStr))
+                return predicateBucket;
+				
+            var inferredRelationsList = new List<IEntityRelation>();
+            var predicate = ConvertStringToPredicate(s => GetField(typedListType, s), null, filterStr, inferredRelationsList);
+            if (inferredRelationsList.Count > 0)
+                predicateBucket.Relations.AddRange(inferredRelationsList);
+            if (predicate != null)
+                predicateBucket.PredicateExpression.Add(predicate);
+            return predicateBucket;
+        }
+
+        internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(TypedViewType typedViewType, string filterStr)
+        {
+            var predicateBucket = new RelationPredicateBucket();
+            var inferredRelationsList = new List<IEntityRelation>();
+            var predicate = ConvertStringToPredicate(s => GetField(typedViewType, s), null, filterStr, inferredRelationsList);
+            if (inferredRelationsList.Count > 0)
+                predicateBucket.Relations.AddRange(inferredRelationsList);
+            if (predicate != null)
+                predicateBucket.PredicateExpression.Add(predicate);
+            return predicateBucket;
+        }
+
+        internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(EntityType entityType, string filterStr, string relationsStr)
+        {
+            var predicateBucket = new RelationPredicateBucket();
+
+            //var relations = ConvertStringToRelations(relationStr);
+            //if (relations != null && relations.Count > 0)
+            //    predicateBucket.Relations.AddRange(relations.ToArray());
+
+            var inferredRelationsList = new List<IEntityRelation>();
+            var predicate = ConvertStringToPredicate(s => GetField(entityType, s), (s, relations) => GetRelatedField(entityType, s, relations), filterStr, inferredRelationsList);
+            if (inferredRelationsList.Count > 0)
+                predicateBucket.Relations.AddRange(inferredRelationsList);
+            if (predicate != null)
+                predicateBucket.PredicateExpression.Add(predicate);
+            return predicateBucket;
+        }
+
+        #region String to Predicate Conversion methods
+
+        private static IPredicate ConvertStringToPredicate(Func<string, IEntityField2> fieldGetter, Func<string, List<IEntityRelation>, IEntityField2> relatedFieldGetter, string filterStr, List<IEntityRelation> inferredRelationsList)
+        {
+            var filterNode = FilterParser.Parse(filterStr);
+            var predicate = BuildPredicateTree(fieldGetter, relatedFieldGetter, filterNode, inferredRelationsList);
+            return predicate;
+        }
+
+        private static IPredicate BuildPredicateTree(Func<string, IEntityField2> fieldGetter, Func<string, List<IEntityRelation>, IEntityField2> relatedFieldGetter, FilterNode filterNode, List<IEntityRelation> inferredRelationsList)
+        {
+            if (filterNode.NodeCount > 0)
+            {
+                if (filterNode.NodeType == FilterNodeType.Root && filterNode.Nodes.Count > 0)
+                {
+                    if (filterNode.NodeCount == 1)
+                        return BuildPredicateTree(fieldGetter, relatedFieldGetter, filterNode.Nodes[0], inferredRelationsList);
+
+                    var predicate = new PredicateExpression();
+                    foreach (var childNode in filterNode.Nodes)
+                    {
+                        var newPredicate = BuildPredicateTree(fieldGetter, relatedFieldGetter, childNode, inferredRelationsList);
+                        if (newPredicate != null)
+                            predicate.AddWithAnd(newPredicate);
+                    }
+                    return predicate;
+                }
+                else if (filterNode.NodeType == FilterNodeType.AndExpression ||
+                    filterNode.NodeType == FilterNodeType.OrExpression)
+                {
+                    var predicate = new PredicateExpression();
+                    foreach (var childNode in filterNode.Nodes)
+                    {
+                        var newPredicate = BuildPredicateTree(fieldGetter, relatedFieldGetter, childNode, inferredRelationsList);
+                        if (newPredicate != null)
+                        {
+                            if (filterNode.NodeType == FilterNodeType.OrExpression)
+                                predicate.AddWithOr(newPredicate);
+                            else
+                                predicate.AddWithAnd(newPredicate);
+                        }
+                    }
+                    return predicate;
+                }
+            }
+            else if (filterNode.ElementCount > 0)
+            {
+                // convert elements to IPredicate
+                var nodePredicate = BuildPredicateFromClauseNode(fieldGetter, relatedFieldGetter, filterNode, inferredRelationsList);
+                if (nodePredicate != null)
+                    return nodePredicate;
+            }
+            return null;
+        }
+
+        /*
+            -> eq (equals any) 
+            -> neq (not equals any) 
+            -> eqc (equals any, case insensitive [on a case sensitive database]) 
+            -> neqc (not equals any, case insensitive [on a case sensitive database]) 
+            -> in (same as eq) 
+            -> nin (same as ne) 
+            -> lk (like) 
+            -> nlk (not like) 
+            -> nl (null)
+            -> nnl (not null)
+            -> gt (greater than) 
+            -> gte (greater than or equal to) 
+            -> lt (less than) 
+            -> lte (less than or equal to) 
+            -> ct (full text contains) 
+            -> ft (full text free text) 
+            -> bt (between)
+            -> nbt (not between)
+         */
+        private static IPredicate BuildPredicateFromClauseNode(Func<string, IEntityField2> fieldGetter, Func<string, List<IEntityRelation>, IEntityField2> relatedFieldGetter, FilterNode filterNode, List<IEntityRelation> inferredRelationsList)
+        {
+            // there are always at least 2 elements
+            if (filterNode.ElementCount < 2)
+                return null;
+
+            var elements = filterNode.Elements;
+
+            //TODO: may need to mess with relation aliases and join types in the future
+            var relations = new List<IEntityRelation>();
+            var field = elements[0].IndexOf('.') == -1
+                                      ? fieldGetter(elements[0])
+                                      : relatedFieldGetter(elements[0], relations);
+            if (field == null)
+                throw new ArgumentNullException("Unable to locate field " + elements[0]);
+
+            foreach (var relation in relations)
+                inferredRelationsList.AddIfNotExists(relation);
+
+            var comparisonOperatorStr = elements[1].ToLowerInvariant();
+
+            var valueElements = elements.Skip(2).ToArray();
+            var objElements = new object[valueElements.Length];
+
+            Action<string> throwINEEx = (s) =>
+            {
+                throw new ArgumentException(string.Format("Invalid number of elements in '{0}' filter clause", s));
+            };
+
+            string objAlias;
+            IPredicate predicate;
+            switch (comparisonOperatorStr)
+            {
+                case ("bt"): //between
+                case ("nbt"): //not between
+                    if (valueElements.Length < 2) throwINEEx(comparisonOperatorStr);
+                    objElements[0] = ConvertStringToFieldValue(field, valueElements[0]);
+                    objElements[1] = ConvertStringToFieldValue(field, valueElements[1]);
+                    objAlias = valueElements.Length == 3 ? valueElements[2] : null;
+                    predicate = new FieldBetweenPredicate(field, null, objElements[0], objElements[1], objAlias, comparisonOperatorStr == "nbt");
+                    break;
+                case ("in"): //same as eq
+                case ("nin"): //same as ne
+                case ("eq"): //equals any
+                case ("neq"): //not equals any
+                case ("eqc"): //equals any, case insensitive [on a case sensitive database] - only 1 element per clause with this option
+                case ("neqc"): //not equals any, case insensitive [on a case sensitive database] - only 1 element per clause with this option
+                    if (valueElements.Length < 1) throwINEEx(comparisonOperatorStr);
+                    for (int i = 0; i < valueElements.Length; i++)
+                        objElements[i] = ConvertStringToFieldValue(field, valueElements[i]);
+                    if (objElements.Length == 1 || comparisonOperatorStr == "eqci" || comparisonOperatorStr == "neci")
+                    {
+                        predicate = new FieldCompareValuePredicate(field, null, comparisonOperatorStr.StartsWith("n")
+                                                                                    ? ComparisonOperator.NotEqual
+                                                                                    : ComparisonOperator.Equal,
+                                                                   objElements[0])
+                        {
+                            CaseSensitiveCollation =
+                                comparisonOperatorStr == "eqci" || comparisonOperatorStr == "neci"
+                        };
+                    }
+                    else
+                    {
+                        if (comparisonOperatorStr.StartsWith("n"))
+                            predicate = (EntityField2)field != objElements;
+                        else
+                            predicate = (EntityField2)field == objElements;
+                    }
+                    break;
+                case ("lk"): //like
+                case ("nlk"): //not like
+                    if (valueElements.Length < 1) throwINEEx(comparisonOperatorStr);
+                    objElements[0] = ConvertStringToFieldValue(field, valueElements[0].Replace('*', '%'));
+                    objAlias = valueElements.Length == 2 ? valueElements[1] : null;
+                    predicate = new FieldLikePredicate(field, null, objAlias, (string)objElements[0], comparisonOperatorStr == "nlk");
+                    break;
+                case ("nl"): //null
+                case ("nnl"): //not null
+                    predicate = new FieldCompareNullPredicate(field, null, null, comparisonOperatorStr == "nnl");
+                    break;
+                case ("gt"): //greater than) 
+                case ("gte"): //greater than or equal to
+                case ("lt"): //less than
+                case ("lte"): //less than or equal to
+                    if (valueElements.Length < 1) throwINEEx(comparisonOperatorStr);
+                    objElements[0] = ConvertStringToFieldValue(field, valueElements[0]);
+                    objAlias = valueElements.Length == 2 ? valueElements[1] : null;
+                    var comparisonOperator = ComparisonOperator.GreaterThan;
+                    if (comparisonOperatorStr == "gte") comparisonOperator = ComparisonOperator.GreaterEqual;
+                    else if (comparisonOperatorStr == "lt") comparisonOperator = ComparisonOperator.LesserThan;
+                    else if (comparisonOperatorStr == "lte") comparisonOperator = ComparisonOperator.LessEqual;
+                    predicate = new FieldCompareValuePredicate(field, null, comparisonOperator, objElements[0], objAlias);
+                    break;
+                case ("ct"): //full text contains
+                case ("ft"): //full text free text
+                    if (valueElements.Length < 1) throwINEEx(comparisonOperatorStr);
+                    objElements[0] = valueElements[0];
+                    objAlias = valueElements.Length == 2 ? valueElements[1] : null;
+                    predicate = new FieldFullTextSearchPredicate(field, null, comparisonOperatorStr == "ct" ? FullTextSearchOperator.Contains : FullTextSearchOperator.Freetext, (string)objElements[0], objAlias);
+                    break;
+                default:
+                    return null;
+            }
+            return predicate;
+        }
+
+        private static object ConvertStringToFieldValue(IEntityField2 field, string fieldValueStr)
+        {
+            var dataValueStr = fieldValueStr.Trim('\'', '\"');
+            var dataType = field.DataType;
+            if (dataType.IsGenericType && dataType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                if (string.IsNullOrEmpty(fieldValueStr))
+                    return null; // it's ok to return null for nullable types
+
+                dataType = dataType.GenericTypeArguments[0];
+            }
+            object dataValue = null;
+            var cannotConvert = true;
+            if (CanChangeType(fieldValueStr, dataType))
+            {
+                try
+                {
+                    dataValue = Convert.ChangeType(dataValueStr, dataType);
+                    cannotConvert = false;
+                }
+                catch
+                {
+                }
+            }
+            if (cannotConvert)
+                throw new ArgumentException(string.Format("Value '{0}' cannot be converted to type {1}.", dataValueStr, dataType));
+            return dataValue;
+        }
+
+        private static bool CanChangeType(object value, Type conversionType)
+        {
+            if (conversionType == null)
+            {
+                return false;
+            }
+
+            if (value == null)
+            {
+                return false;
+            }
+
+            var convertible = value as IConvertible;
+            if (convertible == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Miscellaneous Helpers
+
+        internal static IEntityField2 GetField(EntityType entityType, string fieldName)
+        {
+            var fields = EntityFieldsFactory.CreateEntityFieldsObject(entityType);
+            return
+                (IEntityField2) fields.FirstOrDefault(
+                    f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+			/*
+            return
+                (IEntityField2)fields.FirstOrDefault(
+                    f =>
+                    !string.IsNullOrEmpty(f.Alias)
+                        ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
+                        : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+			*/
+        }
+
+        internal static IEntityField2 GetField(TypedViewType typedViewType, string fieldName)
+        {
+            var fields = EntityFieldsFactory.CreateTypedViewEntityFieldsObject(typedViewType);
+            return
+                (IEntityField2) fields.FirstOrDefault(
+                    f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+            /*
+			return
+                (IEntityField2)fields.FirstOrDefault(
+                    f =>
+                    !string.IsNullOrEmpty(f.Alias)
+                        ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
+                        : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+			*/
+        }
+
+        internal static IEntityField2 GetField(TypedListType typedListType, string fieldName)
+        {
+            var fields = EntityFieldsFactory.CreateTypedListEntityFieldsObject(typedListType);
+            return
+                (IEntityField2)fields.FirstOrDefault(
+                    f => f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+            /*
+            return
+                (IEntityField2)fields.FirstOrDefault(
+                    f =>
+                    !string.IsNullOrEmpty(f.Alias)
+                        ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
+                        : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+			*/
+        }
+
+        internal static IEntityField2 GetRelatedField(EntityType entityType, string fieldInfo, List<IEntityRelation> relationsToFill)
+        {
+            var fieldSegments = fieldInfo.Trim('.').Split('.');
+            var fieldParts = fieldSegments.Take(fieldSegments.Length - 1).ToArray();
+            var fieldName = fieldSegments[fieldSegments.Length - 1];
+
+            for (var i = 0; i < fieldParts.Length; i++)
+            {
+                var isLastEntity = i == fieldParts.Length - 1;
+                var fieldPart = fieldParts[i];
+
+                var relationMap = GetEntityTypeRelationMap(entityType);
+                var relation =
+                    relationMap.FirstOrDefault(
+                        r => r.Value.MappedFieldName.Equals(fieldPart, StringComparison.OrdinalIgnoreCase));
+                if (relation.Equals(default(KeyValuePair<string, IEntityRelation>)))
+                    return null;
+                relationsToFill.AddIfNotExists(relation.Value);
+
+                var prefetchMap = GetEntityTypeIncludeMap(entityType);
+                var prefetch =
+                    prefetchMap.FirstOrDefault(p => p.Key.Equals(fieldPart, StringComparison.OrdinalIgnoreCase));
+                if (prefetch.Equals(default(KeyValuePair<string, IPrefetchPathElement2>)))
+                    return null;
+
+                entityType = (EntityType)prefetch.Value.ToFetchEntityType;
+                if (isLastEntity)
+                {
+                    var fieldKvpToReturn =
+                        GetEntityTypeFieldMap(entityType)
+                            .FirstOrDefault(f => f.Key.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+                    var fieldToReturn = fieldKvpToReturn.Equals(default(KeyValuePair<string, IEntityField2>))
+                                            ? null
+                                            : fieldKvpToReturn.Value;
+                    return fieldToReturn;
+                }
+            }
+            return null;
+        }
+
+        internal static IDictionary<string, IEntityField2> GetEntityTypeFieldMap(EntityType entityType)
+        {
+            return EntityFieldsFactory.CreateEntityFieldsObject(entityType)
+                                      .ToDictionary(k => k.Name, v => (IEntityField2) v);
+        }
+
+        internal static IDictionary<string, IPrefetchPathElement2> GetEntityTypeIncludeMap(EntityType entityType)
+        {
+            return
+                ((CommonEntityBase) GeneralEntityFactory.Create(entityType)).PrefetchPaths.ToDictionary(
+                    k => k.PropertyName, v => v);
+        }
+
+        internal static IDictionary<string, IEntityRelation> GetEntityTypeRelationMap(EntityType entityType)
+        {
+            return
+                ((CommonEntityBase) GeneralEntityFactory.Create(entityType)).EntityRelations.ToDictionary(
+                    k => k.MappedFieldName, v => v);
+        }
+
+        #endregion
+    }
+}

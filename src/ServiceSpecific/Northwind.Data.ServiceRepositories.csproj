@@ -114,6 +114,9 @@
     <Compile Include="Helpers\FilterParser.cs">
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </Compile>
+    <Compile Include="Helpers\RepositoryHelper.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
     <Compile Include="Helpers\StringTokenizer.cs">
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </Compile>
@@ -166,6 +169,63 @@
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </Compile>
     <Compile Include="ServiceRepositories\TerritoryServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedListServiceRepositories\EmployeesByRegionAndTerritoryTypedListServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedListServiceRepositories\TypedListServiceRepositoryBase.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\AlphabeticalListOfProductsTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\CategorySalesFor1997TypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\CurrentProductListTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\CustomerAndSuppliersByCityTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\InvoicesTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\OrderDetailsExtendedTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\OrdersQryTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\OrderSubtotalTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\ProductsAboveAveragePriceTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\ProductSalesFor1997TypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\ProductsByCategoryTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\QuarterlyOrderTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\SalesByCategoryTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\SalesTotalsByAmountTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\SummaryOfSalesByQuarterTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\SummaryOfSalesByYearTypedViewServiceRepository.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="ServiceRepositories\TypedViewServiceRepositories\TypedViewServiceRepositoryBase.cs">
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </Compile>
   </ItemGroup>

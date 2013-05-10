@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 3.5
-// Code is generated on: Thursday, April 04, 2013 7:01:33 PM
+// Code is generated on: Friday, May 10, 2013 1:09:39 AM
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates.NET20
 // Templates vendor: Solutions Design.
 // Templates version: 
@@ -669,7 +669,14 @@ namespace Northwind.Data
 	#endregion
 
 	#region Included code
+	/// <summary>Enum definition for all the typed list types defined in this namespace.</summary>
+	public enum TypedListType
+	{
+		///<summary>EmployeesByRegionAndTerritory</summary>
+		EmployeesByRegionAndTerritoryTypedList
+	}
 
+ 
 	#endregion
 }
 

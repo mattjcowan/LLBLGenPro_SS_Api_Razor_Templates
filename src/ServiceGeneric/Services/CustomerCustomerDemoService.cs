@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'CustomerCustomerDemo'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class CustomerCustomerDemoService : ServiceBase<CustomerCustomerDemo, ICustomerCustomerDemoServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -138,12 +138,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("customercustomerdemos/meta", Verbs = "GET")]
+    [Route("/customercustomerdemos/meta", Verbs = "GET")]
     public partial class CustomerCustomerDemoMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("customercustomerdemos/datatable", Verbs = "POST")] // general query
+    [Route("/customercustomerdemos/datatable", Verbs = "POST")] // general query
     public partial class CustomerCustomerDemoDataTableRequest : GetCollectionRequest<CustomerCustomerDemo, CustomerCustomerDemoCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -172,7 +172,7 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("customercustomerdemos/{CustomerId}/{CustomerTypeId}", Verbs = "GET")] // primary key filter
+    [Route("/customercustomerdemos/{CustomerId}/{CustomerTypeId}", Verbs = "GET")] // primary key filter
     public partial class CustomerCustomerDemoPkRequest: GetRequest<CustomerCustomerDemo, CustomerCustomerDemoResponse>
     {
         public System.String CustomerId { get; set; }
@@ -180,27 +180,27 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("customercustomerdemos", Verbs = "GET")] // general query
+    [Route("/customercustomerdemos", Verbs = "GET")] // general query
     [DefaultView("CustomerCustomerDemoView")]
     public partial class CustomerCustomerDemoQueryCollectionRequest : GetCollectionRequest<CustomerCustomerDemo, CustomerCustomerDemoCollectionResponse>
     {
     }
 
-    [Route("customercustomerdemos", Verbs = "POST")] // add item
+    [Route("/customercustomerdemos", Verbs = "POST")] // add item
     public partial class CustomerCustomerDemoAddRequest : CustomerCustomerDemo, IReturn<CustomerCustomerDemoResponse>
     {
 
     }
 
-    [Route("customercustomerdemos/{CustomerId}/{CustomerTypeId}", Verbs = "PUT")] // update item
-    [Route("customercustomerdemos/{CustomerId}/{CustomerTypeId}/update", Verbs = "POST")] // delete item
+    [Route("/customercustomerdemos/{CustomerId}/{CustomerTypeId}", Verbs = "PUT")] // update item
+    [Route("/customercustomerdemos/{CustomerId}/{CustomerTypeId}/update", Verbs = "POST")] // delete item
     public partial class CustomerCustomerDemoUpdateRequest : CustomerCustomerDemo, IReturn<CustomerCustomerDemoResponse>
     {
 
     }
 
-    [Route("customercustomerdemos/{CustomerId}/{CustomerTypeId}", Verbs = "DELETE")] // delete item
-    [Route("customercustomerdemos/{CustomerId}/{CustomerTypeId}/delete", Verbs = "POST")] // delete item
+    [Route("/customercustomerdemos/{CustomerId}/{CustomerTypeId}", Verbs = "DELETE")] // delete item
+    [Route("/customercustomerdemos/{CustomerId}/{CustomerTypeId}/delete", Verbs = "POST")] // delete item
     public partial class CustomerCustomerDemoDeleteRequest: SimpleRequest<bool>
     {
         public System.String CustomerId { get; set; }
@@ -216,7 +216,7 @@ namespace Northwind.Data.Services
         public CustomerCustomerDemoResponse(CustomerCustomerDemo category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class CustomerCustomerDemoCollectionResponse : GetCollectionResponse<CustomerCustomerDemo>
@@ -226,7 +226,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

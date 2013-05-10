@@ -25,7 +25,11 @@ using Northwind.Data;
 using Northwind.Data.DatabaseSpecific;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+using TLSI = Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces;
+using TVSI = Northwind.Data.ServiceInterfaces.TypedViewServiceInterfaces;
 using Northwind.Data.ServiceRepositories;
+using TLSR = Northwind.Data.ServiceRepositories.TypedListServiceRepositories;
+using TVSR = Northwind.Data.ServiceRepositories.TypedViewServiceRepositories;
 
 namespace Northwind.Data.ConsoleHost
 {
@@ -61,7 +65,7 @@ namespace Northwind.Data.ConsoleHost
     // for more detailed information on the various options you can set for hosting the API.
     class ConsoleAppHost : AppHostHttpListenerBase
     {
-        public ConsoleAppHost() : base("Northwind.Data API (updated on 4/4/2013 7:01:31 PM)", typeof(CommonDtoBase).Assembly) { }
+        public ConsoleAppHost() : base("Northwind.Data API (updated on 5/10/2013 1:09:34 AM)", typeof(CommonDtoBase).Assembly) { }
 
         // THIS IS TO SIMULATE AUTHENTICATION
         private const string UserName = "admin";
@@ -107,7 +111,7 @@ namespace Northwind.Data.ConsoleHost
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
       
-            //Repositories
+            //Entity Repositories
             container.RegisterAs<CategoryServiceRepository, ICategoryServiceRepository>();
             container.RegisterAs<CustomerServiceRepository, ICustomerServiceRepository>();
             container.RegisterAs<CustomerCustomerDemoServiceRepository, ICustomerCustomerDemoServiceRepository>();
@@ -121,6 +125,27 @@ namespace Northwind.Data.ConsoleHost
             container.RegisterAs<ShipperServiceRepository, IShipperServiceRepository>();
             container.RegisterAs<SupplierServiceRepository, ISupplierServiceRepository>();
             container.RegisterAs<TerritoryServiceRepository, ITerritoryServiceRepository>();
+      
+            //TypedList Repositories
+            container.RegisterAs<TLSR.EmployeesByRegionAndTerritoryTypedListServiceRepository, TLSI.IEmployeesByRegionAndTerritoryTypedListServiceRepository>();
+      
+            //TypedView Repositories
+            container.RegisterAs<TVSR.AlphabeticalListOfProductsTypedViewServiceRepository, TVSI.IAlphabeticalListOfProductsTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.CategorySalesFor1997TypedViewServiceRepository, TVSI.ICategorySalesFor1997TypedViewServiceRepository>();
+            container.RegisterAs<TVSR.CurrentProductListTypedViewServiceRepository, TVSI.ICurrentProductListTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.CustomerAndSuppliersByCityTypedViewServiceRepository, TVSI.ICustomerAndSuppliersByCityTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.InvoicesTypedViewServiceRepository, TVSI.IInvoicesTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.OrderDetailsExtendedTypedViewServiceRepository, TVSI.IOrderDetailsExtendedTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.OrdersQryTypedViewServiceRepository, TVSI.IOrdersQryTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.OrderSubtotalTypedViewServiceRepository, TVSI.IOrderSubtotalTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.ProductsAboveAveragePriceTypedViewServiceRepository, TVSI.IProductsAboveAveragePriceTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.ProductSalesFor1997TypedViewServiceRepository, TVSI.IProductSalesFor1997TypedViewServiceRepository>();
+            container.RegisterAs<TVSR.ProductsByCategoryTypedViewServiceRepository, TVSI.IProductsByCategoryTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.QuarterlyOrderTypedViewServiceRepository, TVSI.IQuarterlyOrderTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SalesByCategoryTypedViewServiceRepository, TVSI.ISalesByCategoryTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SalesTotalsByAmountTypedViewServiceRepository, TVSI.ISalesTotalsByAmountTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SummaryOfSalesByQuarterTypedViewServiceRepository, TVSI.ISummaryOfSalesByQuarterTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SummaryOfSalesByYearTypedViewServiceRepository, TVSI.ISummaryOfSalesByYearTypedViewServiceRepository>();
 
             //DataAccess / OrmLite
             var connectionString = ConfigurationManager.ConnectionStrings["ApiDbConnectionString"].ConnectionString;

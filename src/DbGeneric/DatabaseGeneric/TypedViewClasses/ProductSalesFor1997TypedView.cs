@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 3.5
-// Code is generated on: Thursday, April 04, 2013 7:01:38 PM
+// Code is generated on: Friday, May 10, 2013 1:09:46 AM
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates.NET20
 // Templates vendor: Solutions Design.
 // Templates version: 
@@ -207,7 +207,12 @@ namespace Northwind.Data.TypedViewClasses
 		#endregion
 
 		#region Included Code
-
+    /// <summary>Returns the TypedViewType enum value for this typed view.</summary>
+    [Browsable(false), System.Xml.Serialization.XmlIgnore]
+    public TypedViewType TypedViewType 
+    {
+        get { return TypedViewType.ProductSalesFor1997TypedView; }
+    } 
 		#endregion
 	}
 

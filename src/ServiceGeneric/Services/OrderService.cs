@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Order'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class OrderService : ServiceBase<Order, IOrderServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -138,12 +138,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("orders/meta", Verbs = "GET")]
+    [Route("/orders/meta", Verbs = "GET")]
     public partial class OrderMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("orders/datatable", Verbs = "POST")] // general query
+    [Route("/orders/datatable", Verbs = "POST")] // general query
     public partial class OrderDataTableRequest : GetCollectionRequest<Order, OrderCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -244,34 +244,34 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("orders/{OrderId}", Verbs = "GET")] // primary key filter
+    [Route("/orders/{OrderId}", Verbs = "GET")] // primary key filter
     public partial class OrderPkRequest: GetRequest<Order, OrderResponse>
     {
         public System.Int32 OrderId { get; set; }
 
     }
 
-    [Route("orders", Verbs = "GET")] // general query
+    [Route("/orders", Verbs = "GET")] // general query
     [DefaultView("OrderView")]
     public partial class OrderQueryCollectionRequest : GetCollectionRequest<Order, OrderCollectionResponse>
     {
     }
 
-    [Route("orders", Verbs = "POST")] // add item
+    [Route("/orders", Verbs = "POST")] // add item
     public partial class OrderAddRequest : Order, IReturn<OrderResponse>
     {
 
     }
 
-    [Route("orders/{OrderId}", Verbs = "PUT")] // update item
-    [Route("orders/{OrderId}/update", Verbs = "POST")] // delete item
+    [Route("/orders/{OrderId}", Verbs = "PUT")] // update item
+    [Route("/orders/{OrderId}/update", Verbs = "POST")] // delete item
     public partial class OrderUpdateRequest : Order, IReturn<OrderResponse>
     {
 
     }
 
-    [Route("orders/{OrderId}", Verbs = "DELETE")] // delete item
-    [Route("orders/{OrderId}/delete", Verbs = "POST")] // delete item
+    [Route("/orders/{OrderId}", Verbs = "DELETE")] // delete item
+    [Route("/orders/{OrderId}/delete", Verbs = "POST")] // delete item
     public partial class OrderDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 OrderId { get; set; }
@@ -286,7 +286,7 @@ namespace Northwind.Data.Services
         public OrderResponse(Order category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class OrderCollectionResponse : GetCollectionResponse<Order>
@@ -296,7 +296,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

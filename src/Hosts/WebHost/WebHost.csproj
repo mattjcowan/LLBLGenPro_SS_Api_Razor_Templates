@@ -172,6 +172,27 @@
     <Content Include="Views\_EntityNav.cshtml" />
     <Content Include="Views\_Layout.cshtml" />
     <Content Include="web.config" />
+    <Content Include="Views\TypedLists\EmployeesByRegionAndTerritoryTypedList.cshtml" />
+    <Content Include="Views\TypedLists\TypedLists.cshtml" />
+    <Content Include="Views\TypedLists\_TypedListNav.cshtml" />
+    <Content Include="Views\TypedViews\AlphabeticalListOfProductsTypedView.cshtml" />
+    <Content Include="Views\TypedViews\CategorySalesFor1997TypedView.cshtml" />
+    <Content Include="Views\TypedViews\CurrentProductListTypedView.cshtml" />
+    <Content Include="Views\TypedViews\CustomerAndSuppliersByCityTypedView.cshtml" />
+    <Content Include="Views\TypedViews\InvoicesTypedView.cshtml" />
+    <Content Include="Views\TypedViews\OrderDetailsExtendedTypedView.cshtml" />
+    <Content Include="Views\TypedViews\OrdersQryTypedView.cshtml" />
+    <Content Include="Views\TypedViews\OrderSubtotalTypedView.cshtml" />
+    <Content Include="Views\TypedViews\ProductsAboveAveragePriceTypedView.cshtml" />
+    <Content Include="Views\TypedViews\ProductSalesFor1997TypedView.cshtml" />
+    <Content Include="Views\TypedViews\ProductsByCategoryTypedView.cshtml" />
+    <Content Include="Views\TypedViews\QuarterlyOrderTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SalesByCategoryTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SalesTotalsByAmountTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SummaryOfSalesByQuarterTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SummaryOfSalesByYearTypedView.cshtml" />
+    <Content Include="Views\TypedViews\TypedViews.cshtml" />
+    <Content Include="Views\TypedViews\_TypedViewNav.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

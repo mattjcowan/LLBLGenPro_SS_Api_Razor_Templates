@@ -4,6 +4,8 @@
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
+var typedLists = _executingGenerator.TypedLists;
+var typedViews = _executingGenerator.TypedViews;
 %>using System;
 using System.Configuration;
 using System.Drawing;
@@ -31,7 +33,11 @@ using <%=rootNameSpace%>;
 using <%=rootNameSpace%>.DatabaseSpecific;
 using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.ServiceInterfaces;
+using TLSI = <%=rootNameSpace%>.ServiceInterfaces.TypedListServiceInterfaces;
+using TVSI = <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces;
 using <%=rootNameSpace%>.ServiceRepositories;
+using TLSR = <%=rootNameSpace%>.ServiceRepositories.TypedListServiceRepositories;
+using TVSR = <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories;
 
 namespace <%=rootNameSpace%>.ConsoleHost
 {
@@ -113,13 +119,21 @@ namespace <%=rootNameSpace%>.ConsoleHost
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
       
-            //Repositories
+            //Entity Repositories
 <%
-foreach(var entity in entities) {
-%>            container.RegisterAs<<%=entity.Name%>ServiceRepository, I<%=entity.Name%>ServiceRepository>();
+foreach(var item in entities) {
+%>            container.RegisterAs<<%=item.Name%>ServiceRepository, I<%=item.Name%>ServiceRepository>();
+<% } %>      
+            //TypedList Repositories
 <%
-}
-%>
+foreach(var item in typedLists) {
+%>            container.RegisterAs<TLSR.<%=item.Name%>TypedListServiceRepository, TLSI.I<%=item.Name%>TypedListServiceRepository>();
+<% } %>      
+            //TypedView Repositories
+<%
+foreach(var item in typedViews) {
+%>            container.RegisterAs<TVSR.<%=item.Name%>TypedViewServiceRepository, TVSI.I<%=item.Name%>TypedViewServiceRepository>();
+<% } %>
             //DataAccess / OrmLite
             var connectionString = ConfigurationManager.ConnectionStrings["ApiDbConnectionString"].ConnectionString;
             container.Register<IDataAccessAdapterFactory>(c => new DataAccessAdapterFactory(connectionString));

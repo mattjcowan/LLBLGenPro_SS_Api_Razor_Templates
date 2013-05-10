@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Shipper'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class ShipperService : ServiceBase<Shipper, IShipperServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -157,12 +157,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("shippers/meta", Verbs = "GET")]
+    [Route("/shippers/meta", Verbs = "GET")]
     public partial class ShipperMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("shippers/datatable", Verbs = "POST")] // general query
+    [Route("/shippers/datatable", Verbs = "POST")] // general query
     public partial class ShipperDataTableRequest : GetCollectionRequest<Shipper, ShipperCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -195,7 +195,7 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("shippers/uc/shippername/{CompanyName}", Verbs = "GET")] // unique constraint filter
+    [Route("/shippers/uc/shippername/{CompanyName}", Verbs = "GET")] // unique constraint filter
     public partial class ShipperUcShipperNameRequest : GetRequest<Shipper, ShipperResponse>
     {
         // unique constraint fields (that are not also primary key fields)
@@ -204,34 +204,34 @@ namespace Northwind.Data.Services
     }
 
 
-    [Route("shippers/{ShipperId}", Verbs = "GET")] // primary key filter
+    [Route("/shippers/{ShipperId}", Verbs = "GET")] // primary key filter
     public partial class ShipperPkRequest: GetRequest<Shipper, ShipperResponse>
     {
         public System.Int32 ShipperId { get; set; }
 
     }
 
-    [Route("shippers", Verbs = "GET")] // general query
+    [Route("/shippers", Verbs = "GET")] // general query
     [DefaultView("ShipperView")]
     public partial class ShipperQueryCollectionRequest : GetCollectionRequest<Shipper, ShipperCollectionResponse>
     {
     }
 
-    [Route("shippers", Verbs = "POST")] // add item
+    [Route("/shippers", Verbs = "POST")] // add item
     public partial class ShipperAddRequest : Shipper, IReturn<ShipperResponse>
     {
 
     }
 
-    [Route("shippers/{ShipperId}", Verbs = "PUT")] // update item
-    [Route("shippers/{ShipperId}/update", Verbs = "POST")] // delete item
+    [Route("/shippers/{ShipperId}", Verbs = "PUT")] // update item
+    [Route("/shippers/{ShipperId}/update", Verbs = "POST")] // delete item
     public partial class ShipperUpdateRequest : Shipper, IReturn<ShipperResponse>
     {
 
     }
 
-    [Route("shippers/{ShipperId}", Verbs = "DELETE")] // delete item
-    [Route("shippers/{ShipperId}/delete", Verbs = "POST")] // delete item
+    [Route("/shippers/{ShipperId}", Verbs = "DELETE")] // delete item
+    [Route("/shippers/{ShipperId}/delete", Verbs = "POST")] // delete item
     public partial class ShipperDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 ShipperId { get; set; }
@@ -246,7 +246,7 @@ namespace Northwind.Data.Services
         public ShipperResponse(Shipper category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class ShipperCollectionResponse : GetCollectionResponse<Shipper>
@@ -256,7 +256,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

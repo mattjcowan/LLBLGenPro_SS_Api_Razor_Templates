@@ -1,6 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <preset name="MJC.Presets.Adapter.ServiceStack" lastModifiedOn="2013-02-05T15:52:48.9794685-06:00" createdBy="" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
   <supportedPlatforms>
+    <platform name=".NET 4.0" />
     <platform name=".NET 4.5" />
   </supportedPlatforms>
   <supportedTemplateGroups>
@@ -28,16 +29,52 @@
               <parameter name="folderToCreate" value="Dtos" />
             </parameters>
           </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.TypedListDtosDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Dtos\TypedListDtos" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewDtosDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Dtos\TypedViewDtos" />
+            </parameters>
+          </taskPreset>
           <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceInterfacesDirectoryCreator">
             <performRule isEnabled="false" settingName="" operator="0" operand="" />
             <parameters>
               <parameter name="folderToCreate" value="ServiceInterfaces" />
             </parameters>
           </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServiceInterfacesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="ServiceInterfaces\TypedListServiceInterfaces" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewServiceInterfacesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="ServiceInterfaces\TypedViewServiceInterfaces" />
+            </parameters>
+          </taskPreset>
           <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServicesDirectoryCreator">
             <performRule isEnabled="false" settingName="" operator="0" operand="" />
             <parameters>
               <parameter name="folderToCreate" value="Services" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServicesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Services\TypedListServices" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewServicesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Services\TypedViewServices" />
             </parameters>
           </taskPreset>
           <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ValidatorsDirectoryCreator">
@@ -63,12 +100,48 @@
             <parameter name="templateID" value="MJC_SS_Svc_EntityClassTemplate" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedListDtos" />
+            <parameter name="filenameFormat" value="TypedList.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedListClassTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedViewDtos" />
+            <parameter name="filenameFormat" value="TypedView.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedViewClassTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonDtoBaseClassGenerator">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="Dtos" />
             <parameter name="filenameFormat" value="CommonDtoBase.[extension]" />
             <parameter name="templateID" value="MJC_SS_Svc_CommonDtoBaseTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonTypedListDtoBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedListDtos" />
+            <parameter name="filenameFormat" value="CommonTypedListDtoBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CommonTypedListDtoBaseTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeTDLTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonTypedViewDtoBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedViewDtos" />
+            <parameter name="filenameFormat" value="CommonTypedViewDtoBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CommonTypedViewDtoBaseTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.DtoClassGenerator">
@@ -79,12 +152,46 @@
             <parameter name="emitType" value="allEntities" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListDtoClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedListDtos" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedListDtoTemplate" />
+            <parameter name="emitType" value="allTypedLists" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewDtoClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedViewDtos" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedViewDtoTemplate" />
+            <parameter name="emitType" value="allTypedViews" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.IEntityServiceRepositoryClassGenerator">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="ServiceInterfaces" />
             <parameter name="filenameFormat" value="IEntityServiceRepository.[extension]" />
             <parameter name="templateID" value="MJC_SS_Svc_IEntityServiceRepositoryTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ITypedListServiceRepositoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceInterfaces\TypedListServiceInterfaces" />
+            <parameter name="filenameFormat" value="ITypedListServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_ITypedListServiceRepositoryTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ITypedViewServiceRepositoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceInterfaces\TypedViewServiceInterfaces" />
+            <parameter name="filenameFormat" value="ITypedViewServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_ITypedViewServiceRepositoryTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.EntityServiceRepositoryClassGenerator">
@@ -96,12 +203,48 @@
             <parameter name="emitType" value="allEntities" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServiceRepositoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceInterfaces\TypedListServiceInterfaces" />
+            <parameter name="filenameFormat" value="I[elementName]TypedListServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedListServiceRepositoryInterfaceTemplate" />
+            <parameter name="emitType" value="allTypedLists" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewServiceRepositoryClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceInterfaces\TypedViewServiceInterfaces" />
+            <parameter name="filenameFormat" value="I[elementName]TypedViewServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedViewServiceRepositoryInterfaceTemplate" />
+            <parameter name="emitType" value="allTypedViews" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonServiceContractsGenerator">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="Dtos" />
             <parameter name="filenameFormat" value="CommonServiceContracts.[extension]" />
             <parameter name="templateID" value="MJC_SS_Svc_CommonServiceContractsTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonTypedListServiceContractsGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedListDtos" />
+            <parameter name="filenameFormat" value="CommonTypedListServiceContracts.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CommonTypedListServiceContractsTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CommonTypedViewServiceContractsGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Dtos\TypedViewDtos" />
+            <parameter name="filenameFormat" value="CommonTypedViewServiceContracts.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CommonTypedViewServiceContractsTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceBaseClassGenerator">
@@ -112,12 +255,48 @@
             <parameter name="templateID" value="MJC_SS_Svc_EntityServiceBaseTemplate" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServiceBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services\TypedListServices" />
+            <parameter name="filenameFormat" value="TypedListServiceBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedListServiceBaseTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewServiceBaseClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services\TypedViewServices" />
+            <parameter name="filenameFormat" value="TypedViewServiceBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedViewServiceBaseTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.EntityServiceClassGenerator">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="Services" />
             <parameter name="filenameFormat" value="EntityService.[extension]" />
             <parameter name="templateID" value="MJC_SS_Svc_EntityGenericServiceTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServiceClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services\TypedListServices" />
+            <parameter name="filenameFormat" value="TypedListService.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedListGenericServiceTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewServiceClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services\TypedViewServices" />
+            <parameter name="filenameFormat" value="TypedViewService.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedViewGenericServiceTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceClassGenerator">
@@ -127,6 +306,24 @@
             <parameter name="filenameFormat" value="[elementName]Service.[extension]" />
             <parameter name="templateID" value="MJC_SS_Svc_EntityServiceTemplate" />
             <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServiceClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services\TypedListServices" />
+            <parameter name="filenameFormat" value="[elementName]TypedListService.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedListServiceTemplate" />
+            <parameter name="emitType" value="allTypedLists" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedViewServiceClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Services\TypedViewServices" />
+            <parameter name="filenameFormat" value="[elementName]TypedViewService.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_TypedViewServiceTemplate" />
+            <parameter name="emitType" value="allTypedViews" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ValidatorClassGenerator">
@@ -166,7 +363,7 @@
           </parameters>
         </taskPreset>
       </taskGroupPreset>
-      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations" additionalDestinationFolder="ServiceSpecific" requiresCleanCache="false">
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations" additionalDestinationFolder="ServiceSpecific" requiresCleanCache="true">
         <performRule isEnabled="false" settingName="" operator="0" operand="" />
         <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.DirectoryCreators" requiresCleanCache="false">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
@@ -180,6 +377,18 @@
             <performRule isEnabled="false" settingName="" operator="0" operand="" />
             <parameters>
               <parameter name="folderToCreate" value="ServiceRepositories" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedListServiceRepositoriesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="ServiceRepositories\TypedListServiceRepositories" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedViewServiceRepositoriesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="ServiceRepositories\TypedViewServiceRepositories" />
             </parameters>
           </taskPreset>
           <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.PropertiesDirectoryCreator">
@@ -213,6 +422,14 @@
             <parameter name="templateID" value="MJC_SS_SvcImpl_StringTokenizerTemplate" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.RepositoryHelperFileGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Helpers" />
+            <parameter name="filenameFormat" value="RepositoryHelper.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_RepositoryHelperTemplate" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.EntityServiceRepository">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
@@ -222,12 +439,48 @@
             <parameter name="emitType" value="allEntities" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedListServiceRepository">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceRepositories\TypedListServiceRepositories" />
+            <parameter name="filenameFormat" value="[elementName]TypedListServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_TypedListServiceRepositoryTemplate" />
+            <parameter name="emitType" value="allTypedLists" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedViewServiceRepository">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceRepositories\TypedViewServiceRepositories" />
+            <parameter name="filenameFormat" value="[elementName]TypedViewServiceRepository.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_TypedViewServiceRepositoryTemplate" />
+            <parameter name="emitType" value="allTypedViews" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.EntityServiceRepositoryBase">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="ServiceRepositories" />
             <parameter name="filenameFormat" value="EntityServiceRepositoryBase.[extension]" />
             <parameter name="templateID" value="MJC_SS_SvcImpl_EntityServiceRepositoryBaseTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedListServiceRepositoryBase">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceRepositories\TypedListServiceRepositories" />
+            <parameter name="filenameFormat" value="TypedListServiceRepositoryBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_TypedListServiceRepositoryBaseTemplate" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedViewServiceRepositoryBase">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ServiceRepositories\TypedViewServiceRepositories" />
+            <parameter name="filenameFormat" value="TypedViewServiceRepositoryBase.[extension]" />
+            <parameter name="templateID" value="MJC_SS_SvcImpl_TypedViewServiceRepositoryBaseTemplate" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.AssemblyInfoFileGenerator">
@@ -257,7 +510,7 @@
           </parameters>
         </taskPreset>
       </taskGroupPreset>
-      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost" additionalDestinationFolder="Hosts\ConsoleHost" requiresCleanCache="false">
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost" additionalDestinationFolder="Hosts\ConsoleHost" requiresCleanCache="true">
         <performRule isEnabled="false" settingName="" operator="0" operand="" />
         <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.DirectoryCreators" requiresCleanCache="false">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
@@ -283,6 +536,18 @@
             <performRule isEnabled="false" settingName="" operator="0" operand="" />
             <parameters>
               <parameter name="folderToCreate" value="Views" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedListViewsDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views\TypedLists" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedViewViewsDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views\TypedViews" />
             </parameters>
           </taskPreset>
         </taskGroupPreset>
@@ -393,6 +658,24 @@
             <parameter name="templateID" value="MJC_SS_Web_EntityNavPartialCshtml" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedListNavPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\TypedLists" />
+            <parameter name="filenameFormat" value="_TypedListNav.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_TypedListNavPartialCshtml" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedViewNavPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\TypedViews" />
+            <parameter name="filenameFormat" value="_TypedViewNav.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_TypedViewNavPartialCshtml" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.LayoutsMasterpageCshtml">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
@@ -409,6 +692,24 @@
             <parameter name="templateID" value="MJC_SS_Web_EntitiesDashboardCshtml" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedListsDashboardCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\TypedLists" />
+            <parameter name="filenameFormat" value="TypedLists.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_TypedListsDashboardCshtml" />
+            <parameter name="elementFilter" value="TypedLists.Count&gt;0" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedViewsDashboardCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\TypedViews" />
+            <parameter name="filenameFormat" value="TypedViews.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_TypedViewsDashboardCshtml" />
+            <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.EntitiesDetailsCshtml">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
@@ -416,6 +717,24 @@
             <parameter name="filenameFormat" value="[elementName]View.cshtml" />
             <parameter name="templateID" value="MJC_SS_Web_EntitiesDetailsCshtml" />
             <parameter name="emitType" value="allEntities" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedListsDetailsCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\TypedLists" />
+            <parameter name="filenameFormat" value="[elementName]TypedList.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_TypedListsDetailsCshtml" />
+            <parameter name="emitType" value="allTypedLists" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.TypedViewsDetailsCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\TypedViews" />
+            <parameter name="filenameFormat" value="[elementName]TypedView.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_TypedViewsDetailsCshtml" />
+            <parameter name="emitType" value="allTypedViews" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.GenerateVSNetProject">

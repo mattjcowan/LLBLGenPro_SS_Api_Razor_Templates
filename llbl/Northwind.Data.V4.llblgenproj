@@ -94,10 +94,10 @@
         <RootNamespace Value="Northwind.Data" />
         <TemplateGroup Value="Adapter" />
         <TemplateBindings>
+          <Binding Name="MJC.TemplateBindings.ServiceStack" />
           <Binding Name="SD.TemplateBindings.SharedTemplates" />
           <Binding Name="SD.TemplateBindings.SharedTemplates.NET4x" />
           <Binding Name="SD.TemplateBindings.SqlServerSpecific" />
-          <Binding Name="MJC.TemplateBindings.ServiceStack" />
           <Binding Name="SD.TemplateBindings.General" />
         </TemplateBindings>
       </LastUsedPreferences>
@@ -105,11 +105,11 @@
   </CodeGenerationCyclePreferences>
   <CodeGenerationMetaDataDefaults>
     <TargetElement Type="256">
-      <OutputSettingValues>
+      <Defaults>
         <Attributes>
           <Attribute Value="Browsable($false)" />
         </Attributes>
-      </OutputSettingValues>
+      </Defaults>
     </TargetElement>
   </CodeGenerationMetaDataDefaults>
   <EntityModel>

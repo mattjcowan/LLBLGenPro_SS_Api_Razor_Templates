@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Supplier'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class SupplierService : ServiceBase<Supplier, ISupplierServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -157,12 +157,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("suppliers/meta", Verbs = "GET")]
+    [Route("/suppliers/meta", Verbs = "GET")]
     public partial class SupplierMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("suppliers/datatable", Verbs = "POST")] // general query
+    [Route("/suppliers/datatable", Verbs = "POST")] // general query
     public partial class SupplierDataTableRequest : GetCollectionRequest<Supplier, SupplierCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -249,7 +249,7 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("suppliers/uc/suppliername/{CompanyName}", Verbs = "GET")] // unique constraint filter
+    [Route("/suppliers/uc/suppliername/{CompanyName}", Verbs = "GET")] // unique constraint filter
     public partial class SupplierUcSupplierNameRequest : GetRequest<Supplier, SupplierResponse>
     {
         // unique constraint fields (that are not also primary key fields)
@@ -258,34 +258,34 @@ namespace Northwind.Data.Services
     }
 
 
-    [Route("suppliers/{SupplierId}", Verbs = "GET")] // primary key filter
+    [Route("/suppliers/{SupplierId}", Verbs = "GET")] // primary key filter
     public partial class SupplierPkRequest: GetRequest<Supplier, SupplierResponse>
     {
         public System.Int32 SupplierId { get; set; }
 
     }
 
-    [Route("suppliers", Verbs = "GET")] // general query
+    [Route("/suppliers", Verbs = "GET")] // general query
     [DefaultView("SupplierView")]
     public partial class SupplierQueryCollectionRequest : GetCollectionRequest<Supplier, SupplierCollectionResponse>
     {
     }
 
-    [Route("suppliers", Verbs = "POST")] // add item
+    [Route("/suppliers", Verbs = "POST")] // add item
     public partial class SupplierAddRequest : Supplier, IReturn<SupplierResponse>
     {
 
     }
 
-    [Route("suppliers/{SupplierId}", Verbs = "PUT")] // update item
-    [Route("suppliers/{SupplierId}/update", Verbs = "POST")] // delete item
+    [Route("/suppliers/{SupplierId}", Verbs = "PUT")] // update item
+    [Route("/suppliers/{SupplierId}/update", Verbs = "POST")] // delete item
     public partial class SupplierUpdateRequest : Supplier, IReturn<SupplierResponse>
     {
 
     }
 
-    [Route("suppliers/{SupplierId}", Verbs = "DELETE")] // delete item
-    [Route("suppliers/{SupplierId}/delete", Verbs = "POST")] // delete item
+    [Route("/suppliers/{SupplierId}", Verbs = "DELETE")] // delete item
+    [Route("/suppliers/{SupplierId}/delete", Verbs = "POST")] // delete item
     public partial class SupplierDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 SupplierId { get; set; }
@@ -300,7 +300,7 @@ namespace Northwind.Data.Services
         public SupplierResponse(Supplier category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class SupplierCollectionResponse : GetCollectionResponse<Supplier>
@@ -310,7 +310,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

@@ -1,0 +1,114 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var items = _executingGenerator.TypedViews;
+%>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using ServiceStack.Logging;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.ServiceInterface.ServiceModel;
+using ServiceStack.Text;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Dtos.TypedViewDtos;
+using <%=rootNameSpace%>.ServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.Services.TypedViewServices
+{
+    #region TypedViewService
+    public partial class TypedViewService : TypedViewServiceBase
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
+    {
+        public TypedViewCollectionResponse Get(TypedViewsMetaRequest request)
+        {
+            return GetTypedViewsResponse();
+        }
+
+        public TypedViewCollectionResponse Get(TypedViewsRequest request)
+        {
+            return GetTypedViewsResponse();
+        }
+
+        private TypedViewCollectionResponse GetTypedViewsResponse()
+        {
+            const string cacheKey = "meta-typedviews";
+            Func<TypedViewCollectionResponse> funcMethod = GetTypedViewsResponseInternal;
+            var response = base.Cache.Get<TypedViewCollectionResponse>(cacheKey);
+            if (response == null)
+            {
+                response = funcMethod();
+                base.Cache.Set(cacheKey, response, TimeSpan.FromMinutes(2));
+            }
+            return response;
+        }
+        
+        private TypedViewCollectionResponse GetTypedViewsResponseInternal()
+        {
+            var baseUri = base.BaseServiceUri;
+      
+            var items = new List<TypedView>();
+<%foreach(var item in items){
+%>            items.Add(new TypedView{ Name="<%=item.Name%>", MetaLink = GenerateTypedViewLink(baseUri, "<%=item.Name%>", "<%=item.Name.ToLower()%>") });
+<%}%>
+            return new TypedViewCollectionResponse(items, 1, items.Count, items.Count);
+        }
+
+        private static Link GenerateTypedViewLink(string baseUri, string typeViewName, string typeViewId)
+        {
+            var uri = string.Concat(baseUri, "/", typeViewId);
+            return new Link
+                {
+                    Href = uri,
+                    Id = typeViewId,
+                    Rel = "self",
+                    Type = typeViewName,
+                    Properties = new Dictionary<string, string>
+                        {
+                            {"MetaUri", string.Concat(uri, "/meta")},
+                            {"XmlUri", string.Concat(uri, "?format=xml")},
+                            {"JsonUri", string.Concat(uri, "?format=json")},
+                        }
+                };
+        }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>        
+
+    }
+    #endregion
+
+    #region Requests
+    [Route("/views/meta")] // unique constraint filter
+    public partial class TypedViewsMetaRequest : IReturn<TypedViewCollectionResponse>
+    {
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcTypedViewsMetaRequestAdditionalMethods", @"//")%>  
+
+    }
+
+    [Route("/views")]
+    [DefaultView("TypedViews")]
+    public partial class TypedViewsRequest : IReturn<TypedViewCollectionResponse>
+    {
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcTypedViewsRequestAdditionalMethods", @"//")%>  
+
+    }
+    #endregion
+
+    #region Responses
+    public partial class TypedViewCollectionResponse : GetTypedViewCollectionResponse<TypedView>
+    {
+        public TypedViewCollectionResponse() : base() { }
+        public TypedViewCollectionResponse(IEnumerable<TypedView> collection, int pageNumber, int pageSize, int totalItemCount) :
+            base(collection, pageNumber, pageSize, totalItemCount) { }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcTypedViewCollectionResponseAdditionalMethods", @"//")%>  
+
+    }
+    #endregion
+}

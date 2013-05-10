@@ -1,0 +1,48 @@
+﻿@inherits ViewPage<string>
+@{
+    var classVal = "padding-left:6px;font-weight:bold;";
+    var typedLists = new[]
+    {
+     new { a = "/lists/employeesbyregionandterritory", b = "Employees By Region And Territory", c = Model == "/lists/employeesbyregionandterritory" },
+
+        };
+}
+<div class="btn-group narrow-screen span12" style="margin-bottom:10px;">
+    <a href="#" class="btn dropdown-toggle span12" data-toggle="dropdown">
+        <i class="icon-th-list"></i>
+        Typed Lists
+        <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu" style="width:100%;">
+        <li><a href="/lists">All</a></li>
+        @foreach (var e in typedLists)
+        {
+            if (!e.c)
+            {
+                <li><a href="@e.a">@e.b</a></li>
+            }
+            else
+            {
+                <li class="@classVal"><a href="@e.a">&raquo; @e.b</a></li>
+            }
+        }
+    </ul>
+</div>
+<div class="well sidebar-nav wide-screen">
+    <ul class="nav nav-list">
+        <li class="nav-header">Typed Lists</li>
+        <li></li>
+        <li><a href="/lists">All</a></li>
+        @foreach (var e in typedLists)
+        {
+            if (!e.c)
+            {
+                <li><a href="@e.a">@e.b</a></li>
+            }
+            else
+            {
+                <li class="@classVal"><a href="@e.a">&raquo; @e.b</a></li>
+            }
+        }
+    </ul>
+</div> 

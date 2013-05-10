@@ -1,0 +1,82 @@
+﻿<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var typedViews = _executingGenerator.TypedViews;
+%>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.ServiceInterface.ServiceModel;
+
+namespace <%=rootNameSpace%>.Dtos.TypedViewDtos
+{
+    #region Get Request/Response
+
+    public abstract partial class GetTypedViewCollectionRequest
+    {
+        protected GetTypedViewCollectionRequest()
+        {
+            PageNumber = 0;
+            PageSize = 0;
+            Limit = 0;
+            Sort = string.Empty;
+            Select = string.Empty;
+            Filter = string.Empty;
+        }
+        
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int Limit { get; set; }
+        public string Sort { get; set; }
+        public string Select { get; set; }
+        public string Filter { get; set; }
+    }
+
+    public abstract partial class GetTypedViewCollectionRequest<TDto, TResponse> : GetTypedViewCollectionRequest, IReturn<TResponse>
+        where TResponse: GetTypedViewCollectionResponse<TDto>
+    {
+        protected GetTypedViewCollectionRequest()
+            : base()
+        {
+        }
+    }
+    
+    public abstract partial class GetTypedViewCollectionResponse<TDto>
+    {
+        protected GetTypedViewCollectionResponse()
+        {
+        }
+
+        protected GetTypedViewCollectionResponse(IEnumerable<TDto> collection, int pageNumber, int pageSize, int totalItemCount): this()
+        {            
+            var pagedList = new StaticPagedList<TDto>(collection, pageNumber, pageSize, totalItemCount);
+            Result = pagedList.Subset;
+            Paging = new PagingDetails(pagedList);
+        }
+
+        public List<TDto> Result { get; set; }
+
+        public PagingDetails Paging { get; set; }
+
+        public ResponseStatus ResponseStatus { get; set; }
+    }
+  
+    #endregion
+
+    #region Miscellaneous
+  
+    public partial class TypedViewMetaDetailsResponse
+    {
+        public Link[] Fields { get; set; }
+    }
+  
+    #endregion
+}

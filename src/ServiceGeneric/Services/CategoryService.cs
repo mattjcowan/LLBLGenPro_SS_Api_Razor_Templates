@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Category'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class CategoryService : ServiceBase<Category, ICategoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -181,12 +181,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("categories/meta", Verbs = "GET")]
+    [Route("/categories/meta", Verbs = "GET")]
     public partial class CategoryMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("categories/datatable", Verbs = "POST")] // general query
+    [Route("/categories/datatable", Verbs = "POST")] // general query
     public partial class CategoryDataTableRequest : GetCollectionRequest<Category, CategoryCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -225,7 +225,7 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("categories/uc/categoryname/{CategoryName}", Verbs = "GET")] // unique constraint filter
+    [Route("/categories/uc/categoryname/{CategoryName}", Verbs = "GET")] // unique constraint filter
     public partial class CategoryUcCategoryNameRequest : GetRequest<Category, CategoryResponse>
     {
         // unique constraint fields (that are not also primary key fields)
@@ -234,36 +234,36 @@ namespace Northwind.Data.Services
     }
 
 
-    [Route("categories/{CategoryId}", Verbs = "GET")] // primary key filter
+    [Route("/categories/{CategoryId}", Verbs = "GET")] // primary key filter
     public partial class CategoryPkRequest: GetRequest<Category, CategoryResponse>
     {
         public System.Int32 CategoryId { get; set; }
 
     }
 
-    [Route("categories", Verbs = "GET")] // general query
+    [Route("/categories", Verbs = "GET")] // general query
     [DefaultView("CategoryView")]
     public partial class CategoryQueryCollectionRequest : GetCollectionRequest<Category, CategoryCollectionResponse>
     {
     }
 
-    [Route("categories", Verbs = "POST")] // add item
+    [Route("/categories", Verbs = "POST")] // add item
     public partial class CategoryAddRequest : Category, IReturn<CategoryResponse>
     {
         public string PictureSrcPath { get; set; }
 
     }
 
-    [Route("categories/{CategoryId}", Verbs = "PUT")] // update item
-    [Route("categories/{CategoryId}/update", Verbs = "POST")] // delete item
+    [Route("/categories/{CategoryId}", Verbs = "PUT")] // update item
+    [Route("/categories/{CategoryId}/update", Verbs = "POST")] // delete item
     public partial class CategoryUpdateRequest : Category, IReturn<CategoryResponse>
     {
         public string PictureSrcPath { get; set; }
 
     }
 
-    [Route("categories/{CategoryId}", Verbs = "DELETE")] // delete item
-    [Route("categories/{CategoryId}/delete", Verbs = "POST")] // delete item
+    [Route("/categories/{CategoryId}", Verbs = "DELETE")] // delete item
+    [Route("/categories/{CategoryId}/delete", Verbs = "POST")] // delete item
     public partial class CategoryDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 CategoryId { get; set; }
@@ -278,7 +278,7 @@ namespace Northwind.Data.Services
         public CategoryResponse(Category category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class CategoryCollectionResponse : GetCollectionResponse<Category>
@@ -288,7 +288,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

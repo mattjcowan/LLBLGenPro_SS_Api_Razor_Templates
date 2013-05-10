@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Employee'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class EmployeeService : ServiceBase<Employee, IEmployeeServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -162,12 +162,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("employees/meta", Verbs = "GET")]
+    [Route("/employees/meta", Verbs = "GET")]
     public partial class EmployeeMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("employees/datatable", Verbs = "POST")] // general query
+    [Route("/employees/datatable", Verbs = "POST")] // general query
     public partial class EmployeeDataTableRequest : GetCollectionRequest<Employee, EmployeeCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -292,36 +292,36 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("employees/{EmployeeId}", Verbs = "GET")] // primary key filter
+    [Route("/employees/{EmployeeId}", Verbs = "GET")] // primary key filter
     public partial class EmployeePkRequest: GetRequest<Employee, EmployeeResponse>
     {
         public System.Int32 EmployeeId { get; set; }
 
     }
 
-    [Route("employees", Verbs = "GET")] // general query
+    [Route("/employees", Verbs = "GET")] // general query
     [DefaultView("EmployeeView")]
     public partial class EmployeeQueryCollectionRequest : GetCollectionRequest<Employee, EmployeeCollectionResponse>
     {
     }
 
-    [Route("employees", Verbs = "POST")] // add item
+    [Route("/employees", Verbs = "POST")] // add item
     public partial class EmployeeAddRequest : Employee, IReturn<EmployeeResponse>
     {
         public string PhotoSrcPath { get; set; }
 
     }
 
-    [Route("employees/{EmployeeId}", Verbs = "PUT")] // update item
-    [Route("employees/{EmployeeId}/update", Verbs = "POST")] // delete item
+    [Route("/employees/{EmployeeId}", Verbs = "PUT")] // update item
+    [Route("/employees/{EmployeeId}/update", Verbs = "POST")] // delete item
     public partial class EmployeeUpdateRequest : Employee, IReturn<EmployeeResponse>
     {
         public string PhotoSrcPath { get; set; }
 
     }
 
-    [Route("employees/{EmployeeId}", Verbs = "DELETE")] // delete item
-    [Route("employees/{EmployeeId}/delete", Verbs = "POST")] // delete item
+    [Route("/employees/{EmployeeId}", Verbs = "DELETE")] // delete item
+    [Route("/employees/{EmployeeId}/delete", Verbs = "POST")] // delete item
     public partial class EmployeeDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 EmployeeId { get; set; }
@@ -336,7 +336,7 @@ namespace Northwind.Data.Services
         public EmployeeResponse(Employee category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class EmployeeCollectionResponse : GetCollectionResponse<Employee>
@@ -346,7 +346,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

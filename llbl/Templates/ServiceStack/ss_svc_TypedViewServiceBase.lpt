@@ -1,0 +1,49 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var items = _executingGenerator.TypedViews;
+%>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using ServiceStack.Logging;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.ServiceInterface.ServiceModel;
+using ServiceStack.Text;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Dtos.TypedViewDtos;
+using <%=rootNameSpace%>.ServiceInterfaces;
+using <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.Services.TypedViewServices
+{ 
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBaseAdditionalAttributes", @"//")%> 
+    [LogRequestFilter, LogExceptionFilter]
+    public abstract partial class TypedViewServiceBase: Service
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBaseAdditionalInterfaces", @"//")%>
+    {
+        public string BaseServiceUri
+        {
+            get { return base.Request.GetApplicationUrl().TrimEnd('/') + "/views"; }
+        }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcBaseAdditionalMethods", @"//")%>   
+    }
+    
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalAttributes", @"//")%> 
+    public abstract partial class TypedViewServiceBase<TDto, TRepository>: TypedViewServiceBase
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%> 
+        where TDto: CommonTypedViewDtoBase
+        where TRepository: ITypedViewServiceRepository<TDto>
+    {
+        // Set using the IoC Container with Property Injection
+        public virtual TRepository Repository { get; set; }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>   
+    }
+}

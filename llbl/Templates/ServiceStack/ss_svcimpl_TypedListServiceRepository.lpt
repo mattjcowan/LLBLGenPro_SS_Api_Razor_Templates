@@ -1,0 +1,201 @@
+﻿<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+  var typedViews = _executingGenerator.TypedViews;
+  var typedLists = _executingGenerator.TypedLists;
+  
+  //-- Single entity template --
+  var item = (TypedListDefinition)_activeObject;
+  var fields = item.Fields;
+  var nullableAliases = item.GetAllNullableEntityAliasesInSourceSet();
+  var binaryFields = fields.Where(f=>IsFieldBinary(f.MappedFieldInstance.FieldType.RepresentedType)).ToList();
+%>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+using ServiceStack.Text;
+using <%=rootNameSpace%>;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Dtos.TypedListDtos;
+using <%=rootNameSpace%>.EntityClasses;
+using <%=rootNameSpace%>.FactoryClasses;
+using <%=rootNameSpace%>.Helpers;
+using <%=rootNameSpace%>.HelperClasses;
+using <%=rootNameSpace%>.ServiceInterfaces;
+using <%=rootNameSpace%>.ServiceInterfaces.TypedListServiceInterfaces;
+using <%=rootNameSpace%>.Services;
+using <%=rootNameSpace%>.Services.TypedListServices;
+using <%=rootNameSpace%>.TypedListClasses;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.ServiceRepositories.TypedListServiceRepositories
+{ 
+    public partial class <%=item.Name%>TypedListServiceRepository : TypedListServiceRepositoryBase<<%=item.Name%>>, I<%=item.Name%>TypedListServiceRepository
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
+    {
+        #region Class Extensibility Methods
+        partial void OnCreateRepository();
+        partial void OnBeforeFetch<%=item.Name%>QueryCollectionRequest(IDataAccessAdapter adapter, <%=item.Name%>QueryCollectionRequest request, SortExpression sortExpression, string[] includedFieldNames, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetch<%=item.Name%>QueryCollectionRequest(IDataAccessAdapter adapter, <%=item.Name%>QueryCollectionRequest request, <%=item.Name%>TypedList typedList, SortExpression sortExpression, string[] includedFieldNames, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+        #endregion
+        
+        public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
+        
+        protected override TypedListType TypedListType
+        {
+            get { return TypedListType.<%=item.Name%>TypedList; }
+        }
+    
+        public <%=item.Name%>TypedListServiceRepository()
+        {
+            OnCreateRepository();
+        }
+
+        // Description for parameters: http://datatables.net/usage/server-side
+        public DataTableResponse GetDataTableResponse(<%=item.Name%>DataTableRequest request)
+        {
+            //UrlDecode Request Properties
+            request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
+            request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
+            request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
+            request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+
+            //Paging
+            var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
+            iDisplayStart = iDisplayStart <= 0 ? (1+((request.PageNumber-1)*request.PageSize)): iDisplayStart;
+            var iDisplayLength = request.iDisplayLength <= 0 ? request.PageSize: request.iDisplayLength;
+            var pageNumber = Math.Ceiling(iDisplayStart*1.0/iDisplayLength);
+            var pageSize = iDisplayLength;
+            //Sorting
+            var sort = request.Sort;
+            if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
+            {
+                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+            }
+            //Search
+            var filter = request.Filter;
+            var searchStr = string.Empty;
+            if (!string.IsNullOrEmpty(request.sSearch))
+            {
+                // process int field searches
+                var n = 0;
+                var searchStrAsInt = -1;
+                if (int.TryParse(request.sSearch, out searchStrAsInt))
+                {
+                    foreach (var fm in FieldMap)
+                    {
+                        if (fm.Value.DataType.IsNumericType())
+                        {
+                            n++;
+                            searchStr += string.Format("({0}:eq:{1})", fm.Key, searchStrAsInt);
+                        }
+                    }
+                }
+                // process string field searches
+                foreach (var fm in FieldMap)
+                {
+                    if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
+                    {
+                        n++;
+                        searchStr += string.Format("({0}:lk:*{1}*)", fm.Key, request.sSearch);
+                    }
+                }
+                searchStr = n > 1 ? "(|" + searchStr + ")": searchStr.Trim('(', ')');
+
+                filter = string.IsNullOrEmpty(filter) ? searchStr
+                    : string.Format("(^{0}{1})", 
+                    filter.StartsWith("(") ? filter: "(" + filter + ")",
+                    searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
+            }
+
+            var entities = Fetch(new <%=item.Name%>QueryCollectionRequest
+                {
+                    Filter = filter, 
+                    PageNumber = Convert.ToInt32(pageNumber),
+                    PageSize = pageSize,
+                    Sort = sort,
+                    Select = request.Select,
+                });
+            var response = new DataTableResponse();
+            foreach (var item in entities.Result)
+            {
+                response.aaData.Add(new string[]
+                    {
+<%  for(var fi=0;fi<fields.Count;fi++)
+    {
+        var field = fields[fi];
+        var emitAsOptional = field.MappedFieldInstance.IsOptional || nullableAliases.Contains(field.SourceEntityAlias);
+        var dotNetFieldTypeName = GeneratorUtils.ProduceDotNetTypeName(field.MappedFieldInstance.FieldType.RepresentedType,  emitAsOptional, "Nullable<{0}>");
+        var isOfStringType = dotNetFieldTypeName.IndexOf("string", 0, StringComparison.InvariantCultureIgnoreCase)>=0;
+        if(IsFieldBinary(field.MappedFieldInstance.FieldType.RepresentedType)) {
+%>                        string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.<%=field.FieldAlias%>.ToImageSrc(null, 160))<%=(fi>=fields.Count-1?"":",")%><%
+        } else {
+%>                        item.<%=field.FieldAlias%><%if(!isOfStringType){%>.ToString()<%}%><%=(fi>=fields.Count-1?"":",")%>
+<%
+        }
+  }%>
+                    });
+            }
+            response.sEcho = request.sEcho;
+            // total records in the database before datatables search
+            response.iTotalRecords = entities.Paging.TotalCount;
+            // total records in the database after datatables search
+            response.iTotalDisplayRecords = entities.Paging.TotalCount;
+            return response;
+        }
+    
+        public <%=item.Name%>CollectionResponse Fetch(<%=item.Name%>QueryCollectionRequest request)
+        {
+            base.FixupLimitAndPagingOnRequest(request);
+
+            var typedList = new <%=item.Name%>TypedList();
+			
+            var totalItemCount = 0;
+            var sortExpression = RepositoryHelper.ConvertStringToSortExpression(TypedListType, request.Sort);
+            var includedFieldNames = RepositoryHelper.ConvertStringToExcludedIncludedFields(request.Select);
+            var predicateBucket = RepositoryHelper.ConvertStringToRelationPredicateBucket(TypedListType, typedList.GetRelationInfo(), request.Filter);
+
+            using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
+            {
+                OnBeforeFetch<%=item.Name%>QueryCollectionRequest(adapter, request, sortExpression, includedFieldNames, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit);
+                totalItemCount = (int)adapter.GetDbCount(typedList.GetFieldsInfo(), predicateBucket, null, false);
+                adapter.FetchTypedList(typedList.GetFieldsInfo(), typedList, predicateBucket, request.Limit, sortExpression, true, null, request.PageNumber, request.PageSize);
+                OnAfterFetch<%=item.Name%>QueryCollectionRequest(adapter, request, typedList, sortExpression, includedFieldNames, predicateBucket,
+                    request.PageNumber, request.PageSize, request.Limit, totalItemCount);
+            }
+
+            var dtos = new <%=item.Name%>Collection();
+            var enumerator = typedList.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                dtos.Add(Map(enumerator.Current, includedFieldNames));
+            }
+
+            var response = new <%=item.Name%>CollectionResponse(dtos, request.PageNumber,
+                                                          request.PageSize, totalItemCount);
+            return response;       
+        }
+
+        private <%=item.Name%> Map(<%=item.Name%>Row row, string[] fieldNames)
+        {
+            var hasFn = fieldNames != null && fieldNames.Any();
+            var item = new <%=item.Name%>();
+<%  for(var fi=0;fi<fields.Count;fi++)
+    {
+        var field = fields[fi];
+%>            if (!hasFn || fieldNames.Contains("<%=field.FieldAlias%>", StringComparer.OrdinalIgnoreCase))
+				item.<%=field.FieldAlias%> = row.<%=field.FieldAlias%>;
+<%  } %>
+            return item;
+        }
+    
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>
+
+    }
+}

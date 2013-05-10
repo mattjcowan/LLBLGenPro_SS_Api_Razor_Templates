@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'OrderDetail'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class OrderDetailService : ServiceBase<OrderDetail, IOrderDetailServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -138,12 +138,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("orderdetails/meta", Verbs = "GET")]
+    [Route("/orderdetails/meta", Verbs = "GET")]
     public partial class OrderDetailMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("orderdetails/datatable", Verbs = "POST")] // general query
+    [Route("/orderdetails/datatable", Verbs = "POST")] // general query
     public partial class OrderDetailDataTableRequest : GetCollectionRequest<OrderDetail, OrderDetailCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -190,7 +190,7 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("orderdetails/{OrderId}/{ProductId}", Verbs = "GET")] // primary key filter
+    [Route("/orderdetails/{OrderId}/{ProductId}", Verbs = "GET")] // primary key filter
     public partial class OrderDetailPkRequest: GetRequest<OrderDetail, OrderDetailResponse>
     {
         public System.Int32 OrderId { get; set; }
@@ -198,27 +198,27 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("orderdetails", Verbs = "GET")] // general query
+    [Route("/orderdetails", Verbs = "GET")] // general query
     [DefaultView("OrderDetailView")]
     public partial class OrderDetailQueryCollectionRequest : GetCollectionRequest<OrderDetail, OrderDetailCollectionResponse>
     {
     }
 
-    [Route("orderdetails", Verbs = "POST")] // add item
+    [Route("/orderdetails", Verbs = "POST")] // add item
     public partial class OrderDetailAddRequest : OrderDetail, IReturn<OrderDetailResponse>
     {
 
     }
 
-    [Route("orderdetails/{OrderId}/{ProductId}", Verbs = "PUT")] // update item
-    [Route("orderdetails/{OrderId}/{ProductId}/update", Verbs = "POST")] // delete item
+    [Route("/orderdetails/{OrderId}/{ProductId}", Verbs = "PUT")] // update item
+    [Route("/orderdetails/{OrderId}/{ProductId}/update", Verbs = "POST")] // delete item
     public partial class OrderDetailUpdateRequest : OrderDetail, IReturn<OrderDetailResponse>
     {
 
     }
 
-    [Route("orderdetails/{OrderId}/{ProductId}", Verbs = "DELETE")] // delete item
-    [Route("orderdetails/{OrderId}/{ProductId}/delete", Verbs = "POST")] // delete item
+    [Route("/orderdetails/{OrderId}/{ProductId}", Verbs = "DELETE")] // delete item
+    [Route("/orderdetails/{OrderId}/{ProductId}/delete", Verbs = "POST")] // delete item
     public partial class OrderDetailDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 OrderId { get; set; }
@@ -234,7 +234,7 @@ namespace Northwind.Data.Services
         public OrderDetailResponse(OrderDetail category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class OrderDetailCollectionResponse : GetCollectionResponse<OrderDetail>
@@ -244,7 +244,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

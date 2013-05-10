@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Product'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class ProductService : ServiceBase<Product, IProductServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -157,12 +157,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("products/meta", Verbs = "GET")]
+    [Route("/products/meta", Verbs = "GET")]
     public partial class ProductMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("products/datatable", Verbs = "POST")] // general query
+    [Route("/products/datatable", Verbs = "POST")] // general query
     public partial class ProductDataTableRequest : GetCollectionRequest<Product, ProductCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -237,7 +237,7 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("products/uc/productname/{ProductName}", Verbs = "GET")] // unique constraint filter
+    [Route("/products/uc/productname/{ProductName}", Verbs = "GET")] // unique constraint filter
     public partial class ProductUcProductNameRequest : GetRequest<Product, ProductResponse>
     {
         // unique constraint fields (that are not also primary key fields)
@@ -246,34 +246,34 @@ namespace Northwind.Data.Services
     }
 
 
-    [Route("products/{ProductId}", Verbs = "GET")] // primary key filter
+    [Route("/products/{ProductId}", Verbs = "GET")] // primary key filter
     public partial class ProductPkRequest: GetRequest<Product, ProductResponse>
     {
         public System.Int32 ProductId { get; set; }
 
     }
 
-    [Route("products", Verbs = "GET")] // general query
+    [Route("/products", Verbs = "GET")] // general query
     [DefaultView("ProductView")]
     public partial class ProductQueryCollectionRequest : GetCollectionRequest<Product, ProductCollectionResponse>
     {
     }
 
-    [Route("products", Verbs = "POST")] // add item
+    [Route("/products", Verbs = "POST")] // add item
     public partial class ProductAddRequest : Product, IReturn<ProductResponse>
     {
 
     }
 
-    [Route("products/{ProductId}", Verbs = "PUT")] // update item
-    [Route("products/{ProductId}/update", Verbs = "POST")] // delete item
+    [Route("/products/{ProductId}", Verbs = "PUT")] // update item
+    [Route("/products/{ProductId}/update", Verbs = "POST")] // delete item
     public partial class ProductUpdateRequest : Product, IReturn<ProductResponse>
     {
 
     }
 
-    [Route("products/{ProductId}", Verbs = "DELETE")] // delete item
-    [Route("products/{ProductId}/delete", Verbs = "POST")] // delete item
+    [Route("/products/{ProductId}", Verbs = "DELETE")] // delete item
+    [Route("/products/{ProductId}/delete", Verbs = "POST")] // delete item
     public partial class ProductDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 ProductId { get; set; }
@@ -288,7 +288,7 @@ namespace Northwind.Data.Services
         public ProductResponse(Product category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class ProductCollectionResponse : GetCollectionResponse<Product>
@@ -298,7 +298,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

@@ -1,0 +1,6 @@
+    /// <summary>Returns the TypedListType enum value for this typed list.</summary>
+    [Browsable(false), System.Xml.Serialization.XmlIgnore]
+    public TypedListType TypedListType 
+    {
+        get { return TypedListType.<[CurrentTypedListName]>TypedList; }
+    }

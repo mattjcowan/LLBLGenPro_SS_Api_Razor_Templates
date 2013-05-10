@@ -1,0 +1,6 @@
+    /// <summary>Returns the TypedViewType enum value for this typed view.</summary>
+    [Browsable(false), System.Xml.Serialization.XmlIgnore]
+    public TypedViewType TypedViewType 
+    {
+        get { return TypedViewType.<[CurrentTypedViewName]>TypedView; }
+    } 

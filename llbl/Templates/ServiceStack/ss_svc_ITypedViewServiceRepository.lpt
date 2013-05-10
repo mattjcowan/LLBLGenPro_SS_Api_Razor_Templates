@@ -1,0 +1,18 @@
+﻿<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+%>using <%=rootNameSpace%>.Dtos.TypedViewDtos;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcServiceRepositoryAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces
+{
+    public interface ITypedViewServiceRepository<TDto>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcServiceRepositoryInterfaces", @"//")%>
+        where TDto : CommonTypedViewDtoBase
+    {
+    
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcServiceRepositoryMethods", @"//")%>
+
+    }
+}

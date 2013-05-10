@@ -1,0 +1,41 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var items = _executingGenerator.TypedLists;
+
+  //-- Single entity template --
+  var item = (TypedListDefinition)_activeObject;
+  var fields = item.Fields;
+  var nullableAliases = item.GetAllNullableEntityAliasesInSourceSet();
+%>using System;
+using System.ComponentModel;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+#if !CF
+using System.Runtime.Serialization;
+#endif
+using System.Xml.Serialization;
+
+namespace <%=rootNameSpace%>.Dtos.TypedListDtos
+{ 
+    public partial class <%=item.Name%>Collection : CommonTypedListDtoBaseCollection<<%=item.Name%>>
+    {
+        public <%=item.Name%>Collection(){}
+        public <%=item.Name%>Collection(IEnumerable<<%=item.Name%>> collection): base(collection ?? new List<<%=item.Name%>>()){}
+        public <%=item.Name%>Collection(List<<%=item.Name%>> list): base(list ?? new List<<%=item.Name%>>()){}
+    }
+
+    public partial class <%=item.Name%>: CommonTypedListDtoBase<<%=item.Name%>>
+    {
+<%  foreach(var field in fields)
+    {
+        bool emitAsOptional = field.MappedFieldInstance.IsOptional || nullableAliases.Contains(field.SourceEntityAlias);
+        string dotNetFieldTypeName = GeneratorUtils.ProduceDotNetTypeName(field.MappedFieldInstance.FieldType.RepresentedType,  emitAsOptional, "Nullable<{0}>"); 
+%>      /// <summary>Gets or sets the <%=field.FieldAlias%> field. <%=field.MappedFieldInstance.Description%></summary>
+        public virtual <%=dotNetFieldTypeName%> <%=field.FieldAlias%> { get; set; }
+<%  } %>
+    }
+}

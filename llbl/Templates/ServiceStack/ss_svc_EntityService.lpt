@@ -17,7 +17,7 @@
   var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
   var binaryFields = entityFields.Where(f=>IsFieldBinary(f)).ToList();
   if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
-  var baseRoute = Pluralize(entity.Name).ToLower();
+  var baseRoute = string.Concat("/", Pluralize(entity.Name).ToLower());
   var pkFields = entity.IdentifyingFields.Select(f => f.Name).ToArray();
   var pkRouteSb = new StringBuilder();
   foreach(var pkField in pkFields)
@@ -244,12 +244,12 @@ if(includeValidation){%>            if (Validator != null)
     #endregion
 
     #region Requests
-    [Route("/<%=baseRoute%>/meta", Verbs = "GET")]
+    [Route("<%=baseRoute%>/meta", Verbs = "GET")]
     public partial class <%=entity.Name%>MetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("/<%=baseRoute%>/datatable", Verbs = "POST")] // general query
+    [Route("<%=baseRoute%>/datatable", Verbs = "POST")] // general query
     public partial class <%=entity.Name%>DataTableRequest : GetCollectionRequest<<%=entity.Name%>, <%=entity.Name%>CollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -272,7 +272,7 @@ if(includeValidation){%>            if (Validator != null)
     }
 
 <%foreach(var uc in entity.UniqueConstraints){
-%>    [Route("/<%=baseRoute%>/uc/<%=uc.Name.ToLower().Substring(2)%>/<%=ucRoutes[uc.Name]%>", Verbs = "GET")] // unique constraint filter
+%>    [Route("<%=baseRoute%>/uc/<%=uc.Name.ToLower().Substring(2)%>/<%=ucRoutes[uc.Name]%>", Verbs = "GET")] // unique constraint filter
     public partial class <%=entity.Name%><%=uc.Name%>Request : GetRequest<<%=entity.Name%>, <%=entity.Name%>Response>
     {
         // unique constraint fields (that are not also primary key fields)
@@ -285,7 +285,7 @@ if(includeValidation){%>            if (Validator != null)
     }
 <%}%>
 
-    [Route("/<%=baseRoute%>/<%=pkRoute%>", Verbs = "GET")] // primary key filter
+    [Route("<%=baseRoute%>/<%=pkRoute%>", Verbs = "GET")] // primary key filter
     public partial class <%=entity.Name%>PkRequest: GetRequest<<%=entity.Name%>, <%=entity.Name%>Response>
     {
 <%foreach(var pkField in entity.IdentifyingFields){
@@ -294,13 +294,13 @@ if(includeValidation){%>            if (Validator != null)
 <%}%>
     }
 
-    [Route("/<%=baseRoute%>", Verbs = "GET")] // general query
+    [Route("<%=baseRoute%>", Verbs = "GET")] // general query
     [DefaultView("<%=entity.Name%>View")]
     public partial class <%=entity.Name%>QueryCollectionRequest : GetCollectionRequest<<%=entity.Name%>, <%=entity.Name%>CollectionResponse>
     {
     }
 
-    [Route("/<%=baseRoute%>", Verbs = "POST")] // add item
+    [Route("<%=baseRoute%>", Verbs = "POST")] // add item
     public partial class <%=entity.Name%>AddRequest : <%=entity.Name%>, IReturn<<%=entity.Name%>Response>
     {
 <%foreach(var field in binaryFields){
@@ -308,8 +308,8 @@ if(includeValidation){%>            if (Validator != null)
 <%}%>
     }
 
-    [Route("/<%=baseRoute%>/<%=pkRoute%>", Verbs = "PUT")] // update item
-    [Route("/<%=baseRoute%>/<%=pkRoute%>/update", Verbs = "POST")] // delete item
+    [Route("<%=baseRoute%>/<%=pkRoute%>", Verbs = "PUT")] // update item
+    [Route("<%=baseRoute%>/<%=pkRoute%>/update", Verbs = "POST")] // delete item
     public partial class <%=entity.Name%>UpdateRequest : <%=entity.Name%>, IReturn<<%=entity.Name%>Response>
     {
 <%foreach(var field in binaryFields){
@@ -317,8 +317,8 @@ if(includeValidation){%>            if (Validator != null)
 <%}%>
     }
 
-    [Route("/<%=baseRoute%>/<%=pkRoute%>", Verbs = "DELETE")] // delete item
-    [Route("/<%=baseRoute%>/<%=pkRoute%>/delete", Verbs = "POST")] // delete item
+    [Route("<%=baseRoute%>/<%=pkRoute%>", Verbs = "DELETE")] // delete item
+    [Route("<%=baseRoute%>/<%=pkRoute%>/delete", Verbs = "POST")] // delete item
     public partial class <%=entity.Name%>DeleteRequest: SimpleRequest<bool>
     {
 <%foreach(var pkField in entity.IdentifyingFields){

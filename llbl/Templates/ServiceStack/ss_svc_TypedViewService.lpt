@@ -1,0 +1,134 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  
+  //-- Single entity template --
+  var item = (TypedViewDefinition)_activeObject;
+  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+  var binaryFields = fields.Where(f=>IsFieldBinary(f)).ToList();
+  var baseRoute = string.Concat("/views/", item.Name.ToLower());
+  
+  var authOnGet = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnGetVerb");
+  var authOnPut = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnPutVerb");
+  var authOnPost = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnPostVerb");
+  var authOnDelete = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnDeleteVerb");
+%>using System;
+using System.Collections.Generic;
+using System.Net;
+using ServiceStack.Common.Web;
+using ServiceStack.FluentValidation;
+using ServiceStack.Logging;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.Text;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Dtos.TypedViewDtos;
+using <%=rootNameSpace%>.ServiceInterfaces;
+using <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.Services.TypedViewServices
+{
+    #region Service
+    /// <summary>Service class for the typed view '<%=item.Name%>'.</summary>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalAttributes", @"//")%> 
+    public partial class <%=item.Name%>TypedViewService : TypedViewServiceBase<<%=item.Name%>, I<%=item.Name%>TypedViewServiceRepository>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
+    {
+        #region Class Extensibility Methods
+        partial void OnCreateService();
+        partial void OnBeforeGet<%=item.Name%>MetaRequest(<%=item.Name%>MetaRequest request);
+        partial void OnAfterGet<%=item.Name%>MetaRequest(<%=item.Name%>MetaRequest request, TypedViewMetaDetailsResponse response);
+        partial void OnBeforePost<%=item.Name%>DataTableRequest(<%=item.Name%>DataTableRequest request);
+        partial void OnAfterPost<%=item.Name%>DataTableRequest(<%=item.Name%>DataTableRequest request, DataTableResponse response);
+        partial void OnBeforeGet<%=item.Name%>QueryCollectionRequest(<%=item.Name%>QueryCollectionRequest request);
+        partial void OnAfterGet<%=item.Name%>QueryCollectionRequest(<%=item.Name%>QueryCollectionRequest request, <%=item.Name%>CollectionResponse response);
+        #endregion
+    
+        public <%=item.Name%>TypedViewService()
+        {
+            OnCreateService();
+        }
+        
+        /// <summary>Gets meta data information for the typed view '<%=item.Name%>' including field metadata.</summary>
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        public TypedViewMetaDetailsResponse Get(<%=item.Name%>MetaRequest request)
+        {
+            OnBeforeGet<%=item.Name%>MetaRequest(request);
+            var output = Repository.GetTypedViewMetaDetails(this);
+            OnAfterGet<%=item.Name%>MetaRequest(request, output);
+            return output;
+        }
+
+        /// <summary>Fetches '<%=item.Name%>' typed view records matching the request formatted specifically for the datatables.net jquery plugin.</summary>
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        public DataTableResponse Post(<%=item.Name%>DataTableRequest request)
+        {
+            OnBeforePost<%=item.Name%>DataTableRequest(request);
+            var output = Repository.GetDataTableResponse(request);
+            OnAfterPost<%=item.Name%>DataTableRequest(request, output);
+            return output;
+        }
+
+        /// <summary>Queries '<%=item.Name%>' typed view records using sorting, filtering, paging and more.</summary>
+<%if(authOnGet){%>        [Authenticate]
+<%}%>        public <%=item.Name%>CollectionResponse Get(<%=item.Name%>QueryCollectionRequest request)
+        {
+            OnBeforeGet<%=item.Name%>QueryCollectionRequest(request);
+            var output = Repository.Fetch(request);
+            OnAfterGet<%=item.Name%>QueryCollectionRequest(request, output);
+            return output;
+        }
+
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsTypedViewSvcAdditionalMethods", @"//")%>
+
+    }
+    #endregion
+
+    #region Requests
+    [Route("<%=baseRoute%>/meta", Verbs = "GET")]
+    public partial class <%=item.Name%>MetaRequest : IReturn<TypedViewMetaDetailsResponse>
+    {
+    }
+
+    [Route("<%=baseRoute%>/datatable", Verbs = "POST")] // general query
+    public partial class <%=item.Name%>DataTableRequest : GetTypedViewCollectionRequest<<%=item.Name%>, <%=item.Name%>CollectionResponse>
+    {
+        public int iDisplayStart { get; set; }
+        public int iDisplayLength { get; set; }
+        public string sSearch { get; set; }
+        public bool bEscapeRegex { get; set; }
+        public int iColumns { get; set; }
+        public int iSortingCols { get; set; }
+        public string sEcho { get; set; }
+        public string bRegex { get; set; }
+
+<%for(int i=0;i<fields.Count();i++){
+%>        public int iSortCol_<%=i.ToString()%> { get; set; }
+        public string sSortDir_<%=i.ToString()%> { get; set; }
+        public string bSortable_<%=i.ToString()%> { get; set; } 
+        public string mDataProp_<%=i.ToString()%> { get; set; } 
+        public string bRegex_<%=i.ToString()%> { get; set; }
+        public string bSearchable_<%=i.ToString()%> { get; set; }
+<%}%>
+    }
+
+    [Route("<%=baseRoute%>", Verbs = "GET")] // general query
+    [DefaultView("<%=item.Name%>TypedView")]
+    public partial class <%=item.Name%>QueryCollectionRequest : GetTypedViewCollectionRequest<<%=item.Name%>, <%=item.Name%>CollectionResponse>
+    {
+    }
+    #endregion
+
+    #region Responses
+    public partial class <%=item.Name%>CollectionResponse : GetTypedViewCollectionResponse<<%=item.Name%>>
+    {
+        public <%=item.Name%>CollectionResponse(): base(){}
+        public <%=item.Name%>CollectionResponse(IEnumerable<<%=item.Name%>> collection, int pageNumber, int pageSize, int totalItemCount) : 
+            base(collection, pageNumber, pageSize, totalItemCount){}
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcTypedViewCollectionResponseAdditionalMethods", @"//")%>  
+    }
+    #endregion
+}

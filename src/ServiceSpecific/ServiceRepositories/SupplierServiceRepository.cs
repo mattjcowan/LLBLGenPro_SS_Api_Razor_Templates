@@ -9,6 +9,7 @@ using Northwind.Data;
 using Northwind.Data.Dtos;
 using Northwind.Data.EntityClasses;
 using Northwind.Data.FactoryClasses;
+using Northwind.Data.Helpers;
 using Northwind.Data.HelperClasses;
 using Northwind.Data.ServiceInterfaces;
 using Northwind.Data.Services;
@@ -17,7 +18,7 @@ using Northwind.Data.Services;
 
 namespace Northwind.Data.ServiceRepositories
 { 
-    public partial class SupplierServiceRepository : EntityServiceRepositoryBase<Supplier, SupplierEntity, SupplierEntityFactory, SupplierFieldIndex>, ISupplierServiceRepository
+    public partial class SupplierServiceRepository : EntityServiceRepositoryBase<Supplier, SupplierEntity, SupplierEntityFactory>, ISupplierServiceRepository
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
     {
@@ -163,10 +164,10 @@ SupplierQueryCollectionRequest
             base.FixupLimitAndPagingOnRequest(request);
 
             var totalItemCount = 0;
-            var sortExpression = ConvertStringToSortExpression(request.Sort);
-            var includeFields = ConvertStringToExcludedIncludedFields(request.Select);
-            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
-            var predicateBucket = ConvertStringToRelationPredicateBucket(request.Filter, request.Relations);
+            var sortExpression = RepositoryHelper.ConvertStringToSortExpression(EntityType, request.Sort);
+            var includeFields = RepositoryHelper.ConvertStringToExcludedIncludedFields(EntityType, request.Select);
+            var prefetchPath = RepositoryHelper.ConvertStringToPrefetchPath(EntityType, request.Include, request.Select);
+            var predicateBucket = RepositoryHelper.ConvertStringToRelationPredicateBucket(EntityType, request.Filter, request.Relations);
 
             EntityCollection<SupplierEntity> entities;
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
@@ -188,8 +189,8 @@ SupplierQueryCollectionRequest
             var entity = new SupplierEntity();
             entity.CompanyName = request.CompanyName;
 
-            var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
-            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var excludedIncludedFields = RepositoryHelper.ConvertStringToExcludedIncludedFields(EntityType, request.Select);
+            var prefetchPath = RepositoryHelper.ConvertStringToPrefetchPath(EntityType, request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
@@ -210,8 +211,8 @@ SupplierQueryCollectionRequest
             var entity = new SupplierEntity();
             entity.SupplierId = request.SupplierId;
 
-            var excludedIncludedFields = ConvertStringToExcludedIncludedFields(request.Select);
-            var prefetchPath = ConvertStringToPrefetchPath(request.Include, request.Select);
+            var excludedIncludedFields = RepositoryHelper.ConvertStringToExcludedIncludedFields(EntityType, request.Select);
+            var prefetchPath = RepositoryHelper.ConvertStringToPrefetchPath(EntityType, request.Include, request.Select);
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {

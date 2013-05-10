@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'CustomerDemographic'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class CustomerDemographicService : ServiceBase<CustomerDemographic, ICustomerDemographicServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -138,12 +138,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("customerdemographics/meta", Verbs = "GET")]
+    [Route("/customerdemographics/meta", Verbs = "GET")]
     public partial class CustomerDemographicMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("customerdemographics/datatable", Verbs = "POST")] // general query
+    [Route("/customerdemographics/datatable", Verbs = "POST")] // general query
     public partial class CustomerDemographicDataTableRequest : GetCollectionRequest<CustomerDemographic, CustomerDemographicCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -172,34 +172,34 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("customerdemographics/{CustomerTypeId}", Verbs = "GET")] // primary key filter
+    [Route("/customerdemographics/{CustomerTypeId}", Verbs = "GET")] // primary key filter
     public partial class CustomerDemographicPkRequest: GetRequest<CustomerDemographic, CustomerDemographicResponse>
     {
         public System.String CustomerTypeId { get; set; }
 
     }
 
-    [Route("customerdemographics", Verbs = "GET")] // general query
+    [Route("/customerdemographics", Verbs = "GET")] // general query
     [DefaultView("CustomerDemographicView")]
     public partial class CustomerDemographicQueryCollectionRequest : GetCollectionRequest<CustomerDemographic, CustomerDemographicCollectionResponse>
     {
     }
 
-    [Route("customerdemographics", Verbs = "POST")] // add item
+    [Route("/customerdemographics", Verbs = "POST")] // add item
     public partial class CustomerDemographicAddRequest : CustomerDemographic, IReturn<CustomerDemographicResponse>
     {
 
     }
 
-    [Route("customerdemographics/{CustomerTypeId}", Verbs = "PUT")] // update item
-    [Route("customerdemographics/{CustomerTypeId}/update", Verbs = "POST")] // delete item
+    [Route("/customerdemographics/{CustomerTypeId}", Verbs = "PUT")] // update item
+    [Route("/customerdemographics/{CustomerTypeId}/update", Verbs = "POST")] // delete item
     public partial class CustomerDemographicUpdateRequest : CustomerDemographic, IReturn<CustomerDemographicResponse>
     {
 
     }
 
-    [Route("customerdemographics/{CustomerTypeId}", Verbs = "DELETE")] // delete item
-    [Route("customerdemographics/{CustomerTypeId}/delete", Verbs = "POST")] // delete item
+    [Route("/customerdemographics/{CustomerTypeId}", Verbs = "DELETE")] // delete item
+    [Route("/customerdemographics/{CustomerTypeId}/delete", Verbs = "POST")] // delete item
     public partial class CustomerDemographicDeleteRequest: SimpleRequest<bool>
     {
         public System.String CustomerTypeId { get; set; }
@@ -214,7 +214,7 @@ namespace Northwind.Data.Services
         public CustomerDemographicResponse(CustomerDemographic category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class CustomerDemographicCollectionResponse : GetCollectionResponse<CustomerDemographic>
@@ -224,7 +224,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

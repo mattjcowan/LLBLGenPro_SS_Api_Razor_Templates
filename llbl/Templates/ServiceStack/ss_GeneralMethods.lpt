@@ -1,4 +1,4 @@
-<$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $>
+﻿<$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $>
 <$ System.Data.Linq.dll $>
 <[ System ]>
 <[ System.IO ]>
@@ -636,6 +636,19 @@ internal static bool IsFieldSortable( FieldElement fieldElement )
     if(fieldElement == null) return false;  
 
     var type = fieldElement.FieldType.RepresentedType;
+	
+	return IsFieldSortable(type, fieldElement.MaxLength);
+}
+
+// Define other methods and classes here
+/// <summary>
+/// Determines if a type is sortable.  Nullable numeric types are considered numeric.
+/// </summary>
+/// <remarks>
+/// Boolean is not considered numeric.
+/// </remarks>
+internal static bool IsFieldSortable( Type type, int maxLength )
+{
     if(IsNumericType(type))
         return true;
     
@@ -658,7 +671,7 @@ internal static bool IsFieldSortable( FieldElement fieldElement )
         case TypeCode.DateTime:
             return true;
         case TypeCode.String:
-            return (fieldElement.MaxLength <= 500);
+            return (maxLength <= 500);
     }
     return false;
 }
@@ -675,6 +688,12 @@ internal static bool IsFieldSearchable( FieldElement fieldElement )
     if(fieldElement == null) return false;  
 
     var type = fieldElement.FieldType.RepresentedType;
+	
+	return IsFieldSearchable(type, fieldElement.MaxLength);
+}
+
+internal static bool IsFieldSearchable( Type type, int maxLength)
+{
     if(IsNumericType(type))
         return true;
     
@@ -693,7 +712,7 @@ internal static bool IsFieldSearchable( FieldElement fieldElement )
         case TypeCode.Boolean:
         case TypeCode.Char:
         case TypeCode.String:
-            return (fieldElement.MaxLength <= 500);
+            return (maxLength <= 500);
     }
     return false;
 }
@@ -701,10 +720,15 @@ internal static bool IsFieldSearchable( FieldElement fieldElement )
 internal static bool IsFieldVisible( FieldElement fieldElement )
 {
     if(fieldElement == null) return false;  
-  if(fieldElement.IsPartOfIdentifyingFields) return true;
-  if(fieldElement.IsOptional || fieldElement.IsForeignKeyField) return false;
+    if(fieldElement.IsPartOfIdentifyingFields) return true;
+    if(fieldElement.IsOptional || fieldElement.IsForeignKeyField) return false;
   
     var type = fieldElement.FieldType.RepresentedType;
+    return IsFieldVisible(type, fieldElement.MaxLength);
+}
+
+internal static bool IsFieldVisible( Type type, int maxLength )
+{
     if(IsNumericType(type))
         return true;
     
@@ -724,7 +748,7 @@ internal static bool IsFieldVisible( FieldElement fieldElement )
         case TypeCode.DateTime:
             return true;
         case TypeCode.String:
-            return (fieldElement.MaxLength <= 500);
+            return (maxLength <= 500);
     }
     return false;
 }
@@ -734,7 +758,12 @@ internal static bool IsFieldBinary( FieldElement fieldElement )
     if(fieldElement == null) return false;  
   
     var type = fieldElement.FieldType.RepresentedType;
-    
+	
+	return IsFieldBinary(type);
+}
+
+internal static bool IsFieldBinary( Type type )
+{    
     // process generic
     while(Type.GetTypeCode(type) == TypeCode.Object){   
         if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))

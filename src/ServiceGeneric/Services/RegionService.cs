@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Region'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class RegionService : ServiceBase<Region, IRegionServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -157,12 +157,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("regions/meta", Verbs = "GET")]
+    [Route("/regions/meta", Verbs = "GET")]
     public partial class RegionMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("regions/datatable", Verbs = "POST")] // general query
+    [Route("/regions/datatable", Verbs = "POST")] // general query
     public partial class RegionDataTableRequest : GetCollectionRequest<Region, RegionCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -189,7 +189,7 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("regions/uc/regiondescription/{RegionDescription}", Verbs = "GET")] // unique constraint filter
+    [Route("/regions/uc/regiondescription/{RegionDescription}", Verbs = "GET")] // unique constraint filter
     public partial class RegionUcRegionDescriptionRequest : GetRequest<Region, RegionResponse>
     {
         // unique constraint fields (that are not also primary key fields)
@@ -198,34 +198,34 @@ namespace Northwind.Data.Services
     }
 
 
-    [Route("regions/{RegionId}", Verbs = "GET")] // primary key filter
+    [Route("/regions/{RegionId}", Verbs = "GET")] // primary key filter
     public partial class RegionPkRequest: GetRequest<Region, RegionResponse>
     {
         public System.Int32 RegionId { get; set; }
 
     }
 
-    [Route("regions", Verbs = "GET")] // general query
+    [Route("/regions", Verbs = "GET")] // general query
     [DefaultView("RegionView")]
     public partial class RegionQueryCollectionRequest : GetCollectionRequest<Region, RegionCollectionResponse>
     {
     }
 
-    [Route("regions", Verbs = "POST")] // add item
+    [Route("/regions", Verbs = "POST")] // add item
     public partial class RegionAddRequest : Region, IReturn<RegionResponse>
     {
 
     }
 
-    [Route("regions/{RegionId}", Verbs = "PUT")] // update item
-    [Route("regions/{RegionId}/update", Verbs = "POST")] // delete item
+    [Route("/regions/{RegionId}", Verbs = "PUT")] // update item
+    [Route("/regions/{RegionId}/update", Verbs = "POST")] // delete item
     public partial class RegionUpdateRequest : Region, IReturn<RegionResponse>
     {
 
     }
 
-    [Route("regions/{RegionId}", Verbs = "DELETE")] // delete item
-    [Route("regions/{RegionId}/delete", Verbs = "POST")] // delete item
+    [Route("/regions/{RegionId}", Verbs = "DELETE")] // delete item
+    [Route("/regions/{RegionId}/delete", Verbs = "POST")] // delete item
     public partial class RegionDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 RegionId { get; set; }
@@ -240,7 +240,7 @@ namespace Northwind.Data.Services
         public RegionResponse(Region category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class RegionCollectionResponse : GetCollectionResponse<Region>
@@ -250,7 +250,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

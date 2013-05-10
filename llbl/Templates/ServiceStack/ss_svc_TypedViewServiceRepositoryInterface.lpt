@@ -1,0 +1,26 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  
+  //-- Single entity template --
+  var item = (TypedViewDefinition)_activeObject;
+  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+%>using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Dtos.TypedViewDtos;
+using <%=rootNameSpace%>.Services.TypedViewServices;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces
+{ 
+    public interface I<%=item.Name%>TypedViewServiceRepository: ITypedViewServiceRepository<<%=item.Name%>>
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
+    {
+        TypedViewMetaDetailsResponse GetTypedViewMetaDetails(ServiceStack.ServiceInterface.Service service);
+        DataTableResponse GetDataTableResponse(<%=item.Name%>DataTableRequest request);
+        <%=item.Name%>CollectionResponse Fetch(<%=item.Name%>QueryCollectionRequest request);
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsTypedViewSvcAdditionalMethods", @"//")%>
+
+    } 
+}

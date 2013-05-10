@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'EmployeeTerritory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class EmployeeTerritoryService : ServiceBase<EmployeeTerritory, IEmployeeTerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -138,12 +138,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("employeeterritories/meta", Verbs = "GET")]
+    [Route("/employeeterritories/meta", Verbs = "GET")]
     public partial class EmployeeTerritoryMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("employeeterritories/datatable", Verbs = "POST")] // general query
+    [Route("/employeeterritories/datatable", Verbs = "POST")] // general query
     public partial class EmployeeTerritoryDataTableRequest : GetCollectionRequest<EmployeeTerritory, EmployeeTerritoryCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -172,7 +172,7 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("employeeterritories/{EmployeeId}/{TerritoryId}", Verbs = "GET")] // primary key filter
+    [Route("/employeeterritories/{EmployeeId}/{TerritoryId}", Verbs = "GET")] // primary key filter
     public partial class EmployeeTerritoryPkRequest: GetRequest<EmployeeTerritory, EmployeeTerritoryResponse>
     {
         public System.Int32 EmployeeId { get; set; }
@@ -180,27 +180,27 @@ namespace Northwind.Data.Services
 
     }
 
-    [Route("employeeterritories", Verbs = "GET")] // general query
+    [Route("/employeeterritories", Verbs = "GET")] // general query
     [DefaultView("EmployeeTerritoryView")]
     public partial class EmployeeTerritoryQueryCollectionRequest : GetCollectionRequest<EmployeeTerritory, EmployeeTerritoryCollectionResponse>
     {
     }
 
-    [Route("employeeterritories", Verbs = "POST")] // add item
+    [Route("/employeeterritories", Verbs = "POST")] // add item
     public partial class EmployeeTerritoryAddRequest : EmployeeTerritory, IReturn<EmployeeTerritoryResponse>
     {
 
     }
 
-    [Route("employeeterritories/{EmployeeId}/{TerritoryId}", Verbs = "PUT")] // update item
-    [Route("employeeterritories/{EmployeeId}/{TerritoryId}/update", Verbs = "POST")] // delete item
+    [Route("/employeeterritories/{EmployeeId}/{TerritoryId}", Verbs = "PUT")] // update item
+    [Route("/employeeterritories/{EmployeeId}/{TerritoryId}/update", Verbs = "POST")] // delete item
     public partial class EmployeeTerritoryUpdateRequest : EmployeeTerritory, IReturn<EmployeeTerritoryResponse>
     {
 
     }
 
-    [Route("employeeterritories/{EmployeeId}/{TerritoryId}", Verbs = "DELETE")] // delete item
-    [Route("employeeterritories/{EmployeeId}/{TerritoryId}/delete", Verbs = "POST")] // delete item
+    [Route("/employeeterritories/{EmployeeId}/{TerritoryId}", Verbs = "DELETE")] // delete item
+    [Route("/employeeterritories/{EmployeeId}/{TerritoryId}/delete", Verbs = "POST")] // delete item
     public partial class EmployeeTerritoryDeleteRequest: SimpleRequest<bool>
     {
         public System.Int32 EmployeeId { get; set; }
@@ -216,7 +216,7 @@ namespace Northwind.Data.Services
         public EmployeeTerritoryResponse(EmployeeTerritory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class EmployeeTerritoryCollectionResponse : GetCollectionResponse<EmployeeTerritory>
@@ -226,7 +226,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }

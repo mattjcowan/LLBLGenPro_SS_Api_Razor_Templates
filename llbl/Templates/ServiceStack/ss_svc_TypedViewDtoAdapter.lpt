@@ -1,0 +1,39 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //-- Multi entity template --
+  var items = _executingGenerator.TypedViews;
+
+  //-- Single entity template --
+  var item = (TypedViewDefinition)_activeObject;
+  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+%>using System;
+using System.ComponentModel;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+#if !CF
+using System.Runtime.Serialization;
+#endif
+using System.Xml.Serialization;
+
+namespace <%=rootNameSpace%>.Dtos.TypedViewDtos
+{ 
+    public partial class <%=item.Name%>Collection : CommonTypedViewDtoBaseCollection<<%=item.Name%>>
+    {
+        public <%=item.Name%>Collection(){}
+        public <%=item.Name%>Collection(IEnumerable<<%=item.Name%>> collection): base(collection ?? new List<<%=item.Name%>>()){}
+        public <%=item.Name%>Collection(List<<%=item.Name%>> list): base(list ?? new List<<%=item.Name%>>()){}
+    }
+
+    public partial class <%=item.Name%>: CommonTypedViewDtoBase<<%=item.Name%>>
+    {
+<%  foreach(var field in fields)
+    {
+        string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>"); 
+%>      /// <summary>Gets or sets the <%=field.Name%> field. <%=field.Description%></summary>
+        public virtual <%=dotNetFieldTypeName%> <%=field.Name%> { get; set; }
+<%  } %>
+    }
+}

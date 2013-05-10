@@ -90,11 +90,11 @@
         <RootNamespace Value="Northwind.Data" />
         <TemplateGroup Value="Adapter" />
         <TemplateBindings>
+          <Binding Name="MJC.TemplateBindings.ServiceStack" />
           <Binding Name="SD.TemplateBindings.SharedTemplates.NET20" />
           <Binding Name="SD.TemplateBindings.SharedTemplates.NET35" />
           <Binding Name="SD.TemplateBindings.SharedTemplates.NET45" />
           <Binding Name="SD.TemplateBindings.SqlServerSpecific.NET20" />
-          <Binding Name="MJC.TemplateBindings.ServiceStack" />
           <Binding Name="SD.TemplateBindings.General" />
         </TemplateBindings>
       </LastUsedPreferences>

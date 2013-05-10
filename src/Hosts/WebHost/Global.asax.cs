@@ -22,7 +22,11 @@ using Northwind.Data;
 using Northwind.Data.DatabaseSpecific;
 using Northwind.Data.Dtos;
 using Northwind.Data.ServiceInterfaces;
+using TLSI = Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces;
+using TVSI = Northwind.Data.ServiceInterfaces.TypedViewServiceInterfaces;
 using Northwind.Data.ServiceRepositories;
+using TLSR = Northwind.Data.ServiceRepositories.TypedListServiceRepositories;
+using TVSR = Northwind.Data.ServiceRepositories.TypedViewServiceRepositories;
 
 namespace WebHost
 {
@@ -125,7 +129,7 @@ namespace WebHost
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
 
-            //Repositories
+            //Entity Repositories
             container.RegisterAs<CategoryServiceRepository, ICategoryServiceRepository>();
             container.RegisterAs<CustomerServiceRepository, ICustomerServiceRepository>();
             container.RegisterAs<CustomerCustomerDemoServiceRepository, ICustomerCustomerDemoServiceRepository>();
@@ -139,6 +143,27 @@ namespace WebHost
             container.RegisterAs<ShipperServiceRepository, IShipperServiceRepository>();
             container.RegisterAs<SupplierServiceRepository, ISupplierServiceRepository>();
             container.RegisterAs<TerritoryServiceRepository, ITerritoryServiceRepository>();
+
+            //TypedList Repositories
+            container.RegisterAs<TLSR.EmployeesByRegionAndTerritoryTypedListServiceRepository, TLSI.IEmployeesByRegionAndTerritoryTypedListServiceRepository>();
+
+            //TypedView Repositories
+            container.RegisterAs<TVSR.AlphabeticalListOfProductsTypedViewServiceRepository, TVSI.IAlphabeticalListOfProductsTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.CategorySalesFor1997TypedViewServiceRepository, TVSI.ICategorySalesFor1997TypedViewServiceRepository>();
+            container.RegisterAs<TVSR.CurrentProductListTypedViewServiceRepository, TVSI.ICurrentProductListTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.CustomerAndSuppliersByCityTypedViewServiceRepository, TVSI.ICustomerAndSuppliersByCityTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.InvoicesTypedViewServiceRepository, TVSI.IInvoicesTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.OrderDetailsExtendedTypedViewServiceRepository, TVSI.IOrderDetailsExtendedTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.OrdersQryTypedViewServiceRepository, TVSI.IOrdersQryTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.OrderSubtotalTypedViewServiceRepository, TVSI.IOrderSubtotalTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.ProductsAboveAveragePriceTypedViewServiceRepository, TVSI.IProductsAboveAveragePriceTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.ProductSalesFor1997TypedViewServiceRepository, TVSI.IProductSalesFor1997TypedViewServiceRepository>();
+            container.RegisterAs<TVSR.ProductsByCategoryTypedViewServiceRepository, TVSI.IProductsByCategoryTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.QuarterlyOrderTypedViewServiceRepository, TVSI.IQuarterlyOrderTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SalesByCategoryTypedViewServiceRepository, TVSI.ISalesByCategoryTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SalesTotalsByAmountTypedViewServiceRepository, TVSI.ISalesTotalsByAmountTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SummaryOfSalesByQuarterTypedViewServiceRepository, TVSI.ISummaryOfSalesByQuarterTypedViewServiceRepository>();
+            container.RegisterAs<TVSR.SummaryOfSalesByYearTypedViewServiceRepository, TVSI.ISummaryOfSalesByYearTypedViewServiceRepository>();
 
 
             //DataAccess / OrmLite

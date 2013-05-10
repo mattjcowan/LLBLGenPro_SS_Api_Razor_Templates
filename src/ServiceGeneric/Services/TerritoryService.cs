@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Territory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                      
     public partial class TerritoryService : ServiceBase<Territory, ITerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -138,12 +138,12 @@ namespace Northwind.Data.Services
     #endregion
 
     #region Requests
-    [Route("territories/meta", Verbs = "GET")]
+    [Route("/territories/meta", Verbs = "GET")]
     public partial class TerritoryMetaRequest : IReturn<EntityMetaDetailsResponse>
     {
     }
 
-    [Route("territories/datatable", Verbs = "POST")] // general query
+    [Route("/territories/datatable", Verbs = "POST")] // general query
     public partial class TerritoryDataTableRequest : GetCollectionRequest<Territory, TerritoryCollectionResponse>
     {
         public int iDisplayStart { get; set; }
@@ -178,34 +178,34 @@ namespace Northwind.Data.Services
 
 
 
-    [Route("territories/{TerritoryId}", Verbs = "GET")] // primary key filter
+    [Route("/territories/{TerritoryId}", Verbs = "GET")] // primary key filter
     public partial class TerritoryPkRequest: GetRequest<Territory, TerritoryResponse>
     {
         public System.String TerritoryId { get; set; }
 
     }
 
-    [Route("territories", Verbs = "GET")] // general query
+    [Route("/territories", Verbs = "GET")] // general query
     [DefaultView("TerritoryView")]
     public partial class TerritoryQueryCollectionRequest : GetCollectionRequest<Territory, TerritoryCollectionResponse>
     {
     }
 
-    [Route("territories", Verbs = "POST")] // add item
+    [Route("/territories", Verbs = "POST")] // add item
     public partial class TerritoryAddRequest : Territory, IReturn<TerritoryResponse>
     {
 
     }
 
-    [Route("territories/{TerritoryId}", Verbs = "PUT")] // update item
-    [Route("territories/{TerritoryId}/update", Verbs = "POST")] // delete item
+    [Route("/territories/{TerritoryId}", Verbs = "PUT")] // update item
+    [Route("/territories/{TerritoryId}/update", Verbs = "POST")] // delete item
     public partial class TerritoryUpdateRequest : Territory, IReturn<TerritoryResponse>
     {
 
     }
 
-    [Route("territories/{TerritoryId}", Verbs = "DELETE")] // delete item
-    [Route("territories/{TerritoryId}/delete", Verbs = "POST")] // delete item
+    [Route("/territories/{TerritoryId}", Verbs = "DELETE")] // delete item
+    [Route("/territories/{TerritoryId}/delete", Verbs = "POST")] // delete item
     public partial class TerritoryDeleteRequest: SimpleRequest<bool>
     {
         public System.String TerritoryId { get; set; }
@@ -220,7 +220,7 @@ namespace Northwind.Data.Services
         public TerritoryResponse(Territory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
 
     public partial class TerritoryCollectionResponse : GetCollectionResponse<Territory>
@@ -230,7 +230,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                           
     }
     #endregion
 }
