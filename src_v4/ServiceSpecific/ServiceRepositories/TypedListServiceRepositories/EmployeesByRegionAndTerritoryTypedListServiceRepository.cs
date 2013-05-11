@@ -20,13 +20,11 @@ using Northwind.Data.TypedListClasses;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.ServiceRepositories.TypedListServiceRepositories
 { 
     public partial class EmployeesByRegionAndTerritoryTypedListServiceRepository : TypedListServiceRepositoryBase<EmployeesByRegionAndTerritory>, IEmployeesByRegionAndTerritoryTypedListServiceRepository
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
@@ -201,7 +199,6 @@ EmployeesByRegionAndTerritoryQueryCollectionRequest
     
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
 
     }
 }

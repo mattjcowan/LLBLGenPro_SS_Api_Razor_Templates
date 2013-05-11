@@ -19,14 +19,14 @@ namespace Northwind.Data.Dtos.TypedViewDtos
 
     public partial class QuarterlyOrder: CommonTypedViewDtoBase<QuarterlyOrder>
     {
-      /// <summary>Gets or sets the City field. </summary>
-        public virtual System.String City { get; set; }
-      /// <summary>Gets or sets the CompanyName field. </summary>
-        public virtual System.String CompanyName { get; set; }
-      /// <summary>Gets or sets the Country field. </summary>
-        public virtual System.String Country { get; set; }
       /// <summary>Gets or sets the CustomerId field. </summary>
         public virtual System.String CustomerId { get; set; }
+      /// <summary>Gets or sets the CompanyName field. </summary>
+        public virtual System.String CompanyName { get; set; }
+      /// <summary>Gets or sets the City field. </summary>
+        public virtual System.String City { get; set; }
+      /// <summary>Gets or sets the Country field. </summary>
+        public virtual System.String Country { get; set; }
 
     }
 }

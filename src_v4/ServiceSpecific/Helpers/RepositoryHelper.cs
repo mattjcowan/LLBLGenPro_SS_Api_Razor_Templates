@@ -258,7 +258,7 @@ namespace Northwind.Data.Helpers
         {
             if (string.IsNullOrEmpty(filterStr))
                 return predicateBucket;
-				
+                
             var inferredRelationsList = new List<IEntityRelation>();
             var predicate = ConvertStringToPredicate(s => GetField(typedListType, s), null, filterStr, inferredRelationsList);
             if (inferredRelationsList.Count > 0)
@@ -540,14 +540,14 @@ namespace Northwind.Data.Helpers
             return
                 (IEntityField2) fields.FirstOrDefault(
                     f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
-			/*
+            /*
             return
                 (IEntityField2)fields.FirstOrDefault(
                     f =>
                     !string.IsNullOrEmpty(f.Alias)
                         ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
                         : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
-			*/
+            */
         }
 
         internal static IEntityField2 GetField(TypedViewType typedViewType, string fieldName)
@@ -557,13 +557,13 @@ namespace Northwind.Data.Helpers
                 (IEntityField2) fields.FirstOrDefault(
                     f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
             /*
-			return
+            return
                 (IEntityField2)fields.FirstOrDefault(
                     f =>
                     !string.IsNullOrEmpty(f.Alias)
                         ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
                         : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
-			*/
+            */
         }
 
         internal static IEntityField2 GetField(TypedListType typedListType, string fieldName)
@@ -579,7 +579,7 @@ namespace Northwind.Data.Helpers
                     !string.IsNullOrEmpty(f.Alias)
                         ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
                         : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
-			*/
+            */
         }
 
         internal static IEntityField2 GetRelatedField(EntityType entityType, string fieldInfo, List<IEntityRelation> relationsToFill)
@@ -620,6 +620,12 @@ namespace Northwind.Data.Helpers
                 }
             }
             return null;
+        }
+
+        internal static IDictionary<string, IEntityField2> GetTypedViewTypeFieldMap(TypedViewType typedViewType)
+        {
+            return EntityFieldsFactory.CreateTypedViewEntityFieldsObject(typedViewType)
+                                      .ToDictionary(k => k.Name, v => (IEntityField2) v);
         }
 
         internal static IDictionary<string, IEntityField2> GetEntityTypeFieldMap(EntityType entityType)

@@ -65,7 +65,7 @@ namespace Northwind.Data.ConsoleHost
     // for more detailed information on the various options you can set for hosting the API.
     class ConsoleAppHost : AppHostHttpListenerBase
     {
-        public ConsoleAppHost() : base("Northwind.Data API (updated on 5/10/2013 1:16:50 AM)", typeof(CommonDtoBase).Assembly) { }
+        public ConsoleAppHost() : base("Northwind.Data API (updated on 5/11/2013 6:38:16 PM)", typeof(CommonDtoBase).Assembly) { }
 
         // THIS IS TO SIMULATE AUTHENTICATION
         private const string UserName = "admin";

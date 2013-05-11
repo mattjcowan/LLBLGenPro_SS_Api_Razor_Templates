@@ -20,13 +20,11 @@ using Northwind.Data.TypedViewClasses;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
 { 
     public partial class CustomerAndSuppliersByCityTypedViewServiceRepository : TypedViewServiceRepositoryBase<CustomerAndSuppliersByCity>, ICustomerAndSuppliersByCityTypedViewServiceRepository
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
@@ -49,6 +47,9 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
         // Description for parameters: http://datatables.net/usage/server-side
         public DataTableResponse GetDataTableResponse(CustomerAndSuppliersByCityDataTableRequest request)
         {
+            var fieldMap = FieldMap;
+            var fieldCount = fieldMap.Count;
+        
             //UrlDecode Request Properties
             request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
             request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
@@ -65,7 +66,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
             var sort = request.Sort;
             if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
             {
-                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+                sort = string.Format("{0}:{1}", fieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
             }
             //Search
             var filter = request.Filter;
@@ -77,7 +78,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                 var searchStrAsInt = -1;
                 if (int.TryParse(request.sSearch, out searchStrAsInt))
                 {
-                    foreach (var fm in FieldMap)
+                    foreach (var fm in fieldMap)
                     {
                         if (fm.Value.DataType.IsNumericType())
                         {
@@ -87,7 +88,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                     }
                 }
                 // process string field searches
-                foreach (var fm in FieldMap)
+                foreach (var fm in fieldMap)
                 {
                     if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
                     {
@@ -112,18 +113,20 @@ CustomerAndSuppliersByCityQueryCollectionRequest
                     Sort = sort,
                     Select = request.Select,
                 });
+                     
             var response = new DataTableResponse();
             foreach (var item in entities.Result)
             {
                 response.aaData.Add(new string[]
-                    {
+                {
                         item.City,
                         item.CompanyName,
                         item.ContactName,
                         item.Relationship
 
-                    });
+                });
             }
+
             response.sEcho = request.sEcho;
             // total records in the database before datatables search
             response.iTotalRecords = entities.Paging.TotalCount;
@@ -169,13 +172,13 @@ CustomerAndSuppliersByCityQueryCollectionRequest
             var hasFn = fieldNames != null && fieldNames.Any();
             var item = new CustomerAndSuppliersByCity();
             if (!hasFn || fieldNames.Contains("City", StringComparer.OrdinalIgnoreCase))
-            	item.City = row.City;
+                item.City = row.City;
             if (!hasFn || fieldNames.Contains("CompanyName", StringComparer.OrdinalIgnoreCase))
-            	item.CompanyName = row.CompanyName;
+                item.CompanyName = row.CompanyName;
             if (!hasFn || fieldNames.Contains("ContactName", StringComparer.OrdinalIgnoreCase))
-            	item.ContactName = row.ContactName;
+                item.ContactName = row.ContactName;
             if (!hasFn || fieldNames.Contains("Relationship", StringComparer.OrdinalIgnoreCase))
-            	item.Relationship = row.Relationship;
+                item.Relationship = row.Relationship;
 
 
             return item;
@@ -183,7 +186,6 @@ CustomerAndSuppliersByCityQueryCollectionRequest
     
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
 
     }
 }

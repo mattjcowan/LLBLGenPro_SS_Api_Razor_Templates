@@ -21,14 +21,14 @@ namespace Northwind.Data.Dtos.TypedViewDtos
     {
       /// <summary>Gets or sets the CategoryName field. </summary>
         public virtual System.String CategoryName { get; set; }
-      /// <summary>Gets or sets the Discontinued field. </summary>
-        public virtual System.Boolean Discontinued { get; set; }
       /// <summary>Gets or sets the ProductName field. </summary>
         public virtual System.String ProductName { get; set; }
       /// <summary>Gets or sets the QuantityPerUnit field. </summary>
         public virtual System.String QuantityPerUnit { get; set; }
       /// <summary>Gets or sets the UnitsInStock field. </summary>
         public virtual Nullable<System.Int16> UnitsInStock { get; set; }
+      /// <summary>Gets or sets the Discontinued field. </summary>
+        public virtual System.Boolean Discontinued { get; set; }
 
     }
 }

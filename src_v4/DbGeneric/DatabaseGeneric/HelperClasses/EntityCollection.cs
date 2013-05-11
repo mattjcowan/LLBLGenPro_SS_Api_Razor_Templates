@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Friday, May 10, 2013 1:16:54 AM
+// Code is generated on: Saturday, May 11, 2013 6:38:24 PM
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates
 // Templates vendor: Solutions Design.
 // Templates version: 

@@ -11,10 +11,10 @@
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("/views/productsbycategory/datatable")';
         var dtAjaxColumns = [
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // CategoryName field
-            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Discontinued field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // ProductName field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // QuantityPerUnit field
-            { "bSortable": true, "bSearchable": true, "bVisible": false } // UnitsInStock field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // QuantityPerUnit field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // UnitsInStock field
+            { "bSortable": true, "bSearchable": true, "bVisible": true } // Discontinued field
 
         ];
     </script>
@@ -86,10 +86,10 @@
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
                                 <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> Category Name</label></li>
-                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Discontinued</label></li>
-                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" checked="checked" type="checkbox"> Product Name</label></li>
-                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" type="checkbox"> Quantity Per Unit</label></li>
-                                <li><label class="checkbox" for="dt_col_5"><input id="dt_col_5" name="toggle-cols" value="4" type="checkbox"> Units In Stock</label></li>
+                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Product Name</label></li>
+                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" checked="checked" type="checkbox"> Quantity Per Unit</label></li>
+                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" checked="checked" type="checkbox"> Units In Stock</label></li>
+                                <li><label class="checkbox" for="dt_col_5"><input id="dt_col_5" name="toggle-cols" value="4" checked="checked" type="checkbox"> Discontinued</label></li>
 
                             </ul>
                         </div>
@@ -100,10 +100,10 @@
                         <thead>
                             <tr>
                                 <th>Category Name</th>
-                                <th>Discontinued</th>
                                 <th>Product Name</th>
                                 <th>Quantity Per Unit</th>
                                 <th>Units In Stock</th>
+                                <th>Discontinued</th>
 
                             </tr>
                         </thead>

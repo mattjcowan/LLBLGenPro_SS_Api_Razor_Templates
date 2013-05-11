@@ -10,10 +10,10 @@
         var dtBaseUrl = '/views/quarterlyorder';
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("/views/quarterlyorder/datatable")';
         var dtAjaxColumns = [
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // City field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // CompanyName field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // Country field
-            { "bSortable": true, "bSearchable": true, "bVisible": false } // CustomerId field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // CustomerId field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // CompanyName field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // City field
+            { "bSortable": true, "bSearchable": true, "bVisible": true } // Country field
 
         ];
     </script>
@@ -84,10 +84,10 @@
                         <div class="btn-group col_vis_menu">
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
-                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" type="checkbox"> City</label></li>
-                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" type="checkbox"> Company Name</label></li>
-                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" type="checkbox"> Country</label></li>
-                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" type="checkbox"> Customer Id</label></li>
+                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> Customer Id</label></li>
+                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Company Name</label></li>
+                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" checked="checked" type="checkbox"> City</label></li>
+                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" checked="checked" type="checkbox"> Country</label></li>
 
                             </ul>
                         </div>
@@ -97,10 +97,10 @@
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="entity-grid">
                         <thead>
                             <tr>
-                                <th>City</th>
-                                <th>Company Name</th>
-                                <th>Country</th>
                                 <th>Customer Id</th>
+                                <th>Company Name</th>
+                                <th>City</th>
+                                <th>Country</th>
 
                             </tr>
                         </thead>

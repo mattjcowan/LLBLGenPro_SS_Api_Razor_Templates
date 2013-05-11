@@ -63,7 +63,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END     
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
 
     }
 }

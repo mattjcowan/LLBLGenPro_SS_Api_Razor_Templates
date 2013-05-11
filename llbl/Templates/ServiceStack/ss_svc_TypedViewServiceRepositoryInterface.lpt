@@ -5,7 +5,6 @@
   
   //-- Single entity template --
   var item = (TypedViewDefinition)_activeObject;
-  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
 %>using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.Dtos.TypedViewDtos;
 using <%=rootNameSpace%>.Services.TypedViewServices;

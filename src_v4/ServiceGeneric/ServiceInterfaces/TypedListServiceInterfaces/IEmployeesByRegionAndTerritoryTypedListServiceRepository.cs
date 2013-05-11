@@ -4,13 +4,11 @@ using Northwind.Data.Services.TypedListServices;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces
 { 
     public interface IEmployeesByRegionAndTerritoryTypedListServiceRepository: ITypedListServiceRepository<EmployeesByRegionAndTerritory>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         TypedListMetaDetailsResponse GetTypedListMetaDetails(ServiceStack.ServiceInterface.Service service);
         DataTableResponse GetDataTableResponse(EmployeesByRegionAndTerritoryDataTableRequest request);
@@ -18,7 +16,6 @@ namespace Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsTypedListSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
 
     } 
 }

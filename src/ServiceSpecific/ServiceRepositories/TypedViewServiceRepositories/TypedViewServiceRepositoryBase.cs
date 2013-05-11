@@ -28,7 +28,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
 
         internal virtual IDictionary<string, IEntityField2> FieldMap
         {
-            get { return GetFieldMap(TypedViewType); }
+            get { return RepositoryHelper.GetTypedViewTypeFieldMap(TypedViewType); }
             set { }
         }
 
@@ -46,11 +46,9 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
             var appUri = request.GetApplicationUrl().TrimEnd('/');
             var baseServiceUri = appUri + request.PathInfo.Replace("/meta", "");
             var queryString = request.QueryString["format"] != null ? "&format=" + request.QueryString["format"] : "";
-            var pkCount = FieldMap.Count(pk => pk.Value.IsPrimaryKey);
             var fields = new List<Link>();
             foreach (var f in FieldMap)
             {
-                var isUnique = false;
                 var link = Link.Create(
                   f.Key.ToCamelCase(), f.Value.DataType.Name, "field",
                   string.Format("{0}?select={1}{2}", baseServiceUri, f.Key.ToLowerInvariant(), queryString),
@@ -59,20 +57,6 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                 );
                 var props = new SortedDictionary<string, string>();
                 props.Add("index", f.Value.FieldIndex.ToString(CultureInfo.InvariantCulture));
-                if (f.Value.IsPrimaryKey)
-                {
-                    props.Add("isPrimaryKey", f.Value.IsPrimaryKey.ToString().ToLower());
-                    if (pkCount == 1) isUnique = true;
-                }
-                if (f.Value.IsForeignKey)
-                    props.Add("isForeignKey", "true");
-
-                if (isUnique)
-                    props.Add("isUnique", "true");
-                if (f.Value.IsOfEnumDataType)
-                    props.Add("isOfEnumDataType", "true");
-                if (f.Value.IsReadOnly)
-                    props.Add("isReadOnly", "true");
                 if (f.Value.IsNullable)
                     props.Add("isNullable", "true");
                 if (f.Value.IsOfEnumDataType)
@@ -89,7 +73,9 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
 
             metaDetails = new TypedViewMetaDetailsResponse()
             {
-                Fields = fields.ToArray(),
+                Name = typeof(TDto).Name,
+                FieldCount = fields.Count,
+                Fields = fields.ToArray()
             };
             CacheClient.Set(cacheKey, metaDetails);
             return metaDetails;
@@ -102,16 +88,6 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
 
             if (request.PageNumber < 1) request.PageNumber = 1;
             if (request.PageSize < 1) request.PageSize = 10;
-        }
-
-        #endregion
-
-        #region Static Helper Methods
-
-        private static IDictionary<string, IEntityField2> GetFieldMap(TypedViewType typedViewType)
-        {
-            return EntityFieldsFactory.CreateTypedViewEntityFieldsObject(typedViewType)
-                                      .ToDictionary(k => k.Name, v => (IEntityField2) v);
         }
 
         #endregion

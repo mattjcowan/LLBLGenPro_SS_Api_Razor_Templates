@@ -1,5 +1,6 @@
-﻿<$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $>
+<$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $>
 <$ System.Data.Linq.dll $>
+<$ System.Xml.dll $>
 <[ System ]>
 <[ System.IO ]>
 <[ System.Collections ]>
@@ -636,8 +637,8 @@ internal static bool IsFieldSortable( FieldElement fieldElement )
     if(fieldElement == null) return false;  
 
     var type = fieldElement.FieldType.RepresentedType;
-	
-	return IsFieldSortable(type, fieldElement.MaxLength);
+    
+    return IsFieldSortable(type, fieldElement.MaxLength);
 }
 
 // Define other methods and classes here
@@ -688,8 +689,8 @@ internal static bool IsFieldSearchable( FieldElement fieldElement )
     if(fieldElement == null) return false;  
 
     var type = fieldElement.FieldType.RepresentedType;
-	
-	return IsFieldSearchable(type, fieldElement.MaxLength);
+    
+    return IsFieldSearchable(type, fieldElement.MaxLength);
 }
 
 internal static bool IsFieldSearchable( Type type, int maxLength)
@@ -727,19 +728,27 @@ internal static bool IsFieldVisible( FieldElement fieldElement )
     return IsFieldVisible(type, fieldElement.MaxLength);
 }
 
-internal static bool IsFieldVisible( Type type, int maxLength )
+internal static bool IsTypedFieldVisible( FieldElement fieldElement )
 {
-    if(IsNumericType(type))
-        return true;
-    
+    if(fieldElement == null) return false;
+    //if(fieldElement.IsOptional) return false;
+  
+    var type = fieldElement.FieldType.RepresentedType;
+    return IsFieldVisible(type, fieldElement.MaxLength);
+}
+
+internal static bool IsFieldVisible( Type type, int maxLength )
+{    
     // process generic
     while(Type.GetTypeCode(type) == TypeCode.Object){   
         if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             type = Nullable.GetUnderlyingType(type);
-        else {
-      return false;
+        else
+            return false;
     }
-    }
+    
+    if(IsNumericType(type))
+        return true;
     
     switch (Type.GetTypeCode(type))
     {
@@ -758,21 +767,21 @@ internal static bool IsFieldBinary( FieldElement fieldElement )
     if(fieldElement == null) return false;  
   
     var type = fieldElement.FieldType.RepresentedType;
-	
-	return IsFieldBinary(type);
+    
+    return IsFieldBinary(type);
 }
 
 internal static bool IsFieldBinary( Type type )
 {    
     // process generic
-    while(Type.GetTypeCode(type) == TypeCode.Object){   
+    while(Type.GetTypeCode(type) == TypeCode.Object){
         if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             type = Nullable.GetUnderlyingType(type);
         else {
-      if(type == typeof(byte[])) 
-        return true;
-      return false;
-    }
+            if(type == typeof(byte[])) 
+                return true;
+            return false;
+        }
     }
     
     return false;

@@ -13,14 +13,12 @@ using Northwind.Data.ServiceInterfaces;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.Services.TypedViewServices
 {
     #region TypedViewService
     public partial class TypedViewService : TypedViewServiceBase
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         public TypedViewCollectionResponse Get(TypedViewsMetaRequest request)
         {
@@ -89,8 +87,7 @@ namespace Northwind.Data.Services.TypedViewServices
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-        
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                                                                                                                 
 
     }
     #endregion
@@ -101,8 +98,7 @@ namespace Northwind.Data.Services.TypedViewServices
     {
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewsMetaRequestAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-  
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                         
 
     }
 
@@ -112,8 +108,7 @@ namespace Northwind.Data.Services.TypedViewServices
     {
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewsRequestAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-  
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                         
 
     }
     #endregion
@@ -126,8 +121,7 @@ namespace Northwind.Data.Services.TypedViewServices
             base(collection, pageNumber, pageSize, totalItemCount) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-  
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                         
 
     }
     #endregion

@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Friday, May 10, 2013 1:16:46 AM
+// Code is generated on: Saturday, May 11, 2013 6:38:12 PM
 //////////////////////////////////////////////////////////////
 using System;
 using System.Collections;
@@ -56,7 +56,6 @@ namespace Northwind.Data.Dtos.TypedViewDtos
     
     // __LLBLGENPRO_USER_CODE_REGION_START CustomDtoCode
     // __LLBLGENPRO_USER_CODE_REGION_END
-    
 
 
   }
@@ -72,7 +71,6 @@ namespace Northwind.Data.Dtos.TypedViewDtos
     
     // __LLBLGENPRO_USER_CODE_REGION_START CustomGenericDtoCode
     // __LLBLGENPRO_USER_CODE_REGION_END
-    
 
 
   }

@@ -10,10 +10,10 @@
         var dtBaseUrl = '/views/salestotalsbyamount';
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("/views/salestotalsbyamount/datatable")';
         var dtAjaxColumns = [
-            { "bSortable": true, "bSearchable": true, "bVisible": true }, // CompanyName field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // SaleAmount field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // OrderId field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // SaleAmount field
-            { "bSortable": true, "bSearchable": false, "bVisible": false } // ShippedDate field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // CompanyName field
+            { "bSortable": true, "bSearchable": false, "bVisible": true } // ShippedDate field
 
         ];
     </script>
@@ -84,10 +84,10 @@
                         <div class="btn-group col_vis_menu">
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
-                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> Company Name</label></li>
+                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> Sale Amount</label></li>
                                 <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Order Id</label></li>
-                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" type="checkbox"> Sale Amount</label></li>
-                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" type="checkbox"> Shipped Date</label></li>
+                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" checked="checked" type="checkbox"> Company Name</label></li>
+                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" checked="checked" type="checkbox"> Shipped Date</label></li>
 
                             </ul>
                         </div>
@@ -97,9 +97,9 @@
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="entity-grid">
                         <thead>
                             <tr>
-                                <th>Company Name</th>
-                                <th>Order Id</th>
                                 <th>Sale Amount</th>
+                                <th>Order Id</th>
+                                <th>Company Name</th>
                                 <th>Shipped Date</th>
 
                             </tr>

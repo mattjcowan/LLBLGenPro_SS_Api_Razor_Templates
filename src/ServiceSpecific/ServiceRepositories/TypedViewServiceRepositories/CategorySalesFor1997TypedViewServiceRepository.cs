@@ -47,6 +47,9 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
         // Description for parameters: http://datatables.net/usage/server-side
         public DataTableResponse GetDataTableResponse(CategorySalesFor1997DataTableRequest request)
         {
+            var fieldMap = FieldMap;
+            var fieldCount = fieldMap.Count;
+        
             //UrlDecode Request Properties
             request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
             request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
@@ -63,7 +66,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
             var sort = request.Sort;
             if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
             {
-                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+                sort = string.Format("{0}:{1}", fieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
             }
             //Search
             var filter = request.Filter;
@@ -75,7 +78,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                 var searchStrAsInt = -1;
                 if (int.TryParse(request.sSearch, out searchStrAsInt))
                 {
-                    foreach (var fm in FieldMap)
+                    foreach (var fm in fieldMap)
                     {
                         if (fm.Value.DataType.IsNumericType())
                         {
@@ -85,7 +88,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                     }
                 }
                 // process string field searches
-                foreach (var fm in FieldMap)
+                foreach (var fm in fieldMap)
                 {
                     if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
                     {
@@ -110,16 +113,18 @@ CategorySalesFor1997QueryCollectionRequest
                     Sort = sort,
                     Select = request.Select,
                 });
+                     
             var response = new DataTableResponse();
             foreach (var item in entities.Result)
             {
                 response.aaData.Add(new string[]
-                    {
+                {
                         item.CategoryName,
                         item.CategorySales.ToString()
 
-                    });
+                });
             }
+
             response.sEcho = request.sEcho;
             // total records in the database before datatables search
             response.iTotalRecords = entities.Paging.TotalCount;
@@ -165,9 +170,9 @@ CategorySalesFor1997QueryCollectionRequest
             var hasFn = fieldNames != null && fieldNames.Any();
             var item = new CategorySalesFor1997();
             if (!hasFn || fieldNames.Contains("CategoryName", StringComparer.OrdinalIgnoreCase))
-            	item.CategoryName = row.CategoryName;
+                item.CategoryName = row.CategoryName;
             if (!hasFn || fieldNames.Contains("CategorySales", StringComparer.OrdinalIgnoreCase))
-            	item.CategorySales = row.CategorySales;
+                item.CategorySales = row.CategorySales;
 
 
             return item;

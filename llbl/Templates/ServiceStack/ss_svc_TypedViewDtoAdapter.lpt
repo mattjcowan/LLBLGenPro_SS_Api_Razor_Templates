@@ -7,7 +7,11 @@
 
   //-- Single entity template --
   var item = (TypedViewDefinition)_activeObject;
-  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+  var mapping = (TypedViewMapping)_executingGenerator.ProjectDefinition.GetGroupableModelElementMapping(item, _executingGenerator.DriverID);
+  //The following doesn't give you proper ordering, you have to get the ordering from the MappedTarget
+  //var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();   
+  var fields = item.Fields.HasFieldOrdering ? item.Fields.ApplyFieldOrdering().ToList():
+               item.Fields.OrderBy(f => mapping.GetFieldMappingOfField(f).MappedTarget.OrdinalPosition).ToList();
 %>using System;
 using System.ComponentModel;
 using System.Collections;

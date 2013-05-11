@@ -69,6 +69,8 @@ namespace Northwind.Data.Dtos.TypedViewDtos
   
     public partial class TypedViewMetaDetailsResponse
     {
+        public string Name { get; set; }
+        public int FieldCount { get; set; }
         public Link[] Fields { get; set; }
     }
   

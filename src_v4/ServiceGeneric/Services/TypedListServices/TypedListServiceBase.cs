@@ -15,17 +15,14 @@ using Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.Services.TypedListServices
 { 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
- 
+	// __LLBLGENPRO_USER_CODE_REGION_END                             
     [LogRequestFilter, LogExceptionFilter]
     public abstract partial class TypedListServiceBase: Service
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         public string BaseServiceUri
         {
@@ -33,17 +30,14 @@ namespace Northwind.Data.Services.TypedListServices
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-   
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                     
     }
     
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
- 
+	// __LLBLGENPRO_USER_CODE_REGION_END                             
     public abstract partial class TypedListServiceBase<TDto, TRepository>: TypedListServiceBase
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
- 
+	// __LLBLGENPRO_USER_CODE_REGION_END                             
         where TDto: CommonTypedListDtoBase
         where TRepository: ITypedListServiceRepository<TDto>
     {
@@ -51,7 +45,6 @@ namespace Northwind.Data.Services.TypedListServices
         public virtual TRepository Repository { get; set; }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-   
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                     
     }
 }

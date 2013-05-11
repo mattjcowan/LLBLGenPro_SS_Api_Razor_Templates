@@ -7,7 +7,11 @@
 
   //-- Single entity template --
   var item = (TypedViewDefinition)_activeObject;
-  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+  var mapping = (TypedViewMapping)_executingGenerator.ProjectDefinition.GetGroupableModelElementMapping(item, _executingGenerator.DriverID);
+  //The following doesn't give you proper ordering, you have to get the ordering from the MappedTarget
+  //var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+  var fields = item.Fields.HasFieldOrdering ? item.Fields.ApplyFieldOrdering().ToList():
+               item.Fields.OrderBy(f => mapping.GetFieldMappingOfField(f).MappedTarget.OrdinalPosition).ToList();
   var baseUrl = "/views/" + item.Name.ToLower();
 %>@inherits ViewPage<<%=rootNameSpace%>.Services.TypedViewServices.<%=item.Name%>CollectionResponse>
 @{
@@ -23,7 +27,7 @@
         var dtAjaxColumns = [
 <%for(var fi=0;fi<fields.Count;fi++){
         var field = fields[fi];
-%>            { "bSortable": <%=IsFieldSortable(field).ToString().ToLower()%>, "bSearchable": <%=IsFieldSearchable(field).ToString().ToLower()%>, "bVisible": <%=IsFieldVisible(field).ToString().ToLower()%> }<%=(fi==fields.Count-1?"":",")%> // <%=field.Name%> field
+%>            { "bSortable": <%=IsFieldSortable(field).ToString().ToLower()%>, "bSearchable": <%=IsFieldSearchable(field).ToString().ToLower()%>, "bVisible": <%=IsTypedFieldVisible(field).ToString().ToLower()%> }<%=(fi==fields.Count-1?"":",")%> // <%=field.Name%> field
 <%}%>
         ];
     </script>
@@ -97,8 +101,9 @@
 <%var fieldIndex = 0;
 foreach(var field in fields){
   fieldIndex++;
-    
-%>                                <li><label class="checkbox" for="dt_col_<%=fieldIndex.ToString()%>"><input id="dt_col_<%=fieldIndex.ToString()%>" name="toggle-cols" value="<%=(fieldIndex-1).ToString()%>" <%=IsFieldVisible(field)?"checked=\"checked\" ":""%>type="checkbox"> <%=TitleCase(field.Name)%></label></li>
+    var type = field.FieldType.RepresentedType;
+    var maxLength = field.MaxLength;
+%>                                <li><label class="checkbox" for="dt_col_<%=fieldIndex.ToString()%>"><input id="dt_col_<%=fieldIndex.ToString()%>" name="toggle-cols" value="<%=(fieldIndex-1).ToString()%>" <%=IsTypedFieldVisible(field)?"checked=\"checked\" ":""%>type="checkbox"> <%=TitleCase(field.Name)%></label></li>
 <%}%>
                             </ul>
                         </div>

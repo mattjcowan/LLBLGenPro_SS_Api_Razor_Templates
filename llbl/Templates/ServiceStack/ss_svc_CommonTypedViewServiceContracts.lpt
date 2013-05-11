@@ -1,4 +1,4 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
@@ -75,6 +75,8 @@ namespace <%=rootNameSpace%>.Dtos.TypedViewDtos
   
     public partial class TypedViewMetaDetailsResponse
     {
+        public string Name { get; set; }
+        public int FieldCount { get; set; }
         public Link[] Fields { get; set; }
     }
   

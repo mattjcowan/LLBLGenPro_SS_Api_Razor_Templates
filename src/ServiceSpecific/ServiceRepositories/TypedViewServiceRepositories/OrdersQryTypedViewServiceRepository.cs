@@ -47,6 +47,9 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
         // Description for parameters: http://datatables.net/usage/server-side
         public DataTableResponse GetDataTableResponse(OrdersQryDataTableRequest request)
         {
+            var fieldMap = FieldMap;
+            var fieldCount = fieldMap.Count;
+        
             //UrlDecode Request Properties
             request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
             request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
@@ -63,7 +66,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
             var sort = request.Sort;
             if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
             {
-                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+                sort = string.Format("{0}:{1}", fieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
             }
             //Search
             var filter = request.Filter;
@@ -75,7 +78,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                 var searchStrAsInt = -1;
                 if (int.TryParse(request.sSearch, out searchStrAsInt))
                 {
-                    foreach (var fm in FieldMap)
+                    foreach (var fm in fieldMap)
                     {
                         if (fm.Value.DataType.IsNumericType())
                         {
@@ -85,7 +88,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                     }
                 }
                 // process string field searches
-                foreach (var fm in FieldMap)
+                foreach (var fm in fieldMap)
                 {
                     if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
                     {
@@ -110,34 +113,36 @@ OrdersQryQueryCollectionRequest
                     Sort = sort,
                     Select = request.Select,
                 });
+                     
             var response = new DataTableResponse();
             foreach (var item in entities.Result)
             {
                 response.aaData.Add(new string[]
-                    {
-                        item.Address,
-                        item.City,
-                        item.CompanyName,
-                        item.Country,
+                {
+                        item.OrderId.ToString(),
                         item.CustomerId,
                         item.EmployeeId.ToString(),
-                        item.Freight.ToString(),
                         item.OrderDate.ToString(),
-                        item.OrderId.ToString(),
-                        item.PostalCode,
-                        item.Region,
                         item.RequiredDate.ToString(),
+                        item.ShippedDate.ToString(),
+                        item.ShipVia.ToString(),
+                        item.Freight.ToString(),
+                        item.ShipName,
                         item.ShipAddress,
                         item.ShipCity,
-                        item.ShipCountry,
-                        item.ShipName,
-                        item.ShippedDate.ToString(),
-                        item.ShipPostalCode,
                         item.ShipRegion,
-                        item.ShipVia.ToString()
+                        item.ShipPostalCode,
+                        item.ShipCountry,
+                        item.CompanyName,
+                        item.Address,
+                        item.City,
+                        item.Region,
+                        item.PostalCode,
+                        item.Country
 
-                    });
+                });
             }
+
             response.sEcho = request.sEcho;
             // total records in the database before datatables search
             response.iTotalRecords = entities.Paging.TotalCount;
@@ -182,46 +187,46 @@ OrdersQryQueryCollectionRequest
         {
             var hasFn = fieldNames != null && fieldNames.Any();
             var item = new OrdersQry();
-            if (!hasFn || fieldNames.Contains("Address", StringComparer.OrdinalIgnoreCase))
-            	item.Address = row.Address;
-            if (!hasFn || fieldNames.Contains("City", StringComparer.OrdinalIgnoreCase))
-            	item.City = row.City;
-            if (!hasFn || fieldNames.Contains("CompanyName", StringComparer.OrdinalIgnoreCase))
-            	item.CompanyName = row.CompanyName;
-            if (!hasFn || fieldNames.Contains("Country", StringComparer.OrdinalIgnoreCase))
-            	item.Country = row.Country;
-            if (!hasFn || fieldNames.Contains("CustomerId", StringComparer.OrdinalIgnoreCase))
-            	item.CustomerId = row.CustomerId;
-            if (!hasFn || fieldNames.Contains("EmployeeId", StringComparer.OrdinalIgnoreCase))
-            	item.EmployeeId = row.EmployeeId;
-            if (!hasFn || fieldNames.Contains("Freight", StringComparer.OrdinalIgnoreCase))
-            	item.Freight = row.Freight;
-            if (!hasFn || fieldNames.Contains("OrderDate", StringComparer.OrdinalIgnoreCase))
-            	item.OrderDate = row.OrderDate;
             if (!hasFn || fieldNames.Contains("OrderId", StringComparer.OrdinalIgnoreCase))
-            	item.OrderId = row.OrderId;
-            if (!hasFn || fieldNames.Contains("PostalCode", StringComparer.OrdinalIgnoreCase))
-            	item.PostalCode = row.PostalCode;
-            if (!hasFn || fieldNames.Contains("Region", StringComparer.OrdinalIgnoreCase))
-            	item.Region = row.Region;
+                item.OrderId = row.OrderId;
+            if (!hasFn || fieldNames.Contains("CustomerId", StringComparer.OrdinalIgnoreCase))
+                item.CustomerId = row.CustomerId;
+            if (!hasFn || fieldNames.Contains("EmployeeId", StringComparer.OrdinalIgnoreCase))
+                item.EmployeeId = row.EmployeeId;
+            if (!hasFn || fieldNames.Contains("OrderDate", StringComparer.OrdinalIgnoreCase))
+                item.OrderDate = row.OrderDate;
             if (!hasFn || fieldNames.Contains("RequiredDate", StringComparer.OrdinalIgnoreCase))
-            	item.RequiredDate = row.RequiredDate;
-            if (!hasFn || fieldNames.Contains("ShipAddress", StringComparer.OrdinalIgnoreCase))
-            	item.ShipAddress = row.ShipAddress;
-            if (!hasFn || fieldNames.Contains("ShipCity", StringComparer.OrdinalIgnoreCase))
-            	item.ShipCity = row.ShipCity;
-            if (!hasFn || fieldNames.Contains("ShipCountry", StringComparer.OrdinalIgnoreCase))
-            	item.ShipCountry = row.ShipCountry;
-            if (!hasFn || fieldNames.Contains("ShipName", StringComparer.OrdinalIgnoreCase))
-            	item.ShipName = row.ShipName;
+                item.RequiredDate = row.RequiredDate;
             if (!hasFn || fieldNames.Contains("ShippedDate", StringComparer.OrdinalIgnoreCase))
-            	item.ShippedDate = row.ShippedDate;
-            if (!hasFn || fieldNames.Contains("ShipPostalCode", StringComparer.OrdinalIgnoreCase))
-            	item.ShipPostalCode = row.ShipPostalCode;
-            if (!hasFn || fieldNames.Contains("ShipRegion", StringComparer.OrdinalIgnoreCase))
-            	item.ShipRegion = row.ShipRegion;
+                item.ShippedDate = row.ShippedDate;
             if (!hasFn || fieldNames.Contains("ShipVia", StringComparer.OrdinalIgnoreCase))
-            	item.ShipVia = row.ShipVia;
+                item.ShipVia = row.ShipVia;
+            if (!hasFn || fieldNames.Contains("Freight", StringComparer.OrdinalIgnoreCase))
+                item.Freight = row.Freight;
+            if (!hasFn || fieldNames.Contains("ShipName", StringComparer.OrdinalIgnoreCase))
+                item.ShipName = row.ShipName;
+            if (!hasFn || fieldNames.Contains("ShipAddress", StringComparer.OrdinalIgnoreCase))
+                item.ShipAddress = row.ShipAddress;
+            if (!hasFn || fieldNames.Contains("ShipCity", StringComparer.OrdinalIgnoreCase))
+                item.ShipCity = row.ShipCity;
+            if (!hasFn || fieldNames.Contains("ShipRegion", StringComparer.OrdinalIgnoreCase))
+                item.ShipRegion = row.ShipRegion;
+            if (!hasFn || fieldNames.Contains("ShipPostalCode", StringComparer.OrdinalIgnoreCase))
+                item.ShipPostalCode = row.ShipPostalCode;
+            if (!hasFn || fieldNames.Contains("ShipCountry", StringComparer.OrdinalIgnoreCase))
+                item.ShipCountry = row.ShipCountry;
+            if (!hasFn || fieldNames.Contains("CompanyName", StringComparer.OrdinalIgnoreCase))
+                item.CompanyName = row.CompanyName;
+            if (!hasFn || fieldNames.Contains("Address", StringComparer.OrdinalIgnoreCase))
+                item.Address = row.Address;
+            if (!hasFn || fieldNames.Contains("City", StringComparer.OrdinalIgnoreCase))
+                item.City = row.City;
+            if (!hasFn || fieldNames.Contains("Region", StringComparer.OrdinalIgnoreCase))
+                item.Region = row.Region;
+            if (!hasFn || fieldNames.Contains("PostalCode", StringComparer.OrdinalIgnoreCase))
+                item.PostalCode = row.PostalCode;
+            if (!hasFn || fieldNames.Contains("Country", StringComparer.OrdinalIgnoreCase))
+                item.Country = row.Country;
 
 
             return item;

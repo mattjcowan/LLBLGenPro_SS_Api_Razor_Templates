@@ -19,10 +19,10 @@ namespace Northwind.Data.Dtos.TypedViewDtos
 
     public partial class SummaryOfSalesByQuarter: CommonTypedViewDtoBase<SummaryOfSalesByQuarter>
     {
-      /// <summary>Gets or sets the OrderId field. </summary>
-        public virtual System.Int32 OrderId { get; set; }
       /// <summary>Gets or sets the ShippedDate field. </summary>
         public virtual Nullable<System.DateTime> ShippedDate { get; set; }
+      /// <summary>Gets or sets the OrderId field. </summary>
+        public virtual System.Int32 OrderId { get; set; }
       /// <summary>Gets or sets the Subtotal field. </summary>
         public virtual Nullable<System.Decimal> Subtotal { get; set; }
 

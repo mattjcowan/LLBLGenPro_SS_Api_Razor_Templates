@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Territory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END   
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public partial class TerritoryService : ServiceBase<Territory, ITerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -220,7 +220,7 @@ namespace Northwind.Data.Services
         public TerritoryResponse(Territory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END     
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
 
     public partial class TerritoryCollectionResponse : GetCollectionResponse<Territory>
@@ -230,7 +230,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END     
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
     }
     #endregion
 }

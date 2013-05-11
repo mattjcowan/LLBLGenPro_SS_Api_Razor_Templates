@@ -1,12 +1,10 @@
 <# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   
   //-- Single entity template --
   var item = (TypedViewDefinition)_activeObject;
-  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
-  var binaryFields = fields.Where(f=>IsFieldBinary(f)).ToList();
+  var fieldCount = item.Fields.ToList().Count();
   var baseRoute = string.Concat("/views/", item.Name.ToLower());
   
   var authOnGet = currentProject.GetRealBoolSettingValue("RequireAuthenticationOnGetVerb");
@@ -104,7 +102,7 @@ namespace <%=rootNameSpace%>.Services.TypedViewServices
         public string sEcho { get; set; }
         public string bRegex { get; set; }
 
-<%for(int i=0;i<fields.Count();i++){
+<%for(int i=0;i<fieldCount;i++){
 %>        public int iSortCol_<%=i.ToString()%> { get; set; }
         public string sSortDir_<%=i.ToString()%> { get; set; }
         public string bSortable_<%=i.ToString()%> { get; set; } 

@@ -16,7 +16,7 @@ using Northwind.Data.ServiceInterfaces;
 namespace Northwind.Data.Services
 { 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END   
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     [LogRequestFilter, LogExceptionFilter]
     public abstract partial class ServiceBase: Service
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalInterfaces 
@@ -28,14 +28,14 @@ namespace Northwind.Data.Services
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                           
     }
     
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END   
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
     public abstract partial class ServiceBase<TDto, TRepository>: ServiceBase
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
-	// __LLBLGENPRO_USER_CODE_REGION_END   
+	// __LLBLGENPRO_USER_CODE_REGION_END                               
         where TDto: CommonDtoBase
         where TRepository: IEntityServiceRepository<TDto>
     {
@@ -100,7 +100,7 @@ namespace Northwind.Data.Services
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                           
     }
 
     public static class ServiceUtilExtensions
@@ -188,7 +188,7 @@ namespace Northwind.Data.Services
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcUtilExtensionsAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                           
     }
 
     public class LogRequestFilterAttribute : Attribute, IHasRequestFilter

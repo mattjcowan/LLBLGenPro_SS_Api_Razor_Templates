@@ -14,18 +14,15 @@ using Northwind.Data.ServiceInterfaces.TypedViewServiceInterfaces;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.Services.TypedViewServices
 {
     #region Service
     /// <summary>Service class for the typed view 'SummaryOfSalesByQuarter'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
- 
+	// __LLBLGENPRO_USER_CODE_REGION_END                             
     public partial class SummaryOfSalesByQuarterTypedViewService : TypedViewServiceBase<SummaryOfSalesByQuarter, ISummaryOfSalesByQuarterTypedViewServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         #region Class Extensibility Methods
         partial void OnCreateService();
@@ -71,7 +68,6 @@ namespace Northwind.Data.Services.TypedViewServices
 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsTypedViewSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
 
     }
     #endregion
@@ -130,8 +126,7 @@ namespace Northwind.Data.Services.TypedViewServices
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END 
-  
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                         
     }
     #endregion
 }

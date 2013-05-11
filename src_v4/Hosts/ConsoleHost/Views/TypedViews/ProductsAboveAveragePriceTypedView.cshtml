@@ -11,7 +11,7 @@
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("/views/productsaboveaverageprice/datatable")';
         var dtAjaxColumns = [
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // ProductName field
-            { "bSortable": true, "bSearchable": true, "bVisible": false } // UnitPrice field
+            { "bSortable": true, "bSearchable": true, "bVisible": true } // UnitPrice field
 
         ];
     </script>
@@ -83,7 +83,7 @@
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
                                 <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> Product Name</label></li>
-                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" type="checkbox"> Unit Price</label></li>
+                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Unit Price</label></li>
 
                             </ul>
                         </div>

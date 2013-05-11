@@ -1,4 +1,4 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
@@ -8,7 +8,11 @@
   
   //-- Single entity template --
   var item = (TypedViewDefinition)_activeObject;
-  var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();
+  var mapping = (TypedViewMapping)_executingGenerator.ProjectDefinition.GetGroupableModelElementMapping(item, _executingGenerator.DriverID);
+  //The following doesn't give you proper ordering, you have to get the ordering from the MappedTarget
+  //var fields = item.Fields.OrderBy(f => f.FieldIndex).ToList();   
+  var fields = item.Fields.HasFieldOrdering ? item.Fields.ApplyFieldOrdering().ToList():
+               item.Fields.OrderBy(f => mapping.GetFieldMappingOfField(f).MappedTarget.OrdinalPosition).ToList();
 %>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,6 +60,9 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories
         // Description for parameters: http://datatables.net/usage/server-side
         public DataTableResponse GetDataTableResponse(<%=item.Name%>DataTableRequest request)
         {
+            var fieldMap = FieldMap;
+            var fieldCount = fieldMap.Count;
+        
             //UrlDecode Request Properties
             request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
             request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
@@ -72,7 +79,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories
             var sort = request.Sort;
             if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
             {
-                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+                sort = string.Format("{0}:{1}", fieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
             }
             //Search
             var filter = request.Filter;
@@ -84,7 +91,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories
                 var searchStrAsInt = -1;
                 if (int.TryParse(request.sSearch, out searchStrAsInt))
                 {
-                    foreach (var fm in FieldMap)
+                    foreach (var fm in fieldMap)
                     {
                         if (fm.Value.DataType.IsNumericType())
                         {
@@ -94,7 +101,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories
                     }
                 }
                 // process string field searches
-                foreach (var fm in FieldMap)
+                foreach (var fm in fieldMap)
                 {
                     if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
                     {
@@ -118,25 +125,26 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories
                     Sort = sort,
                     Select = request.Select,
                 });
+                     
             var response = new DataTableResponse();
             foreach (var item in entities.Result)
             {
                 response.aaData.Add(new string[]
-                    {
-<%  for(var fi=0;fi<fields.Count;fi++)
-    {
+                {
+<%  for(var fi=0;fi<fields.Count;fi++) {
         var field = fields[fi];
-    string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>");
-    var isOfStringType = dotNetFieldTypeName.IndexOf("string", 0, StringComparison.InvariantCultureIgnoreCase)>=0;
-    if(IsFieldBinary(field)) {
+        string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>");
+        var isOfStringType = dotNetFieldTypeName.IndexOf("string", 0, StringComparison.InvariantCultureIgnoreCase)>=0;
+        if(IsFieldBinary(field)) {
 %>                        string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.<%=field.Name%>.ToImageSrc(null, 160))<%=(fi>=fields.Count-1?"":",")%><%
-    } else {
+        } else {
 %>                        item.<%=field.Name%><%if(!isOfStringType){%>.ToString()<%}%><%=(fi>=fields.Count-1?"":",")%>
 <%
-    }
-  }%>
-                    });
+        }
+    }%>
+                });
             }
+
             response.sEcho = request.sEcho;
             // total records in the database before datatables search
             response.iTotalRecords = entities.Paging.TotalCount;
@@ -185,7 +193,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories
     {
         var field = fields[fi];
 %>            if (!hasFn || fieldNames.Contains("<%=field.Name%>", StringComparer.OrdinalIgnoreCase))
-            	item.<%=field.Name%> = row.<%=field.Name%>;
+                item.<%=field.Name%> = row.<%=field.Name%>;
 <%  } %>
 
             return item;

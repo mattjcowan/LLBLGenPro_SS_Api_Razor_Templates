@@ -10,32 +10,32 @@
         var dtBaseUrl = '/views/invoices';
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("/views/invoices/datatable")';
         var dtAjaxColumns = [
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // Address field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // City field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // Country field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // CustomerId field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipName field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipAddress field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipCity field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipRegion field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipPostalCode field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipCountry field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // CustomerId field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // CustomerName field
-            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Discount field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ExtendedPrice field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // Freight field
-            { "bSortable": true, "bSearchable": false, "bVisible": false }, // OrderDate field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Address field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // City field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Region field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // PostalCode field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Country field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Salesperson field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // OrderId field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // PostalCode field
+            { "bSortable": true, "bSearchable": false, "bVisible": true }, // OrderDate field
+            { "bSortable": true, "bSearchable": false, "bVisible": true }, // RequiredDate field
+            { "bSortable": true, "bSearchable": false, "bVisible": true }, // ShippedDate field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipperName field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // ProductId field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // ProductName field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // UnitPrice field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // Quantity field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // Region field
-            { "bSortable": true, "bSearchable": false, "bVisible": false }, // RequiredDate field
-            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Salesperson field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipAddress field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipCity field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipCountry field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipName field
-            { "bSortable": true, "bSearchable": false, "bVisible": false }, // ShippedDate field
-            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ShipperName field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipPostalCode field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ShipRegion field
-            { "bSortable": true, "bSearchable": true, "bVisible": true } // UnitPrice field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // Discount field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ExtendedPrice field
+            { "bSortable": true, "bSearchable": true, "bVisible": true } // Freight field
 
         ];
     </script>
@@ -106,32 +106,32 @@
                         <div class="btn-group col_vis_menu">
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
-                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" type="checkbox"> Address</label></li>
-                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" type="checkbox"> City</label></li>
-                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" type="checkbox"> Country</label></li>
-                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" type="checkbox"> Customer Id</label></li>
-                                <li><label class="checkbox" for="dt_col_5"><input id="dt_col_5" name="toggle-cols" value="4" checked="checked" type="checkbox"> Customer Name</label></li>
-                                <li><label class="checkbox" for="dt_col_6"><input id="dt_col_6" name="toggle-cols" value="5" checked="checked" type="checkbox"> Discount</label></li>
-                                <li><label class="checkbox" for="dt_col_7"><input id="dt_col_7" name="toggle-cols" value="6" type="checkbox"> Extended Price</label></li>
-                                <li><label class="checkbox" for="dt_col_8"><input id="dt_col_8" name="toggle-cols" value="7" type="checkbox"> Freight</label></li>
-                                <li><label class="checkbox" for="dt_col_9"><input id="dt_col_9" name="toggle-cols" value="8" type="checkbox"> Order Date</label></li>
-                                <li><label class="checkbox" for="dt_col_10"><input id="dt_col_10" name="toggle-cols" value="9" checked="checked" type="checkbox"> Order Id</label></li>
-                                <li><label class="checkbox" for="dt_col_11"><input id="dt_col_11" name="toggle-cols" value="10" type="checkbox"> Postal Code</label></li>
-                                <li><label class="checkbox" for="dt_col_12"><input id="dt_col_12" name="toggle-cols" value="11" checked="checked" type="checkbox"> Product Id</label></li>
-                                <li><label class="checkbox" for="dt_col_13"><input id="dt_col_13" name="toggle-cols" value="12" checked="checked" type="checkbox"> Product Name</label></li>
-                                <li><label class="checkbox" for="dt_col_14"><input id="dt_col_14" name="toggle-cols" value="13" checked="checked" type="checkbox"> Quantity</label></li>
-                                <li><label class="checkbox" for="dt_col_15"><input id="dt_col_15" name="toggle-cols" value="14" type="checkbox"> Region</label></li>
-                                <li><label class="checkbox" for="dt_col_16"><input id="dt_col_16" name="toggle-cols" value="15" type="checkbox"> Required Date</label></li>
-                                <li><label class="checkbox" for="dt_col_17"><input id="dt_col_17" name="toggle-cols" value="16" checked="checked" type="checkbox"> Salesperson</label></li>
-                                <li><label class="checkbox" for="dt_col_18"><input id="dt_col_18" name="toggle-cols" value="17" type="checkbox"> Ship Address</label></li>
-                                <li><label class="checkbox" for="dt_col_19"><input id="dt_col_19" name="toggle-cols" value="18" type="checkbox"> Ship City</label></li>
-                                <li><label class="checkbox" for="dt_col_20"><input id="dt_col_20" name="toggle-cols" value="19" type="checkbox"> Ship Country</label></li>
-                                <li><label class="checkbox" for="dt_col_21"><input id="dt_col_21" name="toggle-cols" value="20" type="checkbox"> Ship Name</label></li>
-                                <li><label class="checkbox" for="dt_col_22"><input id="dt_col_22" name="toggle-cols" value="21" type="checkbox"> Shipped Date</label></li>
-                                <li><label class="checkbox" for="dt_col_23"><input id="dt_col_23" name="toggle-cols" value="22" checked="checked" type="checkbox"> Shipper Name</label></li>
-                                <li><label class="checkbox" for="dt_col_24"><input id="dt_col_24" name="toggle-cols" value="23" type="checkbox"> Ship Postal Code</label></li>
-                                <li><label class="checkbox" for="dt_col_25"><input id="dt_col_25" name="toggle-cols" value="24" type="checkbox"> Ship Region</label></li>
-                                <li><label class="checkbox" for="dt_col_26"><input id="dt_col_26" name="toggle-cols" value="25" checked="checked" type="checkbox"> Unit Price</label></li>
+                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> Ship Name</label></li>
+                                <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Ship Address</label></li>
+                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" checked="checked" type="checkbox"> Ship City</label></li>
+                                <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" checked="checked" type="checkbox"> Ship Region</label></li>
+                                <li><label class="checkbox" for="dt_col_5"><input id="dt_col_5" name="toggle-cols" value="4" checked="checked" type="checkbox"> Ship Postal Code</label></li>
+                                <li><label class="checkbox" for="dt_col_6"><input id="dt_col_6" name="toggle-cols" value="5" checked="checked" type="checkbox"> Ship Country</label></li>
+                                <li><label class="checkbox" for="dt_col_7"><input id="dt_col_7" name="toggle-cols" value="6" checked="checked" type="checkbox"> Customer Id</label></li>
+                                <li><label class="checkbox" for="dt_col_8"><input id="dt_col_8" name="toggle-cols" value="7" checked="checked" type="checkbox"> Customer Name</label></li>
+                                <li><label class="checkbox" for="dt_col_9"><input id="dt_col_9" name="toggle-cols" value="8" checked="checked" type="checkbox"> Address</label></li>
+                                <li><label class="checkbox" for="dt_col_10"><input id="dt_col_10" name="toggle-cols" value="9" checked="checked" type="checkbox"> City</label></li>
+                                <li><label class="checkbox" for="dt_col_11"><input id="dt_col_11" name="toggle-cols" value="10" checked="checked" type="checkbox"> Region</label></li>
+                                <li><label class="checkbox" for="dt_col_12"><input id="dt_col_12" name="toggle-cols" value="11" checked="checked" type="checkbox"> Postal Code</label></li>
+                                <li><label class="checkbox" for="dt_col_13"><input id="dt_col_13" name="toggle-cols" value="12" checked="checked" type="checkbox"> Country</label></li>
+                                <li><label class="checkbox" for="dt_col_14"><input id="dt_col_14" name="toggle-cols" value="13" checked="checked" type="checkbox"> Salesperson</label></li>
+                                <li><label class="checkbox" for="dt_col_15"><input id="dt_col_15" name="toggle-cols" value="14" checked="checked" type="checkbox"> Order Id</label></li>
+                                <li><label class="checkbox" for="dt_col_16"><input id="dt_col_16" name="toggle-cols" value="15" checked="checked" type="checkbox"> Order Date</label></li>
+                                <li><label class="checkbox" for="dt_col_17"><input id="dt_col_17" name="toggle-cols" value="16" checked="checked" type="checkbox"> Required Date</label></li>
+                                <li><label class="checkbox" for="dt_col_18"><input id="dt_col_18" name="toggle-cols" value="17" checked="checked" type="checkbox"> Shipped Date</label></li>
+                                <li><label class="checkbox" for="dt_col_19"><input id="dt_col_19" name="toggle-cols" value="18" checked="checked" type="checkbox"> Shipper Name</label></li>
+                                <li><label class="checkbox" for="dt_col_20"><input id="dt_col_20" name="toggle-cols" value="19" checked="checked" type="checkbox"> Product Id</label></li>
+                                <li><label class="checkbox" for="dt_col_21"><input id="dt_col_21" name="toggle-cols" value="20" checked="checked" type="checkbox"> Product Name</label></li>
+                                <li><label class="checkbox" for="dt_col_22"><input id="dt_col_22" name="toggle-cols" value="21" checked="checked" type="checkbox"> Unit Price</label></li>
+                                <li><label class="checkbox" for="dt_col_23"><input id="dt_col_23" name="toggle-cols" value="22" checked="checked" type="checkbox"> Quantity</label></li>
+                                <li><label class="checkbox" for="dt_col_24"><input id="dt_col_24" name="toggle-cols" value="23" checked="checked" type="checkbox"> Discount</label></li>
+                                <li><label class="checkbox" for="dt_col_25"><input id="dt_col_25" name="toggle-cols" value="24" checked="checked" type="checkbox"> Extended Price</label></li>
+                                <li><label class="checkbox" for="dt_col_26"><input id="dt_col_26" name="toggle-cols" value="25" checked="checked" type="checkbox"> Freight</label></li>
 
                             </ul>
                         </div>
@@ -141,32 +141,32 @@
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="entity-grid">
                         <thead>
                             <tr>
-                                <th>Address</th>
-                                <th>City</th>
-                                <th>Country</th>
+                                <th>Ship Name</th>
+                                <th>Ship Address</th>
+                                <th>Ship City</th>
+                                <th>Ship Region</th>
+                                <th>Ship Postal Code</th>
+                                <th>Ship Country</th>
                                 <th>Customer Id</th>
                                 <th>Customer Name</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>Region</th>
+                                <th>Postal Code</th>
+                                <th>Country</th>
+                                <th>Salesperson</th>
+                                <th>Order Id</th>
+                                <th>Order Date</th>
+                                <th>Required Date</th>
+                                <th>Shipped Date</th>
+                                <th>Shipper Name</th>
+                                <th>Product Id</th>
+                                <th>Product Name</th>
+                                <th>Unit Price</th>
+                                <th>Quantity</th>
                                 <th>Discount</th>
                                 <th>Extended Price</th>
                                 <th>Freight</th>
-                                <th>Order Date</th>
-                                <th>Order Id</th>
-                                <th>Postal Code</th>
-                                <th>Product Id</th>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                                <th>Region</th>
-                                <th>Required Date</th>
-                                <th>Salesperson</th>
-                                <th>Ship Address</th>
-                                <th>Ship City</th>
-                                <th>Ship Country</th>
-                                <th>Ship Name</th>
-                                <th>Shipped Date</th>
-                                <th>Shipper Name</th>
-                                <th>Ship Postal Code</th>
-                                <th>Ship Region</th>
-                                <th>Unit Price</th>
 
                             </tr>
                         </thead>

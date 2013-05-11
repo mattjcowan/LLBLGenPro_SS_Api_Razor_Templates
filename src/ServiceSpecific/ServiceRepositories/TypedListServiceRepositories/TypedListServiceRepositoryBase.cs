@@ -48,8 +48,10 @@ namespace Northwind.Data.ServiceRepositories.TypedListServiceRepositories
             var queryString = request.QueryString["format"] != null ? "&format=" + request.QueryString["format"] : "";
             var pkCount = FieldMap.Count(pk => pk.Value.IsPrimaryKey);
             var fields = new List<Link>();
+            var fieldIndex = -1;
             foreach (var f in FieldMap)
             {
+                fieldIndex++;
                 var isUnique = false;
                 var link = Link.Create(
                   f.Key.ToCamelCase(), f.Value.DataType.Name, "field",
@@ -58,7 +60,7 @@ namespace Northwind.Data.ServiceRepositories.TypedListServiceRepositories
                   new Dictionary<string, string>()
                 );
                 var props = new SortedDictionary<string, string>();
-                props.Add("index", f.Value.FieldIndex.ToString(CultureInfo.InvariantCulture));
+                props.Add("index", fieldIndex.ToString() /*WRONG: f.Value.FieldIndex.ToString(CultureInfo.InvariantCulture)*/);
                 if (f.Value.IsPrimaryKey)
                 {
                     props.Add("isPrimaryKey", f.Value.IsPrimaryKey.ToString().ToLower());

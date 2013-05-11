@@ -10,9 +10,9 @@
         var dtBaseUrl = '/views/customerandsuppliersbycity';
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("/views/customerandsuppliersbycity/datatable")';
         var dtAjaxColumns = [
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // City field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // City field
             { "bSortable": true, "bSearchable": true, "bVisible": true }, // CompanyName field
-            { "bSortable": true, "bSearchable": true, "bVisible": false }, // ContactName field
+            { "bSortable": true, "bSearchable": true, "bVisible": true }, // ContactName field
             { "bSortable": true, "bSearchable": true, "bVisible": true } // Relationship field
 
         ];
@@ -84,9 +84,9 @@
                         <div class="btn-group col_vis_menu">
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
-                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" type="checkbox"> City</label></li>
+                                <li><label class="checkbox" for="dt_col_1"><input id="dt_col_1" name="toggle-cols" value="0" checked="checked" type="checkbox"> City</label></li>
                                 <li><label class="checkbox" for="dt_col_2"><input id="dt_col_2" name="toggle-cols" value="1" checked="checked" type="checkbox"> Company Name</label></li>
-                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" type="checkbox"> Contact Name</label></li>
+                                <li><label class="checkbox" for="dt_col_3"><input id="dt_col_3" name="toggle-cols" value="2" checked="checked" type="checkbox"> Contact Name</label></li>
                                 <li><label class="checkbox" for="dt_col_4"><input id="dt_col_4" name="toggle-cols" value="3" checked="checked" type="checkbox"> Relationship</label></li>
 
                             </ul>

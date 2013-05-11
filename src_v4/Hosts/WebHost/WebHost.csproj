@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BAA579CE-F448-4F79-ADE7-2FE4F018397F}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebHost</RootNamespace>
+    <AssemblyName>WebHost</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Elmah">
+      <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\log4net.1.2.11\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="SD.LLBLGen.Pro.DQE.SqlServer, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL" />
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL" />
+    <Reference Include="ServiceStack">
+      <HintPath>..\..\packages\ServiceStack.3.9.38\lib\net35\ServiceStack.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\..\packages\ServiceStack.Common.3.9.38\lib\net35\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\..\packages\ServiceStack.Common.3.9.38\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Logging.Elmah">
+      <HintPath>..\..\packages\ServiceStack.Logging.Elmah.1.0.6.0\lib\net35\ServiceStack.Logging.Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Logging.Log4Net, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ServiceStack.Logging.Log4Net.1.0.6.0\lib\net35\ServiceStack.Logging.Log4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite">
+      <HintPath>..\..\packages\ServiceStack.OrmLite.SqlServer.3.9.39\lib\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.SqlServer">
+      <HintPath>..\..\packages\ServiceStack.OrmLite.SqlServer.3.9.39\lib\ServiceStack.OrmLite.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Razor">
+      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\ServiceStack.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Redis">
+      <HintPath>..\..\packages\ServiceStack.Redis.3.9.38\lib\net35\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.ServiceInterface">
+      <HintPath>..\..\packages\ServiceStack.3.9.38\lib\net35\ServiceStack.ServiceInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.38\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Css\plugins.css" />
+    <Content Include="Css\styles.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Js\plugins.js" />
+    <Content Include="Js\scripts.js" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Default.cshtml" />
+    <Content Include="NotFound.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CategoryView.cshtml" />
+    <Content Include="Views\CustomerCustomerDemoView.cshtml" />
+    <Content Include="Views\CustomerDemographicView.cshtml" />
+    <Content Include="Views\CustomerView.cshtml" />
+    <Content Include="Views\EmployeeTerritoryView.cshtml" />
+    <Content Include="Views\EmployeeView.cshtml" />
+    <Content Include="Views\Entities.cshtml" />
+    <Content Include="Views\OrderDetailView.cshtml" />
+    <Content Include="Views\OrderView.cshtml" />
+    <Content Include="Views\ProductView.cshtml" />
+    <Content Include="Views\RegionView.cshtml" />
+    <Content Include="Views\ShipperView.cshtml" />
+    <Content Include="Views\SupplierView.cshtml" />
+    <Content Include="Views\TerritoryView.cshtml" />
+    <Content Include="Views\_Analytics.cshtml" />
+    <Content Include="Views\_EntityNav.cshtml" />
+    <Content Include="Views\_Layout.cshtml" />
+    <Content Include="web.config" />
+    <Content Include="Views\TypedLists\EmployeesByRegionAndTerritoryTypedList.cshtml" />
+    <Content Include="Views\TypedLists\TypedLists.cshtml" />
+    <Content Include="Views\TypedLists\_TypedListNav.cshtml" />
+    <Content Include="Views\TypedViews\AlphabeticalListOfProductsTypedView.cshtml" />
+    <Content Include="Views\TypedViews\CategorySalesFor1997TypedView.cshtml" />
+    <Content Include="Views\TypedViews\CurrentProductListTypedView.cshtml" />
+    <Content Include="Views\TypedViews\CustomerAndSuppliersByCityTypedView.cshtml" />
+    <Content Include="Views\TypedViews\InvoicesTypedView.cshtml" />
+    <Content Include="Views\TypedViews\OrderDetailsExtendedTypedView.cshtml" />
+    <Content Include="Views\TypedViews\OrdersQryTypedView.cshtml" />
+    <Content Include="Views\TypedViews\OrderSubtotalTypedView.cshtml" />
+    <Content Include="Views\TypedViews\ProductsAboveAveragePriceTypedView.cshtml" />
+    <Content Include="Views\TypedViews\ProductSalesFor1997TypedView.cshtml" />
+    <Content Include="Views\TypedViews\ProductsByCategoryTypedView.cshtml" />
+    <Content Include="Views\TypedViews\QuarterlyOrderTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SalesByCategoryTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SalesTotalsByAmountTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SummaryOfSalesByQuarterTypedView.cshtml" />
+    <Content Include="Views\TypedViews\SummaryOfSalesByYearTypedView.cshtml" />
+    <Content Include="Views\TypedViews\TypedViews.cshtml" />
+    <Content Include="Views\TypedViews\_TypedViewNav.cshtml" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DbGeneric\Northwind.Data.csproj">
+      <Project>{b81d0e85-e5cb-432d-8832-5c02d28d912d}</Project>
+      <Name>Northwind.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DbSpecific\Northwind.DataDBSpecific.csproj">
+      <Project>{36759884-c5da-42a9-a90e-fdddd0fc301c}</Project>
+      <Name>Northwind.DataDBSpecific</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceGeneric\Northwind.Data.Services.csproj">
+      <Project>{be62f222-bd2c-45d6-affb-52ed5a243eb0}</Project>
+      <Name>Northwind.Data.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceSpecific\Northwind.Data.ServiceRepositories.csproj">
+      <Project>{e3740fe0-a708-49a7-8f3b-ab8c369f0ad6}</Project>
+      <Name>Northwind.Data.ServiceRepositories</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:62475/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy $(SolutionDir)Hosts\ConsoleHost\*.cshtml $(ProjectDir)*.cshtml /Y /C
+xcopy $(SolutionDir)Hosts\ConsoleHost\Css\*.* $(ProjectDir)Css\*.* /Y /E /C
+xcopy $(SolutionDir)Hosts\ConsoleHost\Js\*.* $(ProjectDir)Js\*.* /Y /E /C
+xcopy $(SolutionDir)Hosts\ConsoleHost\Views\*.* $(ProjectDir)Views\*.* /Y /E /C
+</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

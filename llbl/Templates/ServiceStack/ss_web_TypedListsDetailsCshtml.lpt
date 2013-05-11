@@ -8,7 +8,7 @@
   //-- Single entity template --
   var item = (TypedListDefinition)_activeObject;
   var fields = item.Fields;
-  var baseUrl = "/lists/" + item.Name.ToLower();
+  var baseUrl = "/lists/" + item.Name.ToLower();  
 %>@inherits ViewPage<<%=rootNameSpace%>.Services.TypedListServices.<%=item.Name%>CollectionResponse>
 @{
     ViewBag.Title = "<%=TitleCase(item.Name)%> Browser";
@@ -98,7 +98,6 @@
     foreach(var field in fields)
     {
         fieldIndex++;
-    
 %>                                <li><label class="checkbox" for="dt_col_<%=(fieldIndex).ToString()%>"><input id="dt_col_<%=(fieldIndex).ToString()%>" name="toggle-cols" value="<%=(fieldIndex-1).ToString()%>" <%=IsFieldVisible(field.MappedFieldInstance.FieldType.RepresentedType, field.MappedFieldInstance.MaxLength)?"checked=\"checked\" ":""%>type="checkbox"> <%=TitleCase(field.FieldAlias)%></label></li>
 <%  }%>
                             </ul>

@@ -19,7 +19,7 @@ namespace Northwind.Data.Services.TypedViewServices
     #region Service
     /// <summary>Service class for the typed view 'AlphabeticalListOfProducts'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                 
+	// __LLBLGENPRO_USER_CODE_REGION_END                  
     public partial class AlphabeticalListOfProductsTypedViewService : TypedViewServiceBase<AlphabeticalListOfProducts, IAlphabeticalListOfProductsTypedViewServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -174,7 +174,7 @@ namespace Northwind.Data.Services.TypedViewServices
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                   
     }
     #endregion
 }

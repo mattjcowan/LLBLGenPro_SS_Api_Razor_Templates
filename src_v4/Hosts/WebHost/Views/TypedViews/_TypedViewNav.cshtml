@@ -1,0 +1,63 @@
+﻿@inherits ViewPage<string>
+@{
+    var classVal = "padding-left:6px;font-weight:bold;";
+    var typedViews = new[]
+    {
+     new { a = "/views/alphabeticallistofproducts", b = "Alphabetical List Of Products", c = Model == "/views/alphabeticallistofproducts" },
+     new { a = "/views/categorysalesfor1997", b = "Category Sales For 1997", c = Model == "/views/categorysalesfor1997" },
+     new { a = "/views/currentproductlist", b = "Current Product List", c = Model == "/views/currentproductlist" },
+     new { a = "/views/customerandsuppliersbycity", b = "Customer And Suppliers By City", c = Model == "/views/customerandsuppliersbycity" },
+     new { a = "/views/invoices", b = "Invoices", c = Model == "/views/invoices" },
+     new { a = "/views/orderdetailsextended", b = "Order Details Extended", c = Model == "/views/orderdetailsextended" },
+     new { a = "/views/ordersqry", b = "Orders Qry", c = Model == "/views/ordersqry" },
+     new { a = "/views/ordersubtotal", b = "Order Subtotal", c = Model == "/views/ordersubtotal" },
+     new { a = "/views/productsaboveaverageprice", b = "Products Above Average Price", c = Model == "/views/productsaboveaverageprice" },
+     new { a = "/views/productsalesfor1997", b = "Product Sales For 1997", c = Model == "/views/productsalesfor1997" },
+     new { a = "/views/productsbycategory", b = "Products By Category", c = Model == "/views/productsbycategory" },
+     new { a = "/views/quarterlyorder", b = "Quarterly Order", c = Model == "/views/quarterlyorder" },
+     new { a = "/views/salesbycategory", b = "Sales By Category", c = Model == "/views/salesbycategory" },
+     new { a = "/views/salestotalsbyamount", b = "Sales Totals By Amount", c = Model == "/views/salestotalsbyamount" },
+     new { a = "/views/summaryofsalesbyquarter", b = "Summary Of Sales By Quarter", c = Model == "/views/summaryofsalesbyquarter" },
+     new { a = "/views/summaryofsalesbyyear", b = "Summary Of Sales By Year", c = Model == "/views/summaryofsalesbyyear" },
+
+        };
+}
+<div class="btn-group narrow-screen span12" style="margin-bottom:10px;">
+    <a href="#" class="btn dropdown-toggle span12" data-toggle="dropdown">
+        <i class="icon-th-list"></i>
+        Typed Views
+        <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu" style="width:100%;">
+        <li><a href="/views">All</a></li>
+        @foreach (var e in typedViews)
+        {
+            if (!e.c)
+            {
+                <li><a href="@e.a">@e.b</a></li>
+            }
+            else
+            {
+                <li class="@classVal"><a href="@e.a">&raquo; @e.b</a></li>
+            }
+        }
+    </ul>
+</div>
+<div class="well sidebar-nav wide-screen">
+    <ul class="nav nav-list">
+        <li class="nav-header">Typed Views</li>
+        <li></li>
+        <li><a href="/views">All</a></li>
+        @foreach (var e in typedViews)
+        {
+            if (!e.c)
+            {
+                <li><a href="@e.a">@e.b</a></li>
+            }
+            else
+            {
+                <li class="@classVal"><a href="@e.a">&raquo; @e.b</a></li>
+            }
+        }
+    </ul>
+</div> 

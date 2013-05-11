@@ -20,13 +20,11 @@ using Northwind.Data.TypedViewClasses;
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalNamespaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
-
 namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
 { 
     public partial class AlphabeticalListOfProductsTypedViewServiceRepository : TypedViewServiceRepositoryBase<AlphabeticalListOfProducts>, IAlphabeticalListOfProductsTypedViewServiceRepository
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
@@ -49,6 +47,9 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
         // Description for parameters: http://datatables.net/usage/server-side
         public DataTableResponse GetDataTableResponse(AlphabeticalListOfProductsDataTableRequest request)
         {
+            var fieldMap = FieldMap;
+            var fieldCount = fieldMap.Count;
+        
             //UrlDecode Request Properties
             request.sSearch = System.Web.HttpUtility.UrlDecode(request.sSearch);
             request.Sort = System.Web.HttpUtility.UrlDecode(request.Sort);
@@ -65,7 +66,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
             var sort = request.Sort;
             if (request.iSortingCols > 0 && request.iSortCol_0 >= 0)
             {
-                sort = string.Format("{0}:{1}", FieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
+                sort = string.Format("{0}:{1}", fieldMap.Keys.ElementAt(Convert.ToInt32(request.iSortCol_0)), request.sSortDir_0);
             }
             //Search
             var filter = request.Filter;
@@ -77,7 +78,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                 var searchStrAsInt = -1;
                 if (int.TryParse(request.sSearch, out searchStrAsInt))
                 {
-                    foreach (var fm in FieldMap)
+                    foreach (var fm in fieldMap)
                     {
                         if (fm.Value.DataType.IsNumericType())
                         {
@@ -87,7 +88,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                     }
                 }
                 // process string field searches
-                foreach (var fm in FieldMap)
+                foreach (var fm in fieldMap)
                 {
                     if (fm.Value.DataType == typeof (string)/* && fm.Value.MaxLength < 2000*/)
                     {
@@ -112,11 +113,12 @@ AlphabeticalListOfProductsQueryCollectionRequest
                     Sort = sort,
                     Select = request.Select,
                 });
+                     
             var response = new DataTableResponse();
             foreach (var item in entities.Result)
             {
                 response.aaData.Add(new string[]
-                    {
+                {
                         item.ProductId.ToString(),
                         item.ProductName,
                         item.SupplierId.ToString(),
@@ -129,8 +131,9 @@ AlphabeticalListOfProductsQueryCollectionRequest
                         item.Discontinued.ToString(),
                         item.CategoryName
 
-                    });
+                });
             }
+
             response.sEcho = request.sEcho;
             // total records in the database before datatables search
             response.iTotalRecords = entities.Paging.TotalCount;
@@ -176,27 +179,27 @@ AlphabeticalListOfProductsQueryCollectionRequest
             var hasFn = fieldNames != null && fieldNames.Any();
             var item = new AlphabeticalListOfProducts();
             if (!hasFn || fieldNames.Contains("ProductId", StringComparer.OrdinalIgnoreCase))
-            	item.ProductId = row.ProductId;
+                item.ProductId = row.ProductId;
             if (!hasFn || fieldNames.Contains("ProductName", StringComparer.OrdinalIgnoreCase))
-            	item.ProductName = row.ProductName;
+                item.ProductName = row.ProductName;
             if (!hasFn || fieldNames.Contains("SupplierId", StringComparer.OrdinalIgnoreCase))
-            	item.SupplierId = row.SupplierId;
+                item.SupplierId = row.SupplierId;
             if (!hasFn || fieldNames.Contains("CategoryId", StringComparer.OrdinalIgnoreCase))
-            	item.CategoryId = row.CategoryId;
+                item.CategoryId = row.CategoryId;
             if (!hasFn || fieldNames.Contains("QuantityPerUnit", StringComparer.OrdinalIgnoreCase))
-            	item.QuantityPerUnit = row.QuantityPerUnit;
+                item.QuantityPerUnit = row.QuantityPerUnit;
             if (!hasFn || fieldNames.Contains("UnitPrice", StringComparer.OrdinalIgnoreCase))
-            	item.UnitPrice = row.UnitPrice;
+                item.UnitPrice = row.UnitPrice;
             if (!hasFn || fieldNames.Contains("UnitsInStock", StringComparer.OrdinalIgnoreCase))
-            	item.UnitsInStock = row.UnitsInStock;
+                item.UnitsInStock = row.UnitsInStock;
             if (!hasFn || fieldNames.Contains("UnitsOnOrder", StringComparer.OrdinalIgnoreCase))
-            	item.UnitsOnOrder = row.UnitsOnOrder;
+                item.UnitsOnOrder = row.UnitsOnOrder;
             if (!hasFn || fieldNames.Contains("ReorderLevel", StringComparer.OrdinalIgnoreCase))
-            	item.ReorderLevel = row.ReorderLevel;
+                item.ReorderLevel = row.ReorderLevel;
             if (!hasFn || fieldNames.Contains("Discontinued", StringComparer.OrdinalIgnoreCase))
-            	item.Discontinued = row.Discontinued;
+                item.Discontinued = row.Discontinued;
             if (!hasFn || fieldNames.Contains("CategoryName", StringComparer.OrdinalIgnoreCase))
-            	item.CategoryName = row.CategoryName;
+                item.CategoryName = row.CategoryName;
 
 
             return item;
@@ -204,7 +207,6 @@ AlphabeticalListOfProductsQueryCollectionRequest
     
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
-
 
     }
 }

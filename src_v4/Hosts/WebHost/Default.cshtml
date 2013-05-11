@@ -1,0 +1,75 @@
+﻿@inherits ViewPage
+@{
+    ViewBag.Title = "Home";
+    var blogUrl = System.Configuration.ConfigurationManager.AppSettings["BlogUrl"];
+}
+<div class="hero-unit">
+    <div>
+        <h1>Northwind.Data</h1>
+        <p>
+      This site was auto-generated using <a href="http://www.llblgen.com">LLBLGen Pro</a>. The site is service-based
+      and runs on top of the <a href="http://www.servicestack.net">ServiceStack</a> framework and the <a href="http://www.llblgen.com">LLBLGen Pro runtime</a>.
+    </p>
+    <p>
+      Check out the blog post describing how the site was generated using the
+      "Learn more" button, or start browsing the site and the services using
+      the "Browse" button.
+        </p>
+    </div>
+    <a class="btn btn-primary main_button" href="@blogUrl" target="_blank">
+        Learn more <span style="font-size: 13px;">&raquo;</span>
+    </a>
+    <a class="btn btn-primary main_button" href="/entities">
+        Browse <span style="font-size: 13px;">&raquo;</span>
+    </a>
+</div>
+<div class="row">
+    <div class="span4">
+        <div>
+          <h2>Entity Browser</h2>
+          <p>
+            The entity browser allows you to manage the entities of your system.
+          </p>
+          <p>
+            Entities were designed within the LLBLGen Pro designer and modeled on
+            top of a database.
+          </p>
+          <p>
+            Start browsing and managing your entities now.
+          </p>
+        </div>
+        <a class="btn" href="/entities">Browse &raquo;</a>
+    </div>
+    <div class="span4">
+        <div>
+          <h2>Entity API</h2>
+          <p>
+            The entire system runs on top of ServiceStack and the LLBLGen Pro runtime.
+          </p>
+          <ul>
+            <li>100% auto-generated</li>
+            <li>100% service-based</li>
+          </ul>
+          <p>
+            Browse the API documentation now!
+          </p>
+        </div>
+        <a class="btn" href="@blogUrl" target="_blank">API Docs &raquo;</a>
+    </div>
+    <div class="span4">
+        <div>
+          <h2>Powered By</h2>
+          <p>&nbsp;</p>
+          <p style="text-align: center;">
+            <a href="http://www.servicestack.net">
+              <img src="http://www.servicestack.net/ServiceStack.Northwind/img/logo-txt-small.png" style="width:230px;" target="_blank" />
+            </a>
+          </p>
+          <p style="text-align: center;">
+            <a href="http://www.llblgen.com">
+              <img src="http://www.llblgen.com/documentation/3.0/Designer/Images/logo_pro.jpg" style="width:270px;" target="_blank" />
+            </a>
+          </p>
+        </div>
+    </div>
+</div>
