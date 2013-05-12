@@ -15,6 +15,15 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 For all examples below, you may want to use Chrome or a browser that can show you the results (or use Fiddler). 
 Chrome is nice in the sense that it always displays the reponse from the server, regardless of status code (200, 400, 401, 404, 500, etc...) and regardless of the content type (JS, XML, etc...).
 
+### Update - May 11, 2013 ###
+
+Added support for Typed Views and Typed Lists (for both LLBLGen 3.5 and 4.0, and using ServiceStack v3.9.38).
+
+- **New blog post**: [RESTful Api and UI for Typed Views and Typed Lists with LLBLGen and ServiceStack][blog-site2]
+- **New demo of typed view browser**: [http://northwind.mattjcowan.com/views][demo-typed-views]
+- **New demo of typed list browser**: [http://northwind.mattjcowan.com/lists][demo-typed-lists]
+- **Previous demo of entity browser**: [http://northwind.mattjcowan.com/views][demo-entities]
+
 ### Update - May 3, 2013 ###
 
 Added a new LLBLGen Preset and some additional templates to make the project compatible with the newly released LLBLGen V4 release.
@@ -115,6 +124,10 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
 
 [demo-site]: http://northwind.mattjcowan.com
 [blog-site]: http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack
+[blog-site2]: http://www.mattjcowan.com/funcoding/2013/05/11/restful-api-and-ui-for-typed-views-and-typed-lists/
+[demo-entities]: http://northwind.mattjcowan.com/entities
+[demo-typed-views]: http://northwind.mattjcowan.com/views
+[demo-typed-lists]: http://northwind.mattjcowan.com/lists
 [1-xml]: http://northwind.mattjcowan.com/products?limit=10&include=supplier&format=xml
 [1-json]: http://northwind.mattjcowan.com/products?limit=10&include=supplier&format=json
 [2-xml]: http://northwind.mattjcowan.com/products?limit=5&include=supplier&format=xml
