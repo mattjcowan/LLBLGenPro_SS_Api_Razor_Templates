@@ -4,6 +4,8 @@
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
+  var typedLists = _executingGenerator.TypedLists;
+  var typedViews = _executingGenerator.TypedViews;
 %>using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,16 +51,16 @@ namespace <%=rootNameSpace%>.Helpers
         {
             return ConvertStringToSortExpression(sortStr, s => GetField(entityType, s));
         }
-
+<%if(typedLists.Count>0){%>
         internal static SortExpression ConvertStringToSortExpression(TypedListType typedListType, string sortStr)
         {
             return ConvertStringToSortExpression(sortStr, s => GetField(typedListType, s));
-        }
-
+        }<%}%>
+<%if(typedViews.Count>0){%>
         internal static SortExpression ConvertStringToSortExpression(TypedViewType typedViewType, string sortStr)
         {
             return ConvertStringToSortExpression(sortStr, s => GetField(typedViewType, s));
-        }
+        }<%}%>
 
         #endregion
 
@@ -259,7 +261,7 @@ namespace <%=rootNameSpace%>.Helpers
         #endregion
 
         #region String to Relation Conversion methods
-
+<%if(typedLists.Count>0){%>
         internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(TypedListType typedListType, IRelationPredicateBucket predicateBucket, string filterStr)
         {
             if (string.IsNullOrEmpty(filterStr))
@@ -272,8 +274,9 @@ namespace <%=rootNameSpace%>.Helpers
             if (predicate != null)
                 predicateBucket.PredicateExpression.Add(predicate);
             return predicateBucket;
-        }
+        }<%}%>
 
+<%if(typedViews.Count>0){%>
         internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(TypedViewType typedViewType, string filterStr)
         {
             var predicateBucket = new RelationPredicateBucket();
@@ -284,7 +287,7 @@ namespace <%=rootNameSpace%>.Helpers
             if (predicate != null)
                 predicateBucket.PredicateExpression.Add(predicate);
             return predicateBucket;
-        }
+        }<%}%>
 
         internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(EntityType entityType, string filterStr, string relationsStr)
         {
@@ -556,6 +559,7 @@ namespace <%=rootNameSpace%>.Helpers
             */
         }
 
+<%if(typedViews.Count>0){%>
         internal static IEntityField2 GetField(TypedViewType typedViewType, string fieldName)
         {
             var fields = EntityFieldsFactory.CreateTypedViewEntityFieldsObject(typedViewType);
@@ -570,8 +574,9 @@ namespace <%=rootNameSpace%>.Helpers
                         ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
                         : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
             */
-        }
+        }<%}%>
 
+<%if(typedLists.Count>0){%>
         internal static IEntityField2 GetField(TypedListType typedListType, string fieldName)
         {
             var fields = EntityFieldsFactory.CreateTypedListEntityFieldsObject(typedListType);
@@ -586,7 +591,7 @@ namespace <%=rootNameSpace%>.Helpers
                         ? f.Alias.Equals(fieldName, StringComparison.OrdinalIgnoreCase)
                         : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
             */
-        }
+        }<%}%>
 
         internal static IEntityField2 GetRelatedField(EntityType entityType, string fieldInfo, List<IEntityRelation> relationsToFill)
         {
@@ -628,11 +633,12 @@ namespace <%=rootNameSpace%>.Helpers
             return null;
         }
 
+<%if(typedViews.Count>0){%>
         internal static IDictionary<string, IEntityField2> GetTypedViewTypeFieldMap(TypedViewType typedViewType)
         {
             return EntityFieldsFactory.CreateTypedViewEntityFieldsObject(typedViewType)
                                       .ToDictionary(k => k.Name, v => (IEntityField2) v);
-        }
+        }<%}%>
 
         internal static IDictionary<string, IEntityField2> GetEntityTypeFieldMap(EntityType entityType)
         {

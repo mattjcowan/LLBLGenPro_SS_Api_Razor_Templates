@@ -1,4 +1,4 @@
-﻿<%
+<%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
@@ -40,10 +40,10 @@
   </PropertyGroup>  
   <ItemGroup>
     <!-- LLBLGen References -->
-	<Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
-		<SpecificVersion>True</SpecificVersion>
-		<HintPath>C:\Program Files (x86)\Solutions Design\LLBLGen Pro v4.0\Frameworks\LLBLGen Pro\RuntimeLibraries\CompiledRuntimeLibraries\</HintPath>
-	</Reference>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+        <SpecificVersion>True</SpecificVersion>
+        <HintPath>C:\Program Files (x86)\Solutions Design\LLBLGen Pro v4.0\Frameworks\LLBLGen Pro\RuntimeLibraries\CompiledRuntimeLibraries\</HintPath>
+    </Reference>
     <Reference Include="SD.LLBLGen.Pro.DQE.SqlServer, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Solutions Design\LLBLGen Pro v4.0\Frameworks\LLBLGen Pro\RuntimeLibraries\CompiledRuntimeLibraries\</HintPath>
@@ -161,22 +161,22 @@
     </None><%foreach(var entity in entities){%>
     <None Include="Views\<%=entity.Name%>View.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None><%}%>
+    </None><%}%><%if(typedLists.Count>0){%>
     <None Include="Views\TypedLists\_TypedListNav.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\TypedLists\TypedLists.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None><%foreach(var typedList in typedLists){%>
+    </None><%}%><%foreach(var typedList in typedLists){%>
     <None Include="Views\TypedLists\<%=typedList.Name%>TypedList.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None><%}%>
+    </None><%}%><%if(typedViews.Count>0){%>
     <None Include="Views\TypedViews\_TypedViewNav.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\TypedViews\TypedViews.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None><%foreach(var typedView in typedViews){%>
+    </None><%}%><%foreach(var typedView in typedViews){%>
     <None Include="Views\TypedViews\<%=typedView.Name%>TypedView.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None><%}%>

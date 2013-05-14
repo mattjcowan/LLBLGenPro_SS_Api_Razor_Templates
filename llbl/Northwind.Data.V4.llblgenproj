@@ -400,188 +400,188 @@
     </TypedViewDefinition>
     <TypedViewDefinition Name="CategorySalesFor1997">
       <Fields>
-        <Field Name="CategoryName" Type="string" MaxLength="15" />
-        <Field Name="CategorySales" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="CategoryName" Type="string" MaxLength="15" FieldIndex="0" />
+        <Field Name="CategorySales" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="1" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="CurrentProductList">
       <Fields>
-        <Field Name="ProductId" Type="int" Precision="10" />
-        <Field Name="ProductName" Type="string" MaxLength="40" />
+        <Field Name="ProductId" Type="int" Precision="10" FieldIndex="0" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="1" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="CustomerAndSuppliersByCity">
       <Fields>
-        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="CompanyName" Type="string" MaxLength="40" />
-        <Field Name="ContactName" Type="string" IsOptional="true" MaxLength="30" />
-        <Field Name="Relationship" Type="string" MaxLength="9" />
+        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" FieldIndex="0" />
+        <Field Name="CompanyName" Type="string" MaxLength="40" FieldIndex="1" />
+        <Field Name="ContactName" Type="string" IsOptional="true" MaxLength="30" FieldIndex="2" />
+        <Field Name="Relationship" Type="string" MaxLength="9" FieldIndex="3" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="Invoices">
       <Fields>
-        <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" />
-        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" />
-        <Field Name="CustomerName" Type="string" MaxLength="40" />
-        <Field Name="Discount" Type="single" Precision="24" />
-        <Field Name="ExtendedPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
-        <Field Name="Freight" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
-        <Field Name="OrderDate" Type="datetime" IsOptional="true" />
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" />
-        <Field Name="ProductId" Type="int" Precision="10" />
-        <Field Name="ProductName" Type="string" MaxLength="40" />
-        <Field Name="Quantity" Type="short" Precision="5" />
-        <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="RequiredDate" Type="datetime" IsOptional="true" />
-        <Field Name="Salesperson" Type="string" MaxLength="31" />
-        <Field Name="ShipAddress" Type="string" IsOptional="true" MaxLength="60" />
-        <Field Name="ShipCity" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="ShipCountry" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="ShipName" Type="string" IsOptional="true" MaxLength="40" />
-        <Field Name="ShippedDate" Type="datetime" IsOptional="true" />
-        <Field Name="ShipperName" Type="string" MaxLength="40" />
-        <Field Name="ShipPostalCode" Type="string" IsOptional="true" MaxLength="10" />
-        <Field Name="ShipRegion" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="UnitPrice" Type="decimal" Precision="19" Scale="4" />
+        <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" FieldIndex="8" />
+        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" FieldIndex="9" />
+        <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" FieldIndex="12" />
+        <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" FieldIndex="6" />
+        <Field Name="CustomerName" Type="string" MaxLength="40" FieldIndex="7" />
+        <Field Name="Discount" Type="single" Precision="24" FieldIndex="23" />
+        <Field Name="ExtendedPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="24" />
+        <Field Name="Freight" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="25" />
+        <Field Name="OrderDate" Type="datetime" IsOptional="true" FieldIndex="15" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="14" />
+        <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" FieldIndex="11" />
+        <Field Name="ProductId" Type="int" Precision="10" FieldIndex="19" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="20" />
+        <Field Name="Quantity" Type="short" Precision="5" FieldIndex="22" />
+        <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" FieldIndex="10" />
+        <Field Name="RequiredDate" Type="datetime" IsOptional="true" FieldIndex="16" />
+        <Field Name="Salesperson" Type="string" MaxLength="31" FieldIndex="13" />
+        <Field Name="ShipAddress" Type="string" IsOptional="true" MaxLength="60" FieldIndex="1" />
+        <Field Name="ShipCity" Type="string" IsOptional="true" MaxLength="15" FieldIndex="2" />
+        <Field Name="ShipCountry" Type="string" IsOptional="true" MaxLength="15" FieldIndex="5" />
+        <Field Name="ShipName" Type="string" IsOptional="true" MaxLength="40" FieldIndex="0" />
+        <Field Name="ShippedDate" Type="datetime" IsOptional="true" FieldIndex="17" />
+        <Field Name="ShipperName" Type="string" MaxLength="40" FieldIndex="18" />
+        <Field Name="ShipPostalCode" Type="string" IsOptional="true" MaxLength="10" FieldIndex="4" />
+        <Field Name="ShipRegion" Type="string" IsOptional="true" MaxLength="15" FieldIndex="3" />
+        <Field Name="UnitPrice" Type="decimal" Precision="19" Scale="4" FieldIndex="21" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="OrderDetailsExtended">
       <Fields>
-        <Field Name="Discount" Type="single" Precision="24" />
-        <Field Name="ExtendedPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="ProductId" Type="int" Precision="10" />
-        <Field Name="ProductName" Type="string" MaxLength="40" />
-        <Field Name="Quantity" Type="short" Precision="5" />
-        <Field Name="UnitPrice" Type="decimal" Precision="19" Scale="4" />
+        <Field Name="Discount" Type="single" Precision="24" FieldIndex="5" />
+        <Field Name="ExtendedPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="6" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="0" />
+        <Field Name="ProductId" Type="int" Precision="10" FieldIndex="1" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="2" />
+        <Field Name="Quantity" Type="short" Precision="5" FieldIndex="4" />
+        <Field Name="UnitPrice" Type="decimal" Precision="19" Scale="4" FieldIndex="3" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="OrdersQry">
       <Fields>
-        <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" />
-        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="CompanyName" Type="string" MaxLength="40" />
-        <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" />
-        <Field Name="EmployeeId" Type="int" IsOptional="true" Precision="10" />
-        <Field Name="Freight" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
-        <Field Name="OrderDate" Type="datetime" IsOptional="true" />
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" />
-        <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="RequiredDate" Type="datetime" IsOptional="true" />
-        <Field Name="ShipAddress" Type="string" IsOptional="true" MaxLength="60" />
-        <Field Name="ShipCity" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="ShipCountry" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="ShipName" Type="string" IsOptional="true" MaxLength="40" />
-        <Field Name="ShippedDate" Type="datetime" IsOptional="true" />
-        <Field Name="ShipPostalCode" Type="string" IsOptional="true" MaxLength="10" />
-        <Field Name="ShipRegion" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="ShipVia" Type="int" IsOptional="true" Precision="10" />
+        <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" FieldIndex="15" />
+        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" FieldIndex="16" />
+        <Field Name="CompanyName" Type="string" MaxLength="40" FieldIndex="14" />
+        <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" FieldIndex="19" />
+        <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" FieldIndex="1" />
+        <Field Name="EmployeeId" Type="int" IsOptional="true" Precision="10" FieldIndex="2" />
+        <Field Name="Freight" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="7" />
+        <Field Name="OrderDate" Type="datetime" IsOptional="true" FieldIndex="3" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="0" />
+        <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" FieldIndex="18" />
+        <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" FieldIndex="17" />
+        <Field Name="RequiredDate" Type="datetime" IsOptional="true" FieldIndex="4" />
+        <Field Name="ShipAddress" Type="string" IsOptional="true" MaxLength="60" FieldIndex="9" />
+        <Field Name="ShipCity" Type="string" IsOptional="true" MaxLength="15" FieldIndex="10" />
+        <Field Name="ShipCountry" Type="string" IsOptional="true" MaxLength="15" FieldIndex="13" />
+        <Field Name="ShipName" Type="string" IsOptional="true" MaxLength="40" FieldIndex="8" />
+        <Field Name="ShippedDate" Type="datetime" IsOptional="true" FieldIndex="5" />
+        <Field Name="ShipPostalCode" Type="string" IsOptional="true" MaxLength="10" FieldIndex="12" />
+        <Field Name="ShipRegion" Type="string" IsOptional="true" MaxLength="15" FieldIndex="11" />
+        <Field Name="ShipVia" Type="int" IsOptional="true" Precision="10" FieldIndex="6" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="OrderSubtotal">
       <Fields>
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="Subtotal" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="0" />
+        <Field Name="Subtotal" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="1" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="ProductsAboveAveragePrice">
       <Fields>
-        <Field Name="ProductName" Type="string" MaxLength="40" />
-        <Field Name="UnitPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="0" />
+        <Field Name="UnitPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="1" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="ProductSalesFor1997">
       <Fields>
-        <Field Name="CategoryName" Type="string" MaxLength="15" />
-        <Field Name="ProductName" Type="string" MaxLength="40" />
-        <Field Name="ProductSales" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="CategoryName" Type="string" MaxLength="15" FieldIndex="0" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="1" />
+        <Field Name="ProductSales" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="2" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="ProductsByCategory">
       <Fields>
-        <Field Name="CategoryName" Type="string" MaxLength="15" />
-        <Field Name="Discontinued" Type="bool" />
-        <Field Name="ProductName" Type="string" MaxLength="40" />
-        <Field Name="QuantityPerUnit" Type="string" IsOptional="true" MaxLength="20" />
-        <Field Name="UnitsInStock" Type="short" IsOptional="true" Precision="5" />
+        <Field Name="CategoryName" Type="string" MaxLength="15" FieldIndex="0" />
+        <Field Name="Discontinued" Type="bool" FieldIndex="4" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="1" />
+        <Field Name="QuantityPerUnit" Type="string" IsOptional="true" MaxLength="20" FieldIndex="2" />
+        <Field Name="UnitsInStock" Type="short" IsOptional="true" Precision="5" FieldIndex="3" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="QuarterlyOrder">
       <Fields>
-        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="CompanyName" Type="string" IsOptional="true" MaxLength="40" />
-        <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" />
-        <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" />
+        <Field Name="City" Type="string" IsOptional="true" MaxLength="15" FieldIndex="2" />
+        <Field Name="CompanyName" Type="string" IsOptional="true" MaxLength="40" FieldIndex="1" />
+        <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" FieldIndex="3" />
+        <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" FieldIndex="0" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="SalesByCategory">
       <Fields>
-        <Field Name="CategoryId" Type="int" Precision="10" />
-        <Field Name="CategoryName" Type="string" MaxLength="15" />
-        <Field Name="ProductName" Type="string" MaxLength="40" />
-        <Field Name="ProductSales" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="CategoryId" Type="int" Precision="10" FieldIndex="0" />
+        <Field Name="CategoryName" Type="string" MaxLength="15" FieldIndex="1" />
+        <Field Name="ProductName" Type="string" MaxLength="40" FieldIndex="2" />
+        <Field Name="ProductSales" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="3" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="SalesTotalsByAmount">
       <Fields>
-        <Field Name="CompanyName" Type="string" MaxLength="40" />
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="SaleAmount" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
-        <Field Name="ShippedDate" Type="datetime" IsOptional="true" />
+        <Field Name="CompanyName" Type="string" MaxLength="40" FieldIndex="2" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="1" />
+        <Field Name="SaleAmount" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="0" />
+        <Field Name="ShippedDate" Type="datetime" IsOptional="true" FieldIndex="3" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="SummaryOfSalesByQuarter">
       <Fields>
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="ShippedDate" Type="datetime" IsOptional="true" />
-        <Field Name="Subtotal" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="1" />
+        <Field Name="ShippedDate" Type="datetime" IsOptional="true" FieldIndex="0" />
+        <Field Name="Subtotal" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="2" />
       </Fields>
     </TypedViewDefinition>
     <TypedViewDefinition Name="SummaryOfSalesByYear">
       <Fields>
-        <Field Name="OrderId" Type="int" Precision="10" />
-        <Field Name="ShippedDate" Type="datetime" IsOptional="true" />
-        <Field Name="Subtotal" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+        <Field Name="OrderId" Type="int" Precision="10" FieldIndex="1" />
+        <Field Name="ShippedDate" Type="datetime" IsOptional="true" FieldIndex="0" />
+        <Field Name="Subtotal" Type="decimal" IsOptional="true" Precision="19" Scale="4" FieldIndex="2" />
       </Fields>
     </TypedViewDefinition>
   </TypedViewDefinitions>
   <SPCallDefinitions>
     <SPCallDefinition Name="CustOrderHist">
       <Parameters>
-        <Parameter Name="CustomerId" Type="string" MaxLength="5" />
+        <Parameter Name="CustomerId" Type="string" MaxLength="5" FieldIndex="0" />
       </Parameters>
     </SPCallDefinition>
     <SPCallDefinition Name="CustOrdersDetail">
       <Parameters>
-        <Parameter Name="OrderId" Type="int" Precision="10" />
+        <Parameter Name="OrderId" Type="int" Precision="10" FieldIndex="0" />
       </Parameters>
     </SPCallDefinition>
     <SPCallDefinition Name="CustOrdersOrders">
       <Parameters>
-        <Parameter Name="CustomerId" Type="string" MaxLength="5" />
+        <Parameter Name="CustomerId" Type="string" MaxLength="5" FieldIndex="0" />
       </Parameters>
     </SPCallDefinition>
     <SPCallDefinition Name="EmployeeSalesByCountry">
       <Parameters>
-        <Parameter Name="BeginningDate" Type="datetime" />
-        <Parameter Name="EndingDate" Type="datetime" />
+        <Parameter Name="BeginningDate" Type="datetime" FieldIndex="0" />
+        <Parameter Name="EndingDate" Type="datetime" FieldIndex="1" />
       </Parameters>
     </SPCallDefinition>
     <SPCallDefinition Name="SalesByCategoryAndYear">
       <Parameters>
-        <Parameter Name="CategoryName" Type="string" MaxLength="15" />
-        <Parameter Name="OrdYear" Type="string" MaxLength="4" />
+        <Parameter Name="CategoryName" Type="string" MaxLength="15" FieldIndex="0" />
+        <Parameter Name="OrdYear" Type="string" MaxLength="4" FieldIndex="1" />
       </Parameters>
     </SPCallDefinition>
     <SPCallDefinition Name="SalesByYear">
       <Parameters>
-        <Parameter Name="BeginningDate" Type="datetime" />
-        <Parameter Name="EndingDate" Type="datetime" />
+        <Parameter Name="BeginningDate" Type="datetime" FieldIndex="0" />
+        <Parameter Name="EndingDate" Type="datetime" FieldIndex="1" />
       </Parameters>
     </SPCallDefinition>
     <SPCallDefinition Name="TenMostExpensiveProducts" />
@@ -964,10 +964,10 @@
                     <Resultset Name="Resultset1">
                       <Fields>
                         <Field Name="ProductName" Ordinal="1" DbType="12" Length="40" />
-                        <Field Name="UnitPrice" Ordinal="2" DbType="5" Precision="19" Scale="255" />
+                        <Field Name="UnitPrice" Ordinal="2" DbType="9" Precision="19" Scale="4" />
                         <Field Name="Quantity" Ordinal="3" DbType="16" Precision="5" />
                         <Field Name="Discount" Ordinal="4" IsOptional="true" DbType="8" Precision="10" />
-                        <Field Name="ExtendedPrice" Ordinal="5" IsOptional="true" DbType="5" Precision="19" Scale="255" />
+                        <Field Name="ExtendedPrice" Ordinal="5" IsOptional="true" DbType="9" Precision="19" Scale="4" />
                       </Fields>
                     </Resultset>
                   </Resultsets>
@@ -1000,7 +1000,7 @@
                         <Field Name="FirstName" Ordinal="3" DbType="12" Length="10" />
                         <Field Name="ShippedDate" Ordinal="4" IsOptional="true" DbType="4" />
                         <Field Name="OrderID" Ordinal="5" DbType="8" Precision="10" />
-                        <Field Name="SaleAmount" Ordinal="6" IsOptional="true" DbType="5" Precision="19" Scale="255" />
+                        <Field Name="SaleAmount" Ordinal="6" IsOptional="true" DbType="9" Precision="19" Scale="4" />
                       </Fields>
                     </Resultset>
                   </Resultsets>
@@ -1015,7 +1015,7 @@
                       <Fields>
                         <Field Name="ShippedDate" Ordinal="1" IsOptional="true" DbType="4" />
                         <Field Name="OrderID" Ordinal="2" DbType="8" Precision="10" />
-                        <Field Name="Subtotal" Ordinal="3" IsOptional="true" DbType="5" Precision="19" Scale="255" />
+                        <Field Name="Subtotal" Ordinal="3" IsOptional="true" DbType="9" Precision="19" Scale="4" />
                         <Field Name="Year" Ordinal="4" IsOptional="true" DbType="12" Length="30" />
                       </Fields>
                     </Resultset>
@@ -1040,7 +1040,7 @@
                     <Resultset Name="Resultset1">
                       <Fields>
                         <Field Name="TenMostExpensiveProducts" Ordinal="1" DbType="12" Length="40" />
-                        <Field Name="UnitPrice" Ordinal="2" IsOptional="true" DbType="5" Precision="19" Scale="255" />
+                        <Field Name="UnitPrice" Ordinal="2" IsOptional="true" DbType="9" Precision="19" Scale="4" />
                       </Fields>
                     </Resultset>
                   </Resultsets>

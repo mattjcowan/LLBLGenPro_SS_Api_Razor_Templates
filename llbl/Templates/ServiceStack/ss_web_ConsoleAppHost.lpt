@@ -4,8 +4,8 @@
   var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
-var typedLists = _executingGenerator.TypedLists;
-var typedViews = _executingGenerator.TypedViews;
+  var typedLists = _executingGenerator.TypedLists;
+  var typedViews = _executingGenerator.TypedViews;
 %>using System;
 using System.Configuration;
 using System.Drawing;
@@ -33,12 +33,14 @@ using <%=rootNameSpace%>;
 using <%=rootNameSpace%>.DatabaseSpecific;
 using <%=rootNameSpace%>.Dtos;
 using <%=rootNameSpace%>.ServiceInterfaces;
-using TLSI = <%=rootNameSpace%>.ServiceInterfaces.TypedListServiceInterfaces;
-using TVSI = <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces;
 using <%=rootNameSpace%>.ServiceRepositories;
+<%if(typedLists.Count>0){%>
+using TLSI = <%=rootNameSpace%>.ServiceInterfaces.TypedListServiceInterfaces;
 using TLSR = <%=rootNameSpace%>.ServiceRepositories.TypedListServiceRepositories;
+<%}%><%if(typedViews.Count>0){%>
+using TVSI = <%=rootNameSpace%>.ServiceInterfaces.TypedViewServiceInterfaces;
 using TVSR = <%=rootNameSpace%>.ServiceRepositories.TypedViewServiceRepositories;
-
+<%}%>
 namespace <%=rootNameSpace%>.ConsoleHost
 {
     class Program
