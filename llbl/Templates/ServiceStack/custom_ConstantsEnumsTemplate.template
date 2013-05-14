@@ -1,8 +1,8 @@
-﻿<[If HasTypedList]>	/// <summary>Enum definition for all the typed list types defined in this namespace.</summary>
-	public enum TypedListType
-	{
-<[Foreach TypedList CommaCrLf]>		///<summary><[CurrentTypedListName]></summary>
-		<[CurrentTypedListName]>TypedList<[NextForeach]>
-	}
+<[If HasTypedList]> /// <summary>Enum definition for all the typed list types defined in this namespace.</summary>
+    public enum TypedListType
+    {
+<[Foreach TypedList CommaCrLf]>     ///<summary><[CurrentTypedListName]></summary>
+        <[CurrentTypedListName]>TypedList<[NextForeach]>
+    }
 <[EndIf]>
  
