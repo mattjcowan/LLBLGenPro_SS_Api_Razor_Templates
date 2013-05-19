@@ -1,7 +1,6 @@
 <# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi item template --
   var typedViews = _executingGenerator.TypedViews;
 

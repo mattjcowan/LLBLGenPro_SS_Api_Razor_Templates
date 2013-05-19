@@ -1,21 +1,20 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
 
   //-- Single entity template --
   var entity = (EntityDefinition)_activeObject;
   var isSubType = entity.IsSubType;
-  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+  var allRelationshipInfosToTraverse = GetAllRelationshipInfosForEntityIncludingInherited(_executingGenerator, entity)
                           .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
                                 ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
                                 ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
                                 !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
                           .ToList();
   var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
-  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var allEntityFields = entity.GetAllFieldsInElement(true).Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
   string propertyAccessor = "public";
   bool emitKnownTypeAttributes = false; //entity.OutputSettingValues.GetRealBoolSettingValue("EmitKnownTypeAttributesForWCF", currentProject);
   //_executingGenerator.StoreValueInRunQueueCache("EntityClassesNamespace", _executingGenerator.RootNamespaceToUse + ".EntityClasses");
@@ -30,7 +29,7 @@
 %>@inherits ViewPage<<%=rootNameSpace%>.Services.<%=entity.Name%>CollectionResponse>
 
 @{
-    ViewBag.Title = "<%=TitleCase(entity.Name)%>  Browser";
+    ViewBag.Title = "<%=TitleCase(entity.Name)%> Browser";
     Layout = "_Layout";
 }  
     
@@ -42,7 +41,7 @@
         var dtAjaxUrl = '@Html.DataTableAjaxUrl("<%=entityBaseUrl%>/datatable")';
         var dtAllIncludes = '<%=includeStr%>';
         var dtAjaxColumns = [
-<%foreach(var field in entityFields){
+<%foreach(var field in allEntityFields){
 %>            { "bSortable": <%=IsFieldSortable(field).ToString().ToLower()%>, "bSearchable": <%=IsFieldSearchable(field).ToString().ToLower()%>, "bVisible": <%=IsFieldVisible(field).ToString().ToLower()%> }, // <%=field.Name%> field
 <%}%>            { "bSortable": false, "bSearchable": false } // Related field
         ];
@@ -55,7 +54,7 @@
             $("#modalErrorText").text('');
             $("#addEditItemForm").attr("action", dtBaseUrl);
             $("#addEditItemForm").attr("method", "POST");
-<%foreach(var field in entityFields){
+<%foreach(var field in allEntityFields){
   if(field.IsReadOnly) {
 %>            $("#dis<%=field.Name.ToLower()%>").val("");
             $("#<%=field.Name.ToLower()%>").val("");
@@ -74,7 +73,7 @@
             $("#modalErrorText").text('');
             $("#addEditItemForm").attr("action", dtItemUrl(data) + '/update');
             $("#addEditItemForm").attr("method", "POST"); // or PUT without /update trailer in url
-<%foreach(var field in entityFields){
+<%foreach(var field in allEntityFields){
   if(field.IsReadOnly) {
 %>            $("#dis<%=field.Name.ToLower()%>").val(data[<%=field.FieldIndex%>]);
             $("#<%=field.Name.ToLower()%>").val(data[<%=field.FieldIndex%>]);
@@ -161,9 +160,9 @@
                         <div class="btn-group col_vis_menu">
                             <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">Columns <span class="caret"></span></a>
                             <ul id="dt_d_nav" class="dropdown-menu tableMenu">
-<%foreach(var field in entityFields){
+<%foreach(var field in allEntityFields){
 %>                                <li><label class="checkbox" for="dt_col_<%=(field.FieldIndex+1).ToString()%>"><input id="dt_col_<%=(field.FieldIndex+1).ToString()%>" name="toggle-cols" value="<%=field.FieldIndex.ToString()%>" <%=IsFieldVisible(field)?"CHECKED=\"checked\" ":""%>type="checkbox"> <%=TitleCase(field.Name)%></label></li>
-<%}%>                                <li><label class="checkbox" for="dt_col_<%=(entityFields.Count+1).ToString()%>"><input id="dt_col_<%=(entityFields.Count+1).ToString()%>" name="toggle-cols" value="<%=(entityFields.Count).ToString()%>" CHECKED="checked" type="checkbox"> Related</label></li>
+<%}%>                                <li><label class="checkbox" for="dt_col_<%=(allEntityFields.Count+1).ToString()%>"><input id="dt_col_<%=(allEntityFields.Count+1).ToString()%>" name="toggle-cols" value="<%=(allEntityFields.Count).ToString()%>" CHECKED="checked" type="checkbox"> Related</label></li>
                             </ul>
                         </div>
                     </div>
@@ -172,7 +171,7 @@
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="entity-grid">
                         <thead>
                             <tr>
-<%foreach(var field in entityFields){
+<%foreach(var field in allEntityFields){
 %>                                <th><%=TitleCase(field.Name)%></th>
 <%}%>                                <th>Related (<a href="javascript:void(0);" id="showCountHref">@if(Html.HttpRequest.AbsoluteUri.IndexOf("include=")==-1){<text>show</text>}else{<text>hide</text>} count</a>)</th>
                             </tr>
@@ -205,7 +204,7 @@
                   <span id="modalErrorText"></span>
               </div>
 
-<%foreach(var field in entityFields){
+<%foreach(var field in allEntityFields){
   if(field.IsReadOnly) {
 %>
               <div class="control-group">

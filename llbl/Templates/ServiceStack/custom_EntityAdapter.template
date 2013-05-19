@@ -5,6 +5,13 @@
       get { return EntityType.<[CurrentEntityName]>Entity; }
     }
 
+    /// <summary>Returns the Parent EntityType enum value for this entity.</summary>
+    [Browsable(false), XmlIgnore]
+    public override EntityType? ParentType 
+    {        
+      get { return <[If IsSubType]>EntityType.<[SuperTypeName]>Entity;<[Else]>(EntityType?)null;<[EndIf]> }
+    }
+    
     public override List<IEntityRelation> EntityRelations
     {
       get { return GetAllRelations(); }
@@ -15,6 +22,7 @@
       get
       {
         var paths = new List<IPrefetchPathElement2>();
+        <[If IsSubType]>paths.AddRange(base.PrefetchPaths);<[EndIf]>
 <[Foreach RelatedEntity OneToMany CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>
 <[Foreach RelatedEntity ManyToMany CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>
 <[Foreach RelatedEntity ManyToOne CrLf]><[If Not MappedFieldRelationIsHidden]>        paths.Add(PrefetchPath<[MappedFieldNameRelation]>);<[EndIf]><[NextForeach]>

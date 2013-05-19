@@ -1,22 +1,17 @@
 <# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
 
   //-- Single entity template --
   var entity = (EntityDefinition)_activeObject;
   var isSubType = entity.IsSubType;
-  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
-                          .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
-                                ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
-                                ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
-                                !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
-                          .ToList();
+  var identifyingFields = entity.IdentifyingFields.OrderBy(f=>f.FieldIndex).ToList();
   var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  var allEntityFields = entity.GetAllFieldsInElement(true).Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
   var binaryFields = entityFields.Where(f=>IsFieldBinary(f)).ToList();
-  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var allBinaryFields = allEntityFields.Where(f=>IsFieldBinary(f)).ToList();
   var baseRoute = string.Concat("/", Pluralize(entity.Name).ToLower());
   var pkFields = entity.IdentifyingFields.Select(f => f.Name).ToArray();
   var pkRouteSb = new StringBuilder();
@@ -71,12 +66,14 @@ namespace <%=rootNameSpace%>.Services
         partial void OnAfterGet<%=entity.Name%><%=uc.Name%>Request(<%=entity.Name%><%=uc.Name%>Request request, <%=entity.Name%>Response response);
 <%}%>        partial void OnBeforeGet<%=entity.Name%>PkRequest(<%=entity.Name%>PkRequest request);
         partial void OnAfterGet<%=entity.Name%>PkRequest(<%=entity.Name%>PkRequest request, <%=entity.Name%>Response response);
+<%if(!entity.IsAbstract){%>
         partial void OnBefore<%=entity.Name%>AddRequest(<%=entity.Name%>AddRequest request);
         partial void OnAfter<%=entity.Name%>AddRequest(<%=entity.Name%>AddRequest request, <%=entity.Name%>Response response);
         partial void OnBefore<%=entity.Name%>UpdateRequest(<%=entity.Name%>UpdateRequest request);
         partial void OnAfter<%=entity.Name%>UpdateRequest(<%=entity.Name%>UpdateRequest request, <%=entity.Name%>Response response);
         partial void OnBefore<%=entity.Name%>DeleteRequest(<%=entity.Name%>DeleteRequest request);
         partial void OnAfter<%=entity.Name%>DeleteRequest(<%=entity.Name%>DeleteRequest request, SimpleResponse<bool> deleted);
+<%}%>
         #endregion
     
         <%if(includeValidation){%>
@@ -162,7 +159,7 @@ if(includeValidation){%>            if (Validator != null)
                 throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "<%=entity.Name%> matching [<%=pkGetString2%>]  does not exist".Fmt(<%=pkGetString3%>));
             return output;
         }
-
+<%if(!entity.IsAbstract){%>
 <%if(authOnPost){%>        [Authenticate]
 <%}%>        public <%=entity.Name%>Response Any(<%=entity.Name%>AddRequest request)
         {
@@ -170,14 +167,14 @@ if(includeValidation){%>            if (Validator != null)
                 Validator.ValidateAndThrow(request, ApplyTo.Post);<%}%>
                 
             OnBefore<%=entity.Name%>AddRequest(request);
-<%if(binaryFields.Count()>0){
+<%if(allBinaryFields.Count()>0){
 %>            var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
             var fidx = 0;
       
             if(filesUploaded > 0)
             {
-<%foreach(var field in binaryFields){
+<%foreach(var field in allBinaryFields){
 %>              if(!string.IsNullOrEmpty(request.<%=field.Name%>SrcPath))
               {
                 request.<%=field.Name%> = filesInBytes[fidx];
@@ -198,14 +195,14 @@ if(includeValidation){%>            if (Validator != null)
                 Validator.ValidateAndThrow(request, ApplyTo.Put);<%}%>
                 
             OnBefore<%=entity.Name%>UpdateRequest(request);
-<%if(binaryFields.Count()>0){
+<%if(allBinaryFields.Count()>0){
 %>            var filesInBytes = base.GetFilesInBytes();
             var filesUploaded = filesInBytes.Count;
             var fidx = 0;
       
             if(filesUploaded > 0)
             {
-<%foreach(var field in binaryFields){
+<%foreach(var field in allBinaryFields){
 %>              if(!string.IsNullOrEmpty(request.<%=field.Name%>SrcPath))
               {
                 request.<%=field.Name%> = filesInBytes[fidx];
@@ -237,6 +234,7 @@ if(includeValidation){%>            if (Validator != null)
                 throw new HttpError(HttpStatusCode.NotFound, "NullReferenceException", "<%=entity.Name%> matching [<%=pkDeleteString2%>]  does not exist".Fmt(<%=pkDeleteString3%>));
             return output;
         }
+<%}%>
 
 <%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>
 
@@ -261,7 +259,7 @@ if(includeValidation){%>            if (Validator != null)
         public string sEcho { get; set; }
         public string bRegex { get; set; }
 
-<%for(int i=0;i<entityFields.Count();i++){
+<%for(int i=0;i<allEntityFields.Count();i++){
 %>        public int iSortCol_<%=i.ToString()%> { get; set; }
         public string sSortDir_<%=i.ToString()%> { get; set; }
         public string bSortable_<%=i.ToString()%> { get; set; } 
@@ -278,7 +276,7 @@ if(includeValidation){%>            if (Validator != null)
         // unique constraint fields (that are not also primary key fields)
 <%foreach(var ucFieldName in uc.FieldsAsString.Split(',')){
     if(pkFields.Contains(ucFieldName)) continue;
-    var ucField = entity.Fields.Single(f=>f.Name==ucFieldName);
+    var ucField = allEntityFields.Single(f=>f.Name==ucFieldName);
     string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(ucField, _executingGenerator, "Nullable<{0}>");
 %>        public <%=dotNetFieldTypeName%> <%=ucField.Name%> { get; set; }
 <%}%>
@@ -303,7 +301,7 @@ if(includeValidation){%>            if (Validator != null)
     [Route("<%=baseRoute%>", Verbs = "POST")] // add item
     public partial class <%=entity.Name%>AddRequest : <%=entity.Name%>, IReturn<<%=entity.Name%>Response>
     {
-<%foreach(var field in binaryFields){
+<%foreach(var field in allBinaryFields){
 %>        public string <%=field.Name%>SrcPath { get; set; }
 <%}%>
     }
@@ -312,7 +310,7 @@ if(includeValidation){%>            if (Validator != null)
     [Route("<%=baseRoute%>/<%=pkRoute%>/update", Verbs = "POST")] // delete item
     public partial class <%=entity.Name%>UpdateRequest : <%=entity.Name%>, IReturn<<%=entity.Name%>Response>
     {
-<%foreach(var field in binaryFields){
+<%foreach(var field in allBinaryFields){
 %>        public string <%=field.Name%>SrcPath { get; set; }
 <%}%>
     }

@@ -76,6 +76,22 @@ public string Pluralize(string text) {
     return pluralizedText;
 }
 
+internal static List<RelationshipInfo> GetAllRelationshipInfosForEntityIncludingInherited(IGenerator generator, EntityDefinition entity){
+    var le = new List<EntityDefinition>();
+    le.Add(entity);
+    var e = entity;
+    while(e.IsSubType) {
+        e = e.GetSuperType();
+        if(e != null) le.Add(e);
+    }
+    var rels = new List<RelationshipInfo>();
+    foreach(var l in le) {
+        var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(generator, l);
+        rels.AddRange(allRelationshipInfosToTraverse);
+    }
+    return rels.Distinct().ToList();
+}
+
 // Checks whether the relationship specified is a m:n relationship which is objectified, which means the intermediate entity has
 // non-pk fields. Returns true if relationship is the non-supported m:n, false otherwise
 internal static bool CheckIfRelationshipIsNonSupportedMtoN(RelationshipEdge relationship)
@@ -632,7 +648,7 @@ internal static bool IsNumericType( Type type )
 /// <remarks>
 /// Boolean is not considered numeric.
 /// </remarks>
-internal static bool IsFieldSortable( FieldElement fieldElement )
+internal static bool IsFieldSortable( IFieldElementCore fieldElement )
 {
     if(fieldElement == null) return false;  
 
@@ -684,7 +700,7 @@ internal static bool IsFieldSortable( Type type, int maxLength )
 /// <remarks>
 /// Boolean is not considered numeric.
 /// </remarks>
-internal static bool IsFieldSearchable( FieldElement fieldElement )
+internal static bool IsFieldSearchable( IFieldElementCore fieldElement )
 {
     if(fieldElement == null) return false;  
 
@@ -718,7 +734,7 @@ internal static bool IsFieldSearchable( Type type, int maxLength)
     return false;
 }
 
-internal static bool IsFieldVisible( FieldElement fieldElement )
+internal static bool IsFieldVisible( IFieldElementCore fieldElement )
 {
     if(fieldElement == null) return false;  
     if(fieldElement.IsPartOfIdentifyingFields) return true;
@@ -728,7 +744,7 @@ internal static bool IsFieldVisible( FieldElement fieldElement )
     return IsFieldVisible(type, fieldElement.MaxLength);
 }
 
-internal static bool IsTypedFieldVisible( FieldElement fieldElement )
+internal static bool IsTypedFieldVisible( IFieldElementCore fieldElement )
 {
     if(fieldElement == null) return false;
     //if(fieldElement.IsOptional) return false;
@@ -762,7 +778,7 @@ internal static bool IsFieldVisible( Type type, int maxLength )
     return false;
 }
 
-internal static bool IsFieldBinary( FieldElement fieldElement )
+internal static bool IsFieldBinary( IFieldElementCore fieldElement )
 {
     if(fieldElement == null) return false;  
   

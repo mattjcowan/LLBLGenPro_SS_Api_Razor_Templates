@@ -1,21 +1,21 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
   
   //-- Single entity template --
   var entity = (EntityDefinition)_activeObject;
   var isSubType = entity.IsSubType;
-  var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity)
+  var allRelationshipInfosToTraverse = GetAllRelationshipInfosForEntityIncludingInherited(_executingGenerator, entity)
             .Where(ri=>((ri.RelationshipType==EntityRelationshipType.ManyToMany) && 
               ((IndirectRelationshipEdge)ri.Relationship).IsPureManyToMany) ||
               ((ri.RelationshipType!=EntityRelationshipType.ManyToMany) && 
               !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
             .ToList();
+  var identifyingFields = entity.IdentifyingFields.OrderBy(f=>f.FieldIndex).ToList();
   var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
-  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var allEntityFields = entity.GetAllFieldsInElement(true).Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
   var pkFields = entity.IdentifyingFields.Select(f => f.Name).ToArray();
   var pkRouteSb = new StringBuilder();
   foreach(var pkField in pkFields)
@@ -53,12 +53,6 @@ namespace <%=rootNameSpace%>.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
-        partial void OnBefore<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity);
-        partial void OnAfter<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity, ref bool deleted);
-        partial void OnBefore<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
-        partial void OnAfter<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
-        partial void OnBefore<%=entity.Name%>AddRequest(IDataAccessAdapter adapter, <%=entity.Name%>AddRequest request);
-        partial void OnAfter<%=entity.Name%>AddRequest(IDataAccessAdapter adapter, <%=entity.Name%>AddRequest request);
         partial void OnBeforeFetch<%=entity.Name%>PkRequest(IDataAccessAdapter adapter, <%=entity.Name%>PkRequest request, <%=entity.Name%>Entity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnAfterFetch<%=entity.Name%>PkRequest(IDataAccessAdapter adapter, <%=entity.Name%>PkRequest request, <%=entity.Name%>Entity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
 <%foreach(var uc in entity.UniqueConstraints){
@@ -67,6 +61,14 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 <%}%>
         partial void OnBeforeFetch<%=entity.Name%>QueryCollectionRequest(IDataAccessAdapter adapter, <%=entity.Name%>QueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
         partial void OnAfterFetch<%=entity.Name%>QueryCollectionRequest(IDataAccessAdapter adapter, <%=entity.Name%>QueryCollectionRequest request, EntityCollection<<%=entity.Name%>Entity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+<%if(!entity.IsAbstract){%>
+        partial void OnBefore<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity);
+        partial void OnAfter<%=entity.Name%>DeleteRequest(IDataAccessAdapter adapter, <%=entity.Name%>DeleteRequest request, <%=entity.Name%>Entity entity, ref bool deleted);
+        partial void OnBefore<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
+        partial void OnAfter<%=entity.Name%>UpdateRequest(IDataAccessAdapter adapter, <%=entity.Name%>UpdateRequest request);
+        partial void OnBefore<%=entity.Name%>AddRequest(IDataAccessAdapter adapter, <%=entity.Name%>AddRequest request);
+        partial void OnAfter<%=entity.Name%>AddRequest(IDataAccessAdapter adapter, <%=entity.Name%>AddRequest request);
+<%}%>
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -183,7 +185,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 <%}%>
                 response.aaData.Add(new string[]
                     {
-<%  foreach(var field in entityFields)
+<%  foreach(var field in allEntityFields)
     {
     string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>");
     var isOfStringType = dotNetFieldTypeName.IndexOf("string", 0, StringComparison.InvariantCultureIgnoreCase)>=0;
@@ -257,7 +259,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
         public <%=entity.Name%>Response Fetch(<%=entity.Name%>PkRequest request)
         {
             var entity = new <%=entity.Name%>Entity();
-<%  foreach(var field in entityFields.Where(f => f.IsPartOfIdentifyingFields)){
+<%  foreach(var field in identifyingFields){
 %>            entity.<%=field.Name%> = request.<%=field.Name%>;
 <%}%>
             var excludedIncludedFields = RepositoryHelper.ConvertStringToExcludedIncludedFields(EntityType, request.Select);
@@ -274,7 +276,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
             }
             return new <%=entity.Name%>Response(null);
         }
-
+<%if(!entity.IsAbstract){%>
         public <%=entity.Name%>Response Create(<%=entity.Name%>AddRequest request)
         {
             var entity = request.FromDto();
@@ -315,7 +317,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
         public SimpleResponse<bool> Delete(<%=entity.Name%>DeleteRequest request)
         {
             var entity = new <%=entity.Name%>Entity();
-<%  foreach(var field in entityFields.Where(f => f.IsPartOfIdentifyingFields)){
+<%  foreach(var field in identifyingFields){
 %>            entity.<%=field.Name%> = request.<%=field.Name%>;
 <%}%>
 
@@ -328,7 +330,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
             }
             return new SimpleResponse<bool> { Result = deleted };
         }
-
+<%}%>
         private const string UcMapCacheKey = "<%=entity.Name.ToLower()%>-uc-map";
         internal override IDictionary< string, IEntityField2[] > UniqueConstraintMap
         {
@@ -383,7 +385,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
                 parents = new Hashtable(parents) { { entity, null } };
 
                 // Map dto properties
-<%  foreach(var field in entityFields){
+<%  foreach(var field in allEntityFields){
 %>                dto.<%=field.Name%> = entity.<%=field.Name%>;
 <%}%>
 
@@ -449,7 +451,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
             var entity = new <%=entity.Name%>Entity();
 
             // Map entity properties
-<%  foreach(var field in entityFields){
+<%  foreach(var field in allEntityFields){
       if(IsFieldBinary(field)){
 %>            if (dto.<%=field.Name%> != null) entity.<%=field.Name%> = dto.<%=field.Name%>;
 <%    }else{

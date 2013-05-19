@@ -1,7 +1,6 @@
-﻿<# MJC_SS_GeneralMethods #><%
+<# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
   var typedViews = _executingGenerator.TypedViews;
@@ -11,7 +10,6 @@
   var item = (TypedListDefinition)_activeObject;
   var fields = item.Fields;
   var nullableAliases = item.GetAllNullableEntityAliasesInSourceSet();
-  var binaryFields = fields.Where(f=>IsFieldBinary(f.MappedFieldInstance.FieldType.RepresentedType)).ToList();
 %>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -154,7 +152,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedListServiceRepositories
             base.FixupLimitAndPagingOnRequest(request);
 
             var typedList = new <%=item.Name%>TypedList();
-			
+            
             var totalItemCount = 0;
             var sortExpression = RepositoryHelper.ConvertStringToSortExpression(TypedListType, request.Sort);
             var includedFieldNames = RepositoryHelper.ConvertStringToExcludedIncludedFields(request.Select);
@@ -190,7 +188,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories.TypedListServiceRepositories
     {
         var field = fields[fi];
 %>            if (!hasFn || fieldNames.Contains("<%=field.FieldAlias%>", StringComparer.OrdinalIgnoreCase))
-				item.<%=field.FieldAlias%> = row.<%=field.FieldAlias%>;
+                item.<%=field.FieldAlias%> = row.<%=field.FieldAlias%>;
 <%  } %>
             return item;
         }

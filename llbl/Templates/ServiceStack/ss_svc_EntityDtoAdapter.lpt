@@ -1,7 +1,7 @@
 <# MJC_SS_GeneralMethods #><%
   var currentProject = _executingGenerator.ProjectDefinition;
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
-  var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+  //var emitForeignKeyFields = true; //currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
 
@@ -15,7 +15,8 @@
                                 !ri.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate))
                           .ToList();
   var entityFields = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
-  if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+  var allEntityFields = entity.GetAllFieldsInElement(true).Where(f=>!f.IsDiscriminator).OrderBy(f=>f.FieldIndex).ToList();
+  //if(!emitForeignKeyFields) entityFields = entityFields.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
   string propertyAccessor = "public";
   bool emitKnownTypeAttributes = false; //entity.OutputSettingValues.GetRealBoolSettingValue("EmitKnownTypeAttributesForWCF", currentProject);
   //_executingGenerator.StoreValueInRunQueueCache("EntityClassesNamespace", _executingGenerator.RootNamespaceToUse + ".EntityClasses");
@@ -187,10 +188,10 @@ namespace <%=rootNameSpace%>.Dtos
   
   foreach(var forf in entity.FieldsMappedOntoRelatedFields.OrderBy(f=>f.Name))
   {
-    if(forf.MappedField.Field.IsForeignKeyField && !emitForeignKeyFields)
-    {
-      continue;
-    }
+    //if(forf.MappedField.Field.IsForeignKeyField && !emitForeignKeyFields)
+    //{
+    //  continue;
+    //}
     string typeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(forf.MappedField.Field, _executingGenerator, "Nullable<{0}>");
 %>    /// <summary>Represents the related field 'this.<%=forf.MappedFieldAsString%>'</summary>
 <%    if(forf.OutputSettingValues.CustomProperties.Count>0)
