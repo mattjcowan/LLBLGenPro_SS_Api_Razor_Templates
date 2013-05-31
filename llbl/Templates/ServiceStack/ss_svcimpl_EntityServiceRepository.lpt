@@ -279,12 +279,13 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 <%if(!entity.IsAbstract){%>
         public <%=entity.Name%>Response Create(<%=entity.Name%>AddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBefore<%=entity.Name%>AddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfter<%=entity.Name%>AddRequest(adapter, request);
@@ -297,13 +298,14 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
         public <%=entity.Name%>Response Update(<%=entity.Name%>UpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBefore<%=entity.Name%>UpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfter<%=entity.Name%>UpdateRequest(adapter, request);
