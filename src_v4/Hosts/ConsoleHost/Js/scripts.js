@@ -192,6 +192,13 @@ $(document).ready(function () {
         "bAutoWidth": true,
         "sAjaxSource": window.dtAjaxUrl,
         "sServerMethod": "POST",
+        "fnServerParams": function ( aoData ) {
+            var iSelectColumns = [];
+            $("#dt_d_nav li:not(:last-child) input:checked").each(function(){
+                iSelectColumns.push($(this).attr("value"));
+            });
+            aoData.push( { "name": "iSelectColumns", "value": iSelectColumns } );
+        }
     });
     // custom datatable related ui events
     $('#dt_d_nav').on('click', 'li input', function () {

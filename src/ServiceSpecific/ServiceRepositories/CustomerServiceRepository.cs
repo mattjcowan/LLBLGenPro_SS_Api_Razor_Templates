@@ -24,12 +24,6 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
-        partial void OnBeforeCustomerDeleteRequest(IDataAccessAdapter adapter, CustomerDeleteRequest request, CustomerEntity entity);
-        partial void OnAfterCustomerDeleteRequest(IDataAccessAdapter adapter, CustomerDeleteRequest request, CustomerEntity entity, ref bool deleted);
-        partial void OnBeforeCustomerUpdateRequest(IDataAccessAdapter adapter, CustomerUpdateRequest request);
-        partial void OnAfterCustomerUpdateRequest(IDataAccessAdapter adapter, CustomerUpdateRequest request);
-        partial void OnBeforeCustomerAddRequest(IDataAccessAdapter adapter, CustomerAddRequest request);
-        partial void OnAfterCustomerAddRequest(IDataAccessAdapter adapter, CustomerAddRequest request);
         partial void OnBeforeFetchCustomerPkRequest(IDataAccessAdapter adapter, CustomerPkRequest request, CustomerEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnAfterFetchCustomerPkRequest(IDataAccessAdapter adapter, CustomerPkRequest request, CustomerEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnBeforeFetchCustomerUcCompanyNameRequest(IDataAccessAdapter adapter, CustomerUcCompanyNameRequest request, CustomerEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
@@ -37,6 +31,14 @@ namespace Northwind.Data.ServiceRepositories
 
         partial void OnBeforeFetchCustomerQueryCollectionRequest(IDataAccessAdapter adapter, CustomerQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
         partial void OnAfterFetchCustomerQueryCollectionRequest(IDataAccessAdapter adapter, CustomerQueryCollectionRequest request, EntityCollection<CustomerEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
+        partial void OnBeforeCustomerDeleteRequest(IDataAccessAdapter adapter, CustomerDeleteRequest request, CustomerEntity entity);
+        partial void OnAfterCustomerDeleteRequest(IDataAccessAdapter adapter, CustomerDeleteRequest request, CustomerEntity entity, ref bool deleted);
+        partial void OnBeforeCustomerUpdateRequest(IDataAccessAdapter adapter, CustomerUpdateRequest request);
+        partial void OnAfterCustomerUpdateRequest(IDataAccessAdapter adapter, CustomerUpdateRequest request);
+        partial void OnBeforeCustomerAddRequest(IDataAccessAdapter adapter, CustomerAddRequest request);
+        partial void OnAfterCustomerAddRequest(IDataAccessAdapter adapter, CustomerAddRequest request);
+
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -61,6 +63,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -110,8 +115,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-CustomerQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+CustomerFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new CustomerQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -129,13 +139,11 @@ CustomerQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/customercustomerdemos?filter=customerid:eq:{2}"">{1} Customer Customer Demos</a></div>",
-                            includeCustomerCustomerDemos ? item.CustomerCustomerDemos.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeCustomerCustomerDemos ? "": "",
+                            includeCustomerCustomerDemos ? item.CustomerCustomerDemos.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.CustomerId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/orders?filter=customerid:eq:{2}"">{1} Orders</a></div>",
-                            includeOrders ? item.Orders.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeOrders ? "": "",
+                            includeOrders ? item.Orders.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.CustomerId
                         ));
 
@@ -233,12 +241,13 @@ CustomerQueryCollectionRequest
 
         public CustomerResponse Create(CustomerAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeCustomerAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterCustomerAddRequest(adapter, request);
@@ -251,13 +260,14 @@ CustomerQueryCollectionRequest
 
         public CustomerResponse Update(CustomerUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeCustomerUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterCustomerUpdateRequest(adapter, request);

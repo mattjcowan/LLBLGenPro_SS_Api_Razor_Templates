@@ -24,17 +24,19 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
+        partial void OnBeforeFetchEmployeePkRequest(IDataAccessAdapter adapter, EmployeePkRequest request, EmployeeEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchEmployeePkRequest(IDataAccessAdapter adapter, EmployeePkRequest request, EmployeeEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchEmployeeQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchEmployeeQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeQueryCollectionRequest request, EntityCollection<EmployeeEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
         partial void OnBeforeEmployeeDeleteRequest(IDataAccessAdapter adapter, EmployeeDeleteRequest request, EmployeeEntity entity);
         partial void OnAfterEmployeeDeleteRequest(IDataAccessAdapter adapter, EmployeeDeleteRequest request, EmployeeEntity entity, ref bool deleted);
         partial void OnBeforeEmployeeUpdateRequest(IDataAccessAdapter adapter, EmployeeUpdateRequest request);
         partial void OnAfterEmployeeUpdateRequest(IDataAccessAdapter adapter, EmployeeUpdateRequest request);
         partial void OnBeforeEmployeeAddRequest(IDataAccessAdapter adapter, EmployeeAddRequest request);
         partial void OnAfterEmployeeAddRequest(IDataAccessAdapter adapter, EmployeeAddRequest request);
-        partial void OnBeforeFetchEmployeePkRequest(IDataAccessAdapter adapter, EmployeePkRequest request, EmployeeEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
-        partial void OnAfterFetchEmployeePkRequest(IDataAccessAdapter adapter, EmployeePkRequest request, EmployeeEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
 
-        partial void OnBeforeFetchEmployeeQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
-        partial void OnAfterFetchEmployeeQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeQueryCollectionRequest request, EntityCollection<EmployeeEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -59,6 +61,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -108,8 +113,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-EmployeeQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+EmployeeFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new EmployeeQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -129,23 +139,19 @@ EmployeeQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/employees?filter=employeeid:eq:{2}"">{1} Reports To</a></div>",
-                            includeReportsTo ? (item.ReportsTo==null?"0":"1"): "",
-                            includeReportsTo ? "": "",
+                            includeReportsTo ? (item.ReportsTo==null?"0":"1"): "", "",
                             item.ReportsToId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/employees?filter=reportstoid:eq:{2}"">{1} Employees</a></div>",
-                            includeEmployees ? item.Employees.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeEmployees ? "": "",
+                            includeEmployees ? item.Employees.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.EmployeeId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/employeeterritories?filter=employeeid:eq:{2}"">{1} Employee Territories</a></div>",
-                            includeEmployeeTerritories ? item.EmployeeTerritories.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeEmployeeTerritories ? "": "",
+                            includeEmployeeTerritories ? item.EmployeeTerritories.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.EmployeeId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/orders?filter=employeeid:eq:{2}"">{1} Orders</a></div>",
-                            includeOrders ? item.Orders.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeOrders ? "": "",
+                            includeOrders ? item.Orders.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.EmployeeId
                         ));
 
@@ -165,7 +171,7 @@ EmployeeQueryCollectionRequest
                         item.Country,
                         item.HomePhone,
                         item.Extension,
-                        string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.Photo.ToImageSrc(null, 160)),                        item.Notes,
+                        (item.Photo == null ? null: string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.Photo.ToImageSrc(null, 160))),                        item.Notes,
                         item.ReportsToId.ToString(),
                         item.PhotoPath,
 
@@ -228,12 +234,13 @@ EmployeeQueryCollectionRequest
 
         public EmployeeResponse Create(EmployeeAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeEmployeeAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterEmployeeAddRequest(adapter, request);
@@ -246,13 +253,14 @@ EmployeeQueryCollectionRequest
 
         public EmployeeResponse Update(EmployeeUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeEmployeeUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterEmployeeUpdateRequest(adapter, request);

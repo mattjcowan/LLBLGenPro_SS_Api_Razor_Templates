@@ -258,9 +258,10 @@ if(includeValidation){%>            if (Validator != null)
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
 <%for(int i=0;i<allEntityFields.Count();i++){
-%>        public int iSortCol_<%=i.ToString()%> { get; set; }
+%>        public int iSortCol_<%=i.ToString()%> { get; set; } //<%="Field: " + allEntityFields[i].Name%>
         public string sSortDir_<%=i.ToString()%> { get; set; }
         public string bSortable_<%=i.ToString()%> { get; set; } 
         public string mDataProp_<%=i.ToString()%> { get; set; } 

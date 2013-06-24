@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Saturday, May 11, 2013 6:38:26 PM
+// Code is generated on: Monday, June 24, 2013 12:49:15 AM
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates
 // Templates vendor: Solutions Design.
 // Templates version: 
@@ -103,10 +103,11 @@ namespace Northwind.Data.EntityClasses
 		#endregion
 
 		#region Included code
- 		/// <summary>Returns the EntityType enum value for the entity.</summary>		
+        /// <summary>Returns the EntityType enum value for the entity.</summary>        
         public abstract EntityType EntityType { get; }
+        public abstract EntityType? ParentType { get; }
         public virtual List<IEntityRelation> EntityRelations { get { return new List<IEntityRelation>(); } }
-        public virtual List<IPrefetchPathElement2> PrefetchPaths { get { return new List<IPrefetchPathElement2>(); } }		
+        public virtual List<IPrefetchPathElement2> PrefetchPaths { get { return new List<IPrefetchPathElement2>(); } }      
 		#endregion
 	}
 }

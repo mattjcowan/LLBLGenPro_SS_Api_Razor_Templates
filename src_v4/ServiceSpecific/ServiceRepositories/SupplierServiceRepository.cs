@@ -24,12 +24,6 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
-        partial void OnBeforeSupplierDeleteRequest(IDataAccessAdapter adapter, SupplierDeleteRequest request, SupplierEntity entity);
-        partial void OnAfterSupplierDeleteRequest(IDataAccessAdapter adapter, SupplierDeleteRequest request, SupplierEntity entity, ref bool deleted);
-        partial void OnBeforeSupplierUpdateRequest(IDataAccessAdapter adapter, SupplierUpdateRequest request);
-        partial void OnAfterSupplierUpdateRequest(IDataAccessAdapter adapter, SupplierUpdateRequest request);
-        partial void OnBeforeSupplierAddRequest(IDataAccessAdapter adapter, SupplierAddRequest request);
-        partial void OnAfterSupplierAddRequest(IDataAccessAdapter adapter, SupplierAddRequest request);
         partial void OnBeforeFetchSupplierPkRequest(IDataAccessAdapter adapter, SupplierPkRequest request, SupplierEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnAfterFetchSupplierPkRequest(IDataAccessAdapter adapter, SupplierPkRequest request, SupplierEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnBeforeFetchSupplierUcSupplierNameRequest(IDataAccessAdapter adapter, SupplierUcSupplierNameRequest request, SupplierEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
@@ -37,6 +31,14 @@ namespace Northwind.Data.ServiceRepositories
 
         partial void OnBeforeFetchSupplierQueryCollectionRequest(IDataAccessAdapter adapter, SupplierQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
         partial void OnAfterFetchSupplierQueryCollectionRequest(IDataAccessAdapter adapter, SupplierQueryCollectionRequest request, EntityCollection<SupplierEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
+        partial void OnBeforeSupplierDeleteRequest(IDataAccessAdapter adapter, SupplierDeleteRequest request, SupplierEntity entity);
+        partial void OnAfterSupplierDeleteRequest(IDataAccessAdapter adapter, SupplierDeleteRequest request, SupplierEntity entity, ref bool deleted);
+        partial void OnBeforeSupplierUpdateRequest(IDataAccessAdapter adapter, SupplierUpdateRequest request);
+        partial void OnAfterSupplierUpdateRequest(IDataAccessAdapter adapter, SupplierUpdateRequest request);
+        partial void OnBeforeSupplierAddRequest(IDataAccessAdapter adapter, SupplierAddRequest request);
+        partial void OnAfterSupplierAddRequest(IDataAccessAdapter adapter, SupplierAddRequest request);
+
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -61,6 +63,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -110,8 +115,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-SupplierQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+SupplierFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new SupplierQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -120,6 +130,7 @@ SupplierQueryCollectionRequest
                     Include = request.Include,
                     Relations = request.Relations,
                     Select = request.Select,
+                    RCache = request.RCache
                 });
             var response = new DataTableResponse();
             var includeProducts = ((request.Include ?? "").IndexOf("products", StringComparison.InvariantCultureIgnoreCase)) >= 0;
@@ -128,8 +139,7 @@ SupplierQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/products?filter=supplierid:eq:{2}"">{1} Products</a></div>",
-                            includeProducts ? item.Products.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeProducts ? "": "",
+                            includeProducts ? item.Products.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.SupplierId
                         ));
 
@@ -175,7 +185,7 @@ SupplierQueryCollectionRequest
                 OnBeforeFetchSupplierQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
                     request.PageNumber, request.PageSize, request.Limit);
                 entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
-                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                    request.PageNumber, request.PageSize, request.Limit, request.RCache, out totalItemCount);
                 OnAfterFetchSupplierQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
                     request.PageNumber, request.PageSize, request.Limit, totalItemCount);
             }
@@ -194,11 +204,13 @@ SupplierQueryCollectionRequest
 
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
-                var predicate = entity.ConstructFilterForUCCompanyName();
-                OnBeforeFetchSupplierUcSupplierNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
-                if (adapter.FetchEntityUsingUniqueConstraint(entity, predicate, prefetchPath, null, excludedIncludedFields))
+                var ucPredicate = entity.ConstructFilterForUCCompanyName();
+                OnBeforeFetchSupplierUcSupplierNameRequest(adapter, request, entity, ucPredicate, prefetchPath, excludedIncludedFields);
+                
+                entity = base.Fetch(adapter, ucPredicate, prefetchPath, excludedIncludedFields, request.RCache);
+                if (entity != null)
                 {
-                    OnAfterFetchSupplierUcSupplierNameRequest(adapter, request, entity, predicate, prefetchPath, excludedIncludedFields);
+                    OnAfterFetchSupplierUcSupplierNameRequest(adapter, request, entity, ucPredicate, prefetchPath, excludedIncludedFields);
                     return new SupplierResponse(entity.ToDto());
                 }
             }
@@ -217,7 +229,10 @@ SupplierQueryCollectionRequest
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeFetchSupplierPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
-                if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
+
+                var pkPredicate = adapter.CreatePrimaryKeyFilter(entity.Fields.PrimaryKeyFields);
+                entity = base.Fetch(adapter, pkPredicate, prefetchPath, excludedIncludedFields, request.RCache);
+                if (entity != null)
                 {
                     OnAfterFetchSupplierPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new SupplierResponse(entity.ToDto());
@@ -228,12 +243,13 @@ SupplierQueryCollectionRequest
 
         public SupplierResponse Create(SupplierAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeSupplierAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterSupplierAddRequest(adapter, request);
@@ -246,13 +262,14 @@ SupplierQueryCollectionRequest
 
         public SupplierResponse Update(SupplierUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeSupplierUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterSupplierUpdateRequest(adapter, request);

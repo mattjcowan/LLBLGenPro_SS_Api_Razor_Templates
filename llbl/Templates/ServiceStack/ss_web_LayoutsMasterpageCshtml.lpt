@@ -14,44 +14,28 @@
     <meta name="robots" content="noindex">
     <meta name="description" content="A code-generated demo REST api and HTML site, generated using LLBLGen Pro, using the ServiceStack framework">
     <meta name="author" content="Matt Cowan (MJC)">
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">
-    <style>
-      body { padding-top: 60px; }
-    </style>
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <!--[if lt IE 9] >
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link href="/css/styles.css" rel="stylesheet">
+    @Html.Partial("_HeaderScripts")
     @RenderSection("Header", false)
   </head>
   <body>
     <div class="navbar navbar-fixed-top navbar-inverse">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="/">
-            <%=rootNameSpace%>
-          </a>
-          <ul class="nav">
+            <a class="brand" href="/"><%=rootNameSpace%></a>
+            <ul class="nav">
             <li>
-              <a href="/">
-                Home
-              </a>
+                <a href="/">Home</a>
             </li>
             <li>
-              <a href="@blogUrl" target="_blank">
-                Learn more
-              </a>
+                <a href="@blogUrl" target="_blank">Learn more</a>
             </li>
             <li>
-              <a href="/entities">
-                Browse
-              </a>
+                <a href="/entities">Browse</a>
             </li>
-          </ul>
-          <form class="navbar-form pull-right">
-        <!-- put login/logout partial here -->
-          </form>
+            </ul>
+            <ul class="nav pull-right">
+                @Html.Partial("_PullRight")
+            </ul>
         </div>
       </div>
     </div>
@@ -65,11 +49,8 @@
         Site and API 100% auto-generated using <a href="http://www.llblgen.com" target="_blank">LLBLGen Pro</a> and <a href="http://www.servicestack.net" target="_blank">ServiceStack</a>
       </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>
-      
+    @Html.Partial("_FooterScripts")
     @RenderSection("Footer", false)
     @Html.Partial("_Analytics")
-
   </body>
 </html>

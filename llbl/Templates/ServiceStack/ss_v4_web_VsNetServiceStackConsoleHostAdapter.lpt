@@ -48,41 +48,41 @@
       <HintPath>C:\Program Files (x86)\Solutions Design\LLBLGen Pro v4.0\Frameworks\LLBLGen Pro\RuntimeLibraries\CompiledRuntimeLibraries\</HintPath>
     </Reference>
     <!-- ServiceStack References -->
-    <Reference Include="ServiceStack, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.3.9.38\lib\net35\ServiceStack.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.3.9.54\lib\net35\ServiceStack.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Common, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Common, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Common.3.9.38\lib\net35\ServiceStack.Common.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.Common.3.9.54\lib\net35\ServiceStack.Common.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Interfaces, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Interfaces, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Common.3.9.38\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.Common.3.9.54\lib\net35\ServiceStack.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.OrmLite, Version=3.9.39.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.OrmLite, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.OrmLite.SqlServer.3.9.39\lib\ServiceStack.OrmLite.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.OrmLite.SqlServer.3.9.54\lib\ServiceStack.OrmLite.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.OrmLite.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.OrmLite.SqlServer, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.OrmLite.SqlServer.3.9.39\lib\ServiceStack.OrmLite.SqlServer.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.OrmLite.SqlServer.3.9.54\lib\ServiceStack.OrmLite.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Razor">
+    <Reference Include="ServiceStack.Razor, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\ServiceStack.Razor.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.Razor.3.9.54\lib\net40\ServiceStack.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Redis, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Redis, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Redis.3.9.38\lib\net35\ServiceStack.Redis.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.Redis.3.9.54\lib\net35\ServiceStack.Redis.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.ServiceInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.ServiceInterface, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.3.9.38\lib\net35\ServiceStack.ServiceInterface.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.3.9.54\lib\net35\ServiceStack.ServiceInterface.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Text, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Text.3.9.38\lib\net35\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.54\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
     <!-- Framework References -->
     <Reference Include="System" />
@@ -102,21 +102,8 @@
     <Reference Include="System.Web.Extensions">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.WebPages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\ServiceStack.Razor.3.9.38\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    <Reference Include="System.Web.Razor.Unofficial">
+      <HintPath>..\..\packages\System.Web.Razor.Unofficial.2.0.2\lib\net40\System.Web.Razor.Unofficial.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -131,7 +118,7 @@
     <Content Include="Css\plugins.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Css\styles.css">
+    <Content Include="Css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Js\plugins.js">
@@ -152,7 +139,25 @@
     <None Include="Views\_EntityNav.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Views\_FooterScripts.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\_HeaderScripts.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\_PullRight.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Views\_Layout.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Themes\Slate\_Layout.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Themes\Superhero\_HeaderScripts.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Themes\Superhero\_PullRight.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\Entities.cshtml">
@@ -181,6 +186,10 @@
     </None><%}%>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Themes\Default" />
+    <Folder Include="Views\Themes\Default\" />
+  </ItemGroup>
+  <ItemGroup>
     <AppDesigner Include="Properties\" />
     <Folder Include="Properties\" />
   </ItemGroup>
@@ -198,6 +207,126 @@
       <Name><%=currentProject.ProjectName%>.Services</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <!-- ALL THE XTRA NUGET PACKAGES -->
+    <Content Include="Content\bootstrap-responsive.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootstrap-responsive.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\amelia\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\amelia\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\amelia\bootstrap.css" />
+    <Content Include="Content\bootswatch\amelia\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\cerulean\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\cerulean\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\cerulean\bootstrap.css" />
+    <Content Include="Content\bootswatch\cerulean\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\cosmo\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\cosmo\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\cosmo\bootstrap.css" />
+    <Content Include="Content\bootswatch\cosmo\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\cyborg\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\cyborg\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\cyborg\bootstrap.css" />
+    <Content Include="Content\bootswatch\cyborg\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\flatly\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\flatly\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\flatly\bootstrap.css" />
+    <Content Include="Content\bootswatch\flatly\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\journal\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\journal\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\journal\bootstrap.css" />
+    <Content Include="Content\bootswatch\journal\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\readable\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\readable\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\readable\bootstrap.css" />
+    <Content Include="Content\bootswatch\readable\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\simplex\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\simplex\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\simplex\bootstrap.css" />
+    <Content Include="Content\bootswatch\simplex\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\slate\bootstrap-responsive.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\slate\bootstrap-responsive.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\slate\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\slate\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\spacelab\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\spacelab\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\spacelab\bootstrap.css" />
+    <Content Include="Content\bootswatch\spacelab\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\spruce\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\spruce\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\spruce\bootstrap.css" />
+    <Content Include="Content\bootswatch\spruce\bootstrap.min.css" />
+    <Content Include="Content\bootswatch\superhero\bootstrap-responsive.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\superhero\bootstrap-responsive.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\superhero\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\superhero\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootswatch\united\bootstrap-responsive.css" />
+    <Content Include="Content\bootswatch\united\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootswatch\united\bootstrap.css" />
+    <Content Include="Content\bootswatch\united\bootstrap.min.css" />
+    <Content Include="Content\images\glyphicons-halflings-white.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\images\glyphicons-halflings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\bootstrap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\html5shiv-printshiv.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\html5shiv-printshiv.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\html5shiv.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\html5shiv.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\jquery-1.9.1.intellisense.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\jquery-1.9.1.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\jquery-1.9.1.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Scripts\jquery-1.9.1.min.map" />
+    <Content Include="Scripts\jquery.cookie.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>    
+  </ItemGroup>
+  <ItemGroup/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>  

@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Shipper'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END            
     public partial class ShipperService : ServiceBase<Shipper, IShipperServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -34,12 +34,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetShipperUcShipperNameRequest(ShipperUcShipperNameRequest request, ShipperResponse response);
         partial void OnBeforeGetShipperPkRequest(ShipperPkRequest request);
         partial void OnAfterGetShipperPkRequest(ShipperPkRequest request, ShipperResponse response);
+
         partial void OnBeforeShipperAddRequest(ShipperAddRequest request);
         partial void OnAfterShipperAddRequest(ShipperAddRequest request, ShipperResponse response);
         partial void OnBeforeShipperUpdateRequest(ShipperUpdateRequest request);
         partial void OnAfterShipperUpdateRequest(ShipperUpdateRequest request, ShipperResponse response);
         partial void OnBeforeShipperDeleteRequest(ShipperDeleteRequest request);
         partial void OnAfterShipperDeleteRequest(ShipperDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -150,6 +152,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -173,20 +176,21 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: ShipperId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: CompanyName
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
         public string bRegex_1 { get; set; }
         public string bSearchable_1 { get; set; }
-        public int iSortCol_2 { get; set; }
+        public int iSortCol_2 { get; set; } //Field: Phone
         public string sSortDir_2 { get; set; }
         public string bSortable_2 { get; set; } 
         public string mDataProp_2 { get; set; } 
@@ -246,7 +250,7 @@ namespace Northwind.Data.Services
         public ShipperResponse(Shipper category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
 
     public partial class ShipperCollectionResponse : GetCollectionResponse<Shipper>
@@ -256,7 +260,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
     #endregion
 }

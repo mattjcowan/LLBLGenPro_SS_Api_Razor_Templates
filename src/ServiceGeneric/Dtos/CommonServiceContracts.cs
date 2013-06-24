@@ -18,10 +18,12 @@ namespace Northwind.Data.Dtos
     {
         protected GetRequest()
         {
+            RCache = 0;
             Include = string.Empty;
             Select = string.Empty;
         }
 
+        public int RCache { get; set; } //Used by LLBLGen V4 template only
         public string Include { get; set; }
         public string Select { get; set; }
     }
@@ -38,6 +40,7 @@ namespace Northwind.Data.Dtos
     {
         protected GetCollectionRequest()
         {
+            RCache = 0;
             PageNumber = 0;
             PageSize = 0;
             Limit = 0;
@@ -48,6 +51,7 @@ namespace Northwind.Data.Dtos
             Relations = string.Empty;
         }
         
+        public int RCache { get; set; } //Used by LLBLGen V4 template only
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public int Limit { get; set; }

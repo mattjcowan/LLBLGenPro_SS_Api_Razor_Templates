@@ -12,8 +12,17 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 
 ## CHANGE LOG ##
 
-For all examples below, you may want to use Chrome or a browser that can show you the results (or use Fiddler). 
+For all examples below, you may want to use Chrome or a browser that can show you JSON results (IE tends to force a download of json files, or use Fiddler). 
 Chrome is nice in the sense that it always displays the reponse from the server, regardless of status code (200, 400, 401, 404, 500, etc...) and regardless of the content type (JS, XML, etc...).
+
+### Update - June 23, 2013 ###
+
+Blog Post coming on the following (demo site will be updated in the next few days)
+
+- **Upgraded ServiceStack References**: from 3.9.38 to 3.9.54
+- **Added Theming Capability for Razor Views**: by enhancing the RazorFormat class (works for view pages, content pages and razor handlers)
+- **Added SQL Resultset Caching to V4 templates**: use a new rcache querystring parameter to identify the number of seconds you wish to cache resultsets for (use 0 to force cache refresh, uses [LLBLGen Resultset Caching][llblgen-caching])
+- **DataTable implementation enhancement**: now when adding/removing columns in the UI, you are truly only fetching the columns being displayed from the database
 
 ### Update - May 11, 2013 ###
 
@@ -122,6 +131,7 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
 - Be able to filter included items down (not just limit) in response (for example return products and orderdetails and orders, but only those orders where the quantity sold was greater then 30)
 - Be able to support aggregates (MAX, MIN, SUM, COUNT) and grouping clauses 
 
+[llblgen-caching]: https://www.llblgen.com/documentation/4.0/LLBLGen%20Pro%20RTF/Using%20the%20generated%20code/gencode_resultsetcaching.htm
 [demo-site]: http://northwind.mattjcowan.com
 [blog-site]: http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack
 [blog-site2]: http://www.mattjcowan.com/funcoding/2013/05/11/restful-api-and-ui-for-typed-views-and-typed-lists/

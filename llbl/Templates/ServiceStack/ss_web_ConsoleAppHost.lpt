@@ -12,6 +12,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using SD.LLBLGen.Pro.ORMSupportClasses;
 using ServiceStack.CacheAccess;
 using ServiceStack.CacheAccess.Providers;
 using ServiceStack.Common;
@@ -20,17 +21,16 @@ using ServiceStack.Logging;
 using ServiceStack.Logging.Support.Logging;
 using ServiceStack.OrmLite;
 using ServiceStack.OrmLite.SqlServer;
-using ServiceStack.Razor;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.ServiceInterface.Auth;
 using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
-using SD.LLBLGen.Pro.ORMSupportClasses;
 using <%=rootNameSpace%>;
 using <%=rootNameSpace%>.DatabaseSpecific;
 using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.Razor;
 using <%=rootNameSpace%>.ServiceInterfaces;
 using <%=rootNameSpace%>.ServiceRepositories;
 <%if(typedLists.Count>0){%>
@@ -52,7 +52,7 @@ namespace <%=rootNameSpace%>.ConsoleHost
               appHost.Start(listeningOn);
 
               Console.WriteLine("----------------------------------------------------------------------------");
-              Console.WriteLine("Northwind.Data API");
+              Console.WriteLine("<%=rootNameSpace%> API");
               Console.WriteLine("  - Host started at {0}", DateTime.Now);
               Console.WriteLine("  - Host listening on {0}", listeningOn);
               Console.WriteLine("----------------------------------------------------------------------------");
@@ -97,7 +97,8 @@ namespace <%=rootNameSpace%>.ConsoleHost
                     DebugMode = true,
                     EnableFeatures = Feature.All.Remove(GetDisabledFeatures()),
                     CustomHttpHandlers = {
-                        { HttpStatusCode.NotFound, new RazorHandler("/notfound") }
+                        // Use the CmsRazorHandler to add theming capabilities
+                        { HttpStatusCode.NotFound, new CmsRazorHandler("/notfound") }
                     }
                 });
 
@@ -112,10 +113,10 @@ namespace <%=rootNameSpace%>.ConsoleHost
 
             //Enable the validation feature and scan the service assembly for validators
             Plugins.Add(new ValidationFeature());
-            container.RegisterValidators(typeof(Northwind.Data.Services.CategoryService).Assembly);
+            container.RegisterValidators(typeof(Services.CategoryService).Assembly);
 
-            //Razor
-            Plugins.Add(new RazorFormat());
+            //Razor (use CmsRazorFormat to add theming capabilities)
+            Plugins.Add(new CmsRazorFormat());
 
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
@@ -139,6 +140,9 @@ foreach(var item in typedViews) {
             var connectionString = ConfigurationManager.ConnectionStrings["ApiDbConnectionString"].ConnectionString;
             container.Register<IDataAccessAdapterFactory>(c => new DataAccessAdapterFactory(connectionString));
             container.Register<IDbConnectionFactory>(c => new OrmLiteConnectionFactory(connectionString, true, new SqlServerOrmLiteDialectProvider()));
+
+            //DataAccess Caching (only for LLBLGen V4)
+            //CacheController.RegisterCache(string.Empty /* connectionString */, new ResultsetCache(5*60 /* will purge the cache every 5 minutes */)); 
         }
 
         private static void CreateUser(IUserAuthRepository repository, int id, string username, string displayName, string email, string password)

@@ -1,0 +1,45 @@
+﻿<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+%>using ServiceStack.Razor;
+using ServiceStack.Razor.Managers;
+using ServiceStack.ServiceHost;
+
+namespace <%=rootNameSpace%>.Razor
+{
+    public class CmsRazorFormat : RazorFormat
+    {
+        public string DefaultTheme { get; set; }
+
+        public override RazorViewManager CreateViewManager()
+        {
+            return new CmsRazorViewManager(this, VirtualPathProvider);
+        }
+
+        public override RazorPageResolver CreatePageResolver()
+        {
+            return new CmsRazorPageResolver(this, this.ViewManager);
+        }
+
+        #region CmsRazorHandler Methods
+        // METHOD #1
+        // Used exclusively by the CmsRazorHandler class to identity content pages by path first
+        // before attempting to resolve within the views directories
+        public RazorPage GetPageByPathInfo(string pathInfo, IHttpRequest httpReq)
+        {
+            if (ViewManager is CmsRazorViewManager)
+                return (ViewManager as CmsRazorViewManager).GetPageByPathInfo(pathInfo, httpReq);
+            return ViewManager.GetPageByPathInfo(pathInfo);
+        }
+
+        // METHOD #2
+        // Used exclusively by the CmsRazorHandler class to identity content pages by page name first
+        public RazorPage GetPageByName(string pageName, IHttpRequest request, object dto)
+        {
+            return ViewManager.GetPageByName(pageName, request, dto);
+        }
+        #endregion
+    }
+}

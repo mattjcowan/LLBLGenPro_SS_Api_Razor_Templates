@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Category'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                    
     public partial class CategoryService : ServiceBase<Category, ICategoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -34,12 +34,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetCategoryUcCategoryNameRequest(CategoryUcCategoryNameRequest request, CategoryResponse response);
         partial void OnBeforeGetCategoryPkRequest(CategoryPkRequest request);
         partial void OnAfterGetCategoryPkRequest(CategoryPkRequest request, CategoryResponse response);
+
         partial void OnBeforeCategoryAddRequest(CategoryAddRequest request);
         partial void OnAfterCategoryAddRequest(CategoryAddRequest request, CategoryResponse response);
         partial void OnBeforeCategoryUpdateRequest(CategoryUpdateRequest request);
         partial void OnAfterCategoryUpdateRequest(CategoryUpdateRequest request, CategoryResponse response);
         partial void OnBeforeCategoryDeleteRequest(CategoryDeleteRequest request);
         partial void OnAfterCategoryDeleteRequest(CategoryDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -174,6 +176,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -197,26 +200,27 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: CategoryId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: CategoryName
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
         public string bRegex_1 { get; set; }
         public string bSearchable_1 { get; set; }
-        public int iSortCol_2 { get; set; }
+        public int iSortCol_2 { get; set; } //Field: Description
         public string sSortDir_2 { get; set; }
         public string bSortable_2 { get; set; } 
         public string mDataProp_2 { get; set; } 
         public string bRegex_2 { get; set; }
         public string bSearchable_2 { get; set; }
-        public int iSortCol_3 { get; set; }
+        public int iSortCol_3 { get; set; } //Field: Picture
         public string sSortDir_3 { get; set; }
         public string bSortable_3 { get; set; } 
         public string mDataProp_3 { get; set; } 
@@ -278,7 +282,7 @@ namespace Northwind.Data.Services
         public CategoryResponse(Category category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
 
     public partial class CategoryCollectionResponse : GetCollectionResponse<Category>
@@ -288,7 +292,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
     #endregion
 }

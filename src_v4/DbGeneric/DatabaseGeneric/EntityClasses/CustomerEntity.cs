@@ -2,7 +2,7 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Saturday, May 11, 2013 6:38:27 PM
+// Code is generated on: Monday, June 24, 2013 12:49:16 AM
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates
 // Templates vendor: Solutions Design.
 // Templates version: 
@@ -624,6 +624,13 @@ namespace Northwind.Data.EntityClasses
       get { return EntityType.CustomerEntity; }
     }
 
+    /// <summary>Returns the Parent EntityType enum value for this entity.</summary>
+    [Browsable(false), XmlIgnore]
+    public override EntityType? ParentType 
+    {        
+      get { return (EntityType?)null; }
+    }
+    
     public override List<IEntityRelation> EntityRelations
     {
       get { return GetAllRelations(); }
@@ -634,6 +641,7 @@ namespace Northwind.Data.EntityClasses
       get
       {
         var paths = new List<IPrefetchPathElement2>();
+        
         paths.Add(PrefetchPathCustomerCustomerDemos);
         paths.Add(PrefetchPathOrders);
 

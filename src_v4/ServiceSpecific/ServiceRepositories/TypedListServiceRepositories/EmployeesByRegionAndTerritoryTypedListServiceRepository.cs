@@ -141,7 +141,7 @@ EmployeesByRegionAndTerritoryQueryCollectionRequest
             base.FixupLimitAndPagingOnRequest(request);
 
             var typedList = new EmployeesByRegionAndTerritoryTypedList();
-			
+            
             var totalItemCount = 0;
             var sortExpression = RepositoryHelper.ConvertStringToSortExpression(TypedListType, request.Sort);
             var includedFieldNames = RepositoryHelper.ConvertStringToExcludedIncludedFields(request.Select);
@@ -174,25 +174,25 @@ EmployeesByRegionAndTerritoryQueryCollectionRequest
             var hasFn = fieldNames != null && fieldNames.Any();
             var item = new EmployeesByRegionAndTerritory();
             if (!hasFn || fieldNames.Contains("RegionId", StringComparer.OrdinalIgnoreCase))
-				item.RegionId = row.RegionId;
+                item.RegionId = row.RegionId;
             if (!hasFn || fieldNames.Contains("RegionDescription", StringComparer.OrdinalIgnoreCase))
-				item.RegionDescription = row.RegionDescription;
+                item.RegionDescription = row.RegionDescription;
             if (!hasFn || fieldNames.Contains("TerritoryId", StringComparer.OrdinalIgnoreCase))
-				item.TerritoryId = row.TerritoryId;
+                item.TerritoryId = row.TerritoryId;
             if (!hasFn || fieldNames.Contains("TerritoryDescription", StringComparer.OrdinalIgnoreCase))
-				item.TerritoryDescription = row.TerritoryDescription;
+                item.TerritoryDescription = row.TerritoryDescription;
             if (!hasFn || fieldNames.Contains("EmployeeId", StringComparer.OrdinalIgnoreCase))
-				item.EmployeeId = row.EmployeeId;
+                item.EmployeeId = row.EmployeeId;
             if (!hasFn || fieldNames.Contains("EmployeeFirstName", StringComparer.OrdinalIgnoreCase))
-				item.EmployeeFirstName = row.EmployeeFirstName;
+                item.EmployeeFirstName = row.EmployeeFirstName;
             if (!hasFn || fieldNames.Contains("EmployeeLastName", StringComparer.OrdinalIgnoreCase))
-				item.EmployeeLastName = row.EmployeeLastName;
+                item.EmployeeLastName = row.EmployeeLastName;
             if (!hasFn || fieldNames.Contains("EmployeeCity", StringComparer.OrdinalIgnoreCase))
-				item.EmployeeCity = row.EmployeeCity;
+                item.EmployeeCity = row.EmployeeCity;
             if (!hasFn || fieldNames.Contains("EmployeeCountry", StringComparer.OrdinalIgnoreCase))
-				item.EmployeeCountry = row.EmployeeCountry;
+                item.EmployeeCountry = row.EmployeeCountry;
             if (!hasFn || fieldNames.Contains("EmployeeRegion", StringComparer.OrdinalIgnoreCase))
-				item.EmployeeRegion = row.EmployeeRegion;
+                item.EmployeeRegion = row.EmployeeRegion;
 
             return item;
         }

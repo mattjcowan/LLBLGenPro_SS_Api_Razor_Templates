@@ -32,41 +32,41 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- ServiceStack References -->
-    <Reference Include="ServiceStack, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.3.9.38\lib\net35\ServiceStack.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.3.9.54\lib\net35\ServiceStack.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Common, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Common, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.Common.3.9.38\lib\net35\ServiceStack.Common.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Common.3.9.54\lib\net35\ServiceStack.Common.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Interfaces, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Interfaces, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.Common.3.9.38\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Common.3.9.54\lib\net35\ServiceStack.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.OrmLite, Version=3.9.39.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.OrmLite, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.OrmLite.SqlServer.3.9.39\lib\ServiceStack.OrmLite.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.OrmLite.SqlServer.3.9.54\lib\ServiceStack.OrmLite.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.OrmLite.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.OrmLite.SqlServer, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.OrmLite.SqlServer.3.9.39\lib\ServiceStack.OrmLite.SqlServer.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.OrmLite.SqlServer.3.9.54\lib\ServiceStack.OrmLite.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Razor">
+    <Reference Include="ServiceStack.Razor, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.Razor.3.9.38\lib\net40\ServiceStack.Razor.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Razor.3.9.54\lib\net40\ServiceStack.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Redis, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Redis, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.Redis.3.9.38\lib\net35\ServiceStack.Redis.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Redis.3.9.54\lib\net35\ServiceStack.Redis.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.ServiceInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.ServiceInterface, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.3.9.38\lib\net35\ServiceStack.ServiceInterface.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.3.9.54\lib\net35\ServiceStack.ServiceInterface.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.38.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ServiceStack.Text, Version=3.9.54.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.Text.3.9.38\lib\net35\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Text.3.9.54\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
     <!-- Framework References -->
     <Reference Include="System" />
@@ -77,6 +77,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor.Unofficial">
+      <HintPath>..\packages\System.Web.Razor.Unofficial.2.0.2\lib\net40\System.Web.Razor.Unofficial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -207,6 +210,18 @@
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </None>
     <Compile Include="Properties\AssemblyInfo.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="Razor\CmsRazorFormat.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="Razor\CmsRazorHandler.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="Razor\CmsRazorPageResolver.cs">
+      <GeneratedBy>LLBLGen Pro</GeneratedBy>
+    </Compile>
+    <Compile Include="Razor\CmsRazorViewManager.cs">
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </Compile>
     <Compile Include="ServiceInterfaces\ICategoryServiceRepository.cs">
@@ -456,9 +471,7 @@
       <GeneratedBy>LLBLGen Pro</GeneratedBy>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

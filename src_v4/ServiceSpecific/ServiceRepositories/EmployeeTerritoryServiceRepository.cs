@@ -24,17 +24,19 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
+        partial void OnBeforeFetchEmployeeTerritoryPkRequest(IDataAccessAdapter adapter, EmployeeTerritoryPkRequest request, EmployeeTerritoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchEmployeeTerritoryPkRequest(IDataAccessAdapter adapter, EmployeeTerritoryPkRequest request, EmployeeTerritoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchEmployeeTerritoryQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeTerritoryQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchEmployeeTerritoryQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeTerritoryQueryCollectionRequest request, EntityCollection<EmployeeTerritoryEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
         partial void OnBeforeEmployeeTerritoryDeleteRequest(IDataAccessAdapter adapter, EmployeeTerritoryDeleteRequest request, EmployeeTerritoryEntity entity);
         partial void OnAfterEmployeeTerritoryDeleteRequest(IDataAccessAdapter adapter, EmployeeTerritoryDeleteRequest request, EmployeeTerritoryEntity entity, ref bool deleted);
         partial void OnBeforeEmployeeTerritoryUpdateRequest(IDataAccessAdapter adapter, EmployeeTerritoryUpdateRequest request);
         partial void OnAfterEmployeeTerritoryUpdateRequest(IDataAccessAdapter adapter, EmployeeTerritoryUpdateRequest request);
         partial void OnBeforeEmployeeTerritoryAddRequest(IDataAccessAdapter adapter, EmployeeTerritoryAddRequest request);
         partial void OnAfterEmployeeTerritoryAddRequest(IDataAccessAdapter adapter, EmployeeTerritoryAddRequest request);
-        partial void OnBeforeFetchEmployeeTerritoryPkRequest(IDataAccessAdapter adapter, EmployeeTerritoryPkRequest request, EmployeeTerritoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
-        partial void OnAfterFetchEmployeeTerritoryPkRequest(IDataAccessAdapter adapter, EmployeeTerritoryPkRequest request, EmployeeTerritoryEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
 
-        partial void OnBeforeFetchEmployeeTerritoryQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeTerritoryQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
-        partial void OnAfterFetchEmployeeTerritoryQueryCollectionRequest(IDataAccessAdapter adapter, EmployeeTerritoryQueryCollectionRequest request, EntityCollection<EmployeeTerritoryEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -59,6 +61,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -108,8 +113,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-EmployeeTerritoryQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+EmployeeTerritoryFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new EmployeeTerritoryQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -118,6 +128,7 @@ EmployeeTerritoryQueryCollectionRequest
                     Include = request.Include,
                     Relations = request.Relations,
                     Select = request.Select,
+                    RCache = request.RCache
                 });
             var response = new DataTableResponse();
             var includeEmployee = ((request.Include ?? "").IndexOf("employee", StringComparison.InvariantCultureIgnoreCase)) >= 0;
@@ -127,13 +138,11 @@ EmployeeTerritoryQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/employees?filter=employeeid:eq:{2}"">{1} Employee</a></div>",
-                            includeEmployee ? (item.Employee==null?"0":"1"): "",
-                            includeEmployee ? "": "",
+                            includeEmployee ? (item.Employee==null?"0":"1"): "", "",
                             item.EmployeeId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/territories?filter=territoryid:eq:{2}"">{1} Territory</a></div>",
-                            includeTerritory ? (item.Territory==null?"0":"1"): "",
-                            includeTerritory ? "": "",
+                            includeTerritory ? (item.Territory==null?"0":"1"): "", "",
                             item.TerritoryId
                         ));
 
@@ -169,7 +178,7 @@ EmployeeTerritoryQueryCollectionRequest
                 OnBeforeFetchEmployeeTerritoryQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
                     request.PageNumber, request.PageSize, request.Limit);
                 entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
-                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                    request.PageNumber, request.PageSize, request.Limit, request.RCache, out totalItemCount);
                 OnAfterFetchEmployeeTerritoryQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
                     request.PageNumber, request.PageSize, request.Limit, totalItemCount);
             }
@@ -191,7 +200,10 @@ EmployeeTerritoryQueryCollectionRequest
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeFetchEmployeeTerritoryPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
-                if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
+
+                var pkPredicate = adapter.CreatePrimaryKeyFilter(entity.Fields.PrimaryKeyFields);
+                entity = base.Fetch(adapter, pkPredicate, prefetchPath, excludedIncludedFields, request.RCache);
+                if (entity != null)
                 {
                     OnAfterFetchEmployeeTerritoryPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new EmployeeTerritoryResponse(entity.ToDto());
@@ -202,12 +214,13 @@ EmployeeTerritoryQueryCollectionRequest
 
         public EmployeeTerritoryResponse Create(EmployeeTerritoryAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeEmployeeTerritoryAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterEmployeeTerritoryAddRequest(adapter, request);
@@ -220,13 +233,14 @@ EmployeeTerritoryQueryCollectionRequest
 
         public EmployeeTerritoryResponse Update(EmployeeTerritoryUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeEmployeeTerritoryUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterEmployeeTerritoryUpdateRequest(adapter, request);

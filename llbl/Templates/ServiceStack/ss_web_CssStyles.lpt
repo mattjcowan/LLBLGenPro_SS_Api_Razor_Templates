@@ -3,7 +3,9 @@
   var rootNameSpace = _executingGenerator.RootNamespaceToUse;
   //-- Multi entity template --
   var entities = _executingGenerator.Entities;
-%>.main_button { margin-right:10px; }
+%>.blockUI, .blockOverlay, .blockPage {background-color: #fff !important;}
+body { padding-top: 60px; }
+.main_button { margin-right:10px; }
 .entity-browser a, .entity-browser a:hover, .entity-browser a:active, .entity-browser a:visited,
 .entity-row a, .entity-row a:hover, .entity-row a:active, .entity-row a:visited { text-decoration: none; }
 /* some responsive rendering */

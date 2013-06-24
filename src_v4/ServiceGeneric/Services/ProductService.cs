@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Product'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END            
     public partial class ProductService : ServiceBase<Product, IProductServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -34,12 +34,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetProductUcProductNameRequest(ProductUcProductNameRequest request, ProductResponse response);
         partial void OnBeforeGetProductPkRequest(ProductPkRequest request);
         partial void OnAfterGetProductPkRequest(ProductPkRequest request, ProductResponse response);
+
         partial void OnBeforeProductAddRequest(ProductAddRequest request);
         partial void OnAfterProductAddRequest(ProductAddRequest request, ProductResponse response);
         partial void OnBeforeProductUpdateRequest(ProductUpdateRequest request);
         partial void OnAfterProductUpdateRequest(ProductUpdateRequest request, ProductResponse response);
         partial void OnBeforeProductDeleteRequest(ProductDeleteRequest request);
         partial void OnAfterProductDeleteRequest(ProductDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -150,6 +152,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -173,62 +176,63 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: ProductId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: ProductName
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
         public string bRegex_1 { get; set; }
         public string bSearchable_1 { get; set; }
-        public int iSortCol_2 { get; set; }
+        public int iSortCol_2 { get; set; } //Field: SupplierId
         public string sSortDir_2 { get; set; }
         public string bSortable_2 { get; set; } 
         public string mDataProp_2 { get; set; } 
         public string bRegex_2 { get; set; }
         public string bSearchable_2 { get; set; }
-        public int iSortCol_3 { get; set; }
+        public int iSortCol_3 { get; set; } //Field: CategoryId
         public string sSortDir_3 { get; set; }
         public string bSortable_3 { get; set; } 
         public string mDataProp_3 { get; set; } 
         public string bRegex_3 { get; set; }
         public string bSearchable_3 { get; set; }
-        public int iSortCol_4 { get; set; }
+        public int iSortCol_4 { get; set; } //Field: QuantityPerUnit
         public string sSortDir_4 { get; set; }
         public string bSortable_4 { get; set; } 
         public string mDataProp_4 { get; set; } 
         public string bRegex_4 { get; set; }
         public string bSearchable_4 { get; set; }
-        public int iSortCol_5 { get; set; }
+        public int iSortCol_5 { get; set; } //Field: UnitPrice
         public string sSortDir_5 { get; set; }
         public string bSortable_5 { get; set; } 
         public string mDataProp_5 { get; set; } 
         public string bRegex_5 { get; set; }
         public string bSearchable_5 { get; set; }
-        public int iSortCol_6 { get; set; }
+        public int iSortCol_6 { get; set; } //Field: UnitsInStock
         public string sSortDir_6 { get; set; }
         public string bSortable_6 { get; set; } 
         public string mDataProp_6 { get; set; } 
         public string bRegex_6 { get; set; }
         public string bSearchable_6 { get; set; }
-        public int iSortCol_7 { get; set; }
+        public int iSortCol_7 { get; set; } //Field: UnitsOnOrder
         public string sSortDir_7 { get; set; }
         public string bSortable_7 { get; set; } 
         public string mDataProp_7 { get; set; } 
         public string bRegex_7 { get; set; }
         public string bSearchable_7 { get; set; }
-        public int iSortCol_8 { get; set; }
+        public int iSortCol_8 { get; set; } //Field: ReorderLevel
         public string sSortDir_8 { get; set; }
         public string bSortable_8 { get; set; } 
         public string mDataProp_8 { get; set; } 
         public string bRegex_8 { get; set; }
         public string bSearchable_8 { get; set; }
-        public int iSortCol_9 { get; set; }
+        public int iSortCol_9 { get; set; } //Field: Discontinued
         public string sSortDir_9 { get; set; }
         public string bSortable_9 { get; set; } 
         public string mDataProp_9 { get; set; } 
@@ -288,7 +292,7 @@ namespace Northwind.Data.Services
         public ProductResponse(Product category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
 
     public partial class ProductCollectionResponse : GetCollectionResponse<Product>
@@ -298,7 +302,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
     #endregion
 }

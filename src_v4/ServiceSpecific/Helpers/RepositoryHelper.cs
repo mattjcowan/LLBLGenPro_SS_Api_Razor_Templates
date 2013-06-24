@@ -268,6 +268,7 @@ namespace Northwind.Data.Helpers
             return predicateBucket;
         }
 
+
         internal static IRelationPredicateBucket ConvertStringToRelationPredicateBucket(TypedViewType typedViewType, string filterStr)
         {
             var predicateBucket = new RelationPredicateBucket();
@@ -550,6 +551,7 @@ namespace Northwind.Data.Helpers
             */
         }
 
+
         internal static IEntityField2 GetField(TypedViewType typedViewType, string fieldName)
         {
             var fields = EntityFieldsFactory.CreateTypedViewEntityFieldsObject(typedViewType);
@@ -565,6 +567,7 @@ namespace Northwind.Data.Helpers
                         : f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
             */
         }
+
 
         internal static IEntityField2 GetField(TypedListType typedListType, string fieldName)
         {
@@ -621,6 +624,7 @@ namespace Northwind.Data.Helpers
             }
             return null;
         }
+
 
         internal static IDictionary<string, IEntityField2> GetTypedViewTypeFieldMap(TypedViewType typedViewType)
         {

@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'EmployeeTerritory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                               
+	// __LLBLGENPRO_USER_CODE_REGION_END            
     public partial class EmployeeTerritoryService : ServiceBase<EmployeeTerritory, IEmployeeTerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -32,12 +32,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetEmployeeTerritoryQueryCollectionRequest(EmployeeTerritoryQueryCollectionRequest request, EmployeeTerritoryCollectionResponse response);
         partial void OnBeforeGetEmployeeTerritoryPkRequest(EmployeeTerritoryPkRequest request);
         partial void OnAfterGetEmployeeTerritoryPkRequest(EmployeeTerritoryPkRequest request, EmployeeTerritoryResponse response);
+
         partial void OnBeforeEmployeeTerritoryAddRequest(EmployeeTerritoryAddRequest request);
         partial void OnAfterEmployeeTerritoryAddRequest(EmployeeTerritoryAddRequest request, EmployeeTerritoryResponse response);
         partial void OnBeforeEmployeeTerritoryUpdateRequest(EmployeeTerritoryUpdateRequest request);
         partial void OnAfterEmployeeTerritoryUpdateRequest(EmployeeTerritoryUpdateRequest request, EmployeeTerritoryResponse response);
         partial void OnBeforeEmployeeTerritoryDeleteRequest(EmployeeTerritoryDeleteRequest request);
         partial void OnAfterEmployeeTerritoryDeleteRequest(EmployeeTerritoryDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -131,6 +133,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -154,14 +157,15 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: EmployeeId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: TerritoryId
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
@@ -216,7 +220,7 @@ namespace Northwind.Data.Services
         public EmployeeTerritoryResponse(EmployeeTerritory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
 
     public partial class EmployeeTerritoryCollectionResponse : GetCollectionResponse<EmployeeTerritory>
@@ -226,7 +230,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
     #endregion
 }

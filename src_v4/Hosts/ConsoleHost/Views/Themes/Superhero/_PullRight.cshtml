@@ -1,0 +1,12 @@
+﻿@using System
+                <li class="divider-vertical"></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">Themes <strong class="caret"></strong></a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li><a href="#" class="theme-picker" data-theme="Default">Default</a></li>
+@foreach (var theme in ServiceStack.Configuration.ConfigUtils.GetAppSetting("AdditionalThemes", "").Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries))
+{
+                        <li @if (theme.Equals("superhero", StringComparison.InvariantCultureIgnoreCase)){<text> class="disabled"</text>}><a href="#" class="theme-picker" data-theme="@theme.ToLowerInvariant()">@theme</a></li>
+}
+                    </ul>
+                </li>

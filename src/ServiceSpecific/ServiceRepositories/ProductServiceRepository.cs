@@ -24,12 +24,6 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
-        partial void OnBeforeProductDeleteRequest(IDataAccessAdapter adapter, ProductDeleteRequest request, ProductEntity entity);
-        partial void OnAfterProductDeleteRequest(IDataAccessAdapter adapter, ProductDeleteRequest request, ProductEntity entity, ref bool deleted);
-        partial void OnBeforeProductUpdateRequest(IDataAccessAdapter adapter, ProductUpdateRequest request);
-        partial void OnAfterProductUpdateRequest(IDataAccessAdapter adapter, ProductUpdateRequest request);
-        partial void OnBeforeProductAddRequest(IDataAccessAdapter adapter, ProductAddRequest request);
-        partial void OnAfterProductAddRequest(IDataAccessAdapter adapter, ProductAddRequest request);
         partial void OnBeforeFetchProductPkRequest(IDataAccessAdapter adapter, ProductPkRequest request, ProductEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnAfterFetchProductPkRequest(IDataAccessAdapter adapter, ProductPkRequest request, ProductEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnBeforeFetchProductUcProductNameRequest(IDataAccessAdapter adapter, ProductUcProductNameRequest request, ProductEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
@@ -37,6 +31,14 @@ namespace Northwind.Data.ServiceRepositories
 
         partial void OnBeforeFetchProductQueryCollectionRequest(IDataAccessAdapter adapter, ProductQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
         partial void OnAfterFetchProductQueryCollectionRequest(IDataAccessAdapter adapter, ProductQueryCollectionRequest request, EntityCollection<ProductEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
+        partial void OnBeforeProductDeleteRequest(IDataAccessAdapter adapter, ProductDeleteRequest request, ProductEntity entity);
+        partial void OnAfterProductDeleteRequest(IDataAccessAdapter adapter, ProductDeleteRequest request, ProductEntity entity, ref bool deleted);
+        partial void OnBeforeProductUpdateRequest(IDataAccessAdapter adapter, ProductUpdateRequest request);
+        partial void OnAfterProductUpdateRequest(IDataAccessAdapter adapter, ProductUpdateRequest request);
+        partial void OnBeforeProductAddRequest(IDataAccessAdapter adapter, ProductAddRequest request);
+        partial void OnAfterProductAddRequest(IDataAccessAdapter adapter, ProductAddRequest request);
+
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -61,6 +63,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -110,8 +115,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-ProductQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+ProductFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new ProductQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -130,18 +140,15 @@ ProductQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/categories?filter=categoryid:eq:{2}"">{1} Category</a></div>",
-                            includeCategory ? (item.Category==null?"0":"1"): "",
-                            includeCategory ? "": "",
+                            includeCategory ? (item.Category==null?"0":"1"): "", "",
                             item.CategoryId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/orderdetails?filter=productid:eq:{2}"">{1} Order Details</a></div>",
-                            includeOrderDetails ? item.OrderDetails.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeOrderDetails ? "": "",
+                            includeOrderDetails ? item.OrderDetails.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.ProductId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/suppliers?filter=supplierid:eq:{2}"">{1} Supplier</a></div>",
-                            includeSupplier ? (item.Supplier==null?"0":"1"): "",
-                            includeSupplier ? "": "",
+                            includeSupplier ? (item.Supplier==null?"0":"1"): "", "",
                             item.SupplierId
                         ));
 
@@ -238,12 +245,13 @@ ProductQueryCollectionRequest
 
         public ProductResponse Create(ProductAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeProductAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterProductAddRequest(adapter, request);
@@ -256,13 +264,14 @@ ProductQueryCollectionRequest
 
         public ProductResponse Update(ProductUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeProductUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterProductUpdateRequest(adapter, request);

@@ -1,0 +1,121 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+%>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using ServiceStack.Logging;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.ServiceInterface.ServiceModel;
+using ServiceStack.Text;
+using <%=rootNameSpace%>.Dtos;
+using <%=rootNameSpace%>.ServiceInterfaces;
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalNamespaces", @"//")%>
+
+namespace <%=rootNameSpace%>.Services
+{
+    #region EntityService
+    public partial class EntityService : ServiceBase
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalInterfaces", @"//")%>
+    {
+        public EntityCollectionResponse Get(EntitiesMetaRequest request)
+        {
+            return GetEntitiesResponse();
+        }
+
+        public EntityCollectionResponse Get(EntitiesRequest request)
+        {
+            return GetEntitiesResponse();
+        }
+
+        private EntityCollectionResponse GetEntitiesResponse()
+        {
+            const string cacheKey = "meta-entities";
+            Func<EntityCollectionResponse> funcMethod = GetEntitiesResponseInternal;
+            var response = base.Cache.Get<EntityCollectionResponse>(cacheKey);
+            if (response == null)
+            {
+                response = funcMethod();
+                base.Cache.Set(cacheKey, response, TimeSpan.FromMinutes(2));
+            }
+            return response;
+        }
+        
+        private EntityCollectionResponse GetEntitiesResponseInternal()
+        {
+            var baseUri = base.BaseServiceUri;
+      
+            var entities = new List<Entity>();
+<%foreach(var entity in entities){
+%>            entities.Add(new Entity{ Name="<%=entity.Name%>", MetaLink = GenerateEntityLink(baseUri, "<%=entity.Name%>", "<%=Pluralize(entity.Name).ToLower()%>") });
+<%}%>
+            return new EntityCollectionResponse(entities, 1, entities.Count, entities.Count);
+        }
+
+        private static Link GenerateEntityLink(string baseUri, string entityName, string entityId)
+        {
+            var entityUri = string.Concat(baseUri, "/", entityId);
+            return new Link
+                {
+                    Href = entityUri,
+                    Id = entityId,
+                    Rel = "self",
+                    Type = entityName,
+                    Properties = new Dictionary<string, string>
+                        {
+                            {"MetaUri", string.Concat(entityUri, "/meta")},
+                            {"XmlUri", string.Concat(entityUri, "?format=xml")},
+                            {"JsonUri", string.Concat(entityUri, "?format=json")},
+                        }
+                };
+        }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcAdditionalMethods", @"//")%>        
+
+    }
+    #endregion
+
+    #region Requests
+    [Route("/entities/meta")] // unique constraint filter
+    public partial class EntitiesMetaRequest : IReturn<EntityCollectionResponse>
+    {
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntitiesMetaRequestAdditionalMethods", @"//")%>  
+
+    }
+
+    [Route("/entities")]
+    [DefaultView("Entities")]
+    public partial class EntitiesRequest : IReturn<EntityCollectionResponse>
+    {
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntitiesRequestAdditionalMethods", @"//")%>  
+
+    }
+    #endregion
+
+    #region Responses
+    public partial class EntityResponse : GetResponse<Entity>
+    {
+        public EntityResponse() : base() { }
+        public EntityResponse(Entity entity) : base(entity) { }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntityResponseAdditionalMethods", @"//")%>  
+
+    }
+
+    public partial class EntityCollectionResponse : GetCollectionResponse<Entity>
+    {
+        public EntityCollectionResponse() : base() { }
+        public EntityCollectionResponse(IEnumerable<Entity> collection, int pageNumber, int pageSize, int totalItemCount) :
+            base(collection, pageNumber, pageSize, totalItemCount) { }
+        
+<%=DotNetTemplateEngine.GetUserCodeRegion("SsSvcEntityCollectionResponseAdditionalMethods", @"//")%>  
+
+    }
+    #endregion
+}

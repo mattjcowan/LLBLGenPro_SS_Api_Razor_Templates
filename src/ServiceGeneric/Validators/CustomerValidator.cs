@@ -8,6 +8,8 @@ using ServiceStack.ServiceInterface;
 
 namespace Northwind.Data.Validators
 { 
+    /* Identifying fields:       - CustomerId
+    */
     public partial class CustomerValidator : AbstractValidator<Customer>, IRequiresHttpRequest
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -77,7 +79,7 @@ namespace Northwind.Data.Validators
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                           
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                     
 
     }
 }

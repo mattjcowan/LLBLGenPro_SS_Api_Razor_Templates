@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Order'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                    
     public partial class OrderService : ServiceBase<Order, IOrderServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -32,12 +32,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetOrderQueryCollectionRequest(OrderQueryCollectionRequest request, OrderCollectionResponse response);
         partial void OnBeforeGetOrderPkRequest(OrderPkRequest request);
         partial void OnAfterGetOrderPkRequest(OrderPkRequest request, OrderResponse response);
+
         partial void OnBeforeOrderAddRequest(OrderAddRequest request);
         partial void OnAfterOrderAddRequest(OrderAddRequest request, OrderResponse response);
         partial void OnBeforeOrderUpdateRequest(OrderUpdateRequest request);
         partial void OnAfterOrderUpdateRequest(OrderUpdateRequest request, OrderResponse response);
         partial void OnBeforeOrderDeleteRequest(OrderDeleteRequest request);
         partial void OnAfterOrderDeleteRequest(OrderDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -131,6 +133,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -154,86 +157,87 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: OrderId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: CustomerId
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
         public string bRegex_1 { get; set; }
         public string bSearchable_1 { get; set; }
-        public int iSortCol_2 { get; set; }
+        public int iSortCol_2 { get; set; } //Field: EmployeeId
         public string sSortDir_2 { get; set; }
         public string bSortable_2 { get; set; } 
         public string mDataProp_2 { get; set; } 
         public string bRegex_2 { get; set; }
         public string bSearchable_2 { get; set; }
-        public int iSortCol_3 { get; set; }
+        public int iSortCol_3 { get; set; } //Field: OrderDate
         public string sSortDir_3 { get; set; }
         public string bSortable_3 { get; set; } 
         public string mDataProp_3 { get; set; } 
         public string bRegex_3 { get; set; }
         public string bSearchable_3 { get; set; }
-        public int iSortCol_4 { get; set; }
+        public int iSortCol_4 { get; set; } //Field: RequiredDate
         public string sSortDir_4 { get; set; }
         public string bSortable_4 { get; set; } 
         public string mDataProp_4 { get; set; } 
         public string bRegex_4 { get; set; }
         public string bSearchable_4 { get; set; }
-        public int iSortCol_5 { get; set; }
+        public int iSortCol_5 { get; set; } //Field: ShippedDate
         public string sSortDir_5 { get; set; }
         public string bSortable_5 { get; set; } 
         public string mDataProp_5 { get; set; } 
         public string bRegex_5 { get; set; }
         public string bSearchable_5 { get; set; }
-        public int iSortCol_6 { get; set; }
+        public int iSortCol_6 { get; set; } //Field: ShipVia
         public string sSortDir_6 { get; set; }
         public string bSortable_6 { get; set; } 
         public string mDataProp_6 { get; set; } 
         public string bRegex_6 { get; set; }
         public string bSearchable_6 { get; set; }
-        public int iSortCol_7 { get; set; }
+        public int iSortCol_7 { get; set; } //Field: Freight
         public string sSortDir_7 { get; set; }
         public string bSortable_7 { get; set; } 
         public string mDataProp_7 { get; set; } 
         public string bRegex_7 { get; set; }
         public string bSearchable_7 { get; set; }
-        public int iSortCol_8 { get; set; }
+        public int iSortCol_8 { get; set; } //Field: ShipName
         public string sSortDir_8 { get; set; }
         public string bSortable_8 { get; set; } 
         public string mDataProp_8 { get; set; } 
         public string bRegex_8 { get; set; }
         public string bSearchable_8 { get; set; }
-        public int iSortCol_9 { get; set; }
+        public int iSortCol_9 { get; set; } //Field: ShipAddress
         public string sSortDir_9 { get; set; }
         public string bSortable_9 { get; set; } 
         public string mDataProp_9 { get; set; } 
         public string bRegex_9 { get; set; }
         public string bSearchable_9 { get; set; }
-        public int iSortCol_10 { get; set; }
+        public int iSortCol_10 { get; set; } //Field: ShipCity
         public string sSortDir_10 { get; set; }
         public string bSortable_10 { get; set; } 
         public string mDataProp_10 { get; set; } 
         public string bRegex_10 { get; set; }
         public string bSearchable_10 { get; set; }
-        public int iSortCol_11 { get; set; }
+        public int iSortCol_11 { get; set; } //Field: ShipRegion
         public string sSortDir_11 { get; set; }
         public string bSortable_11 { get; set; } 
         public string mDataProp_11 { get; set; } 
         public string bRegex_11 { get; set; }
         public string bSearchable_11 { get; set; }
-        public int iSortCol_12 { get; set; }
+        public int iSortCol_12 { get; set; } //Field: ShipPostalCode
         public string sSortDir_12 { get; set; }
         public string bSortable_12 { get; set; } 
         public string mDataProp_12 { get; set; } 
         public string bRegex_12 { get; set; }
         public string bSearchable_12 { get; set; }
-        public int iSortCol_13 { get; set; }
+        public int iSortCol_13 { get; set; } //Field: ShipCountry
         public string sSortDir_13 { get; set; }
         public string bSortable_13 { get; set; } 
         public string mDataProp_13 { get; set; } 
@@ -286,7 +290,7 @@ namespace Northwind.Data.Services
         public OrderResponse(Order category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
 
     public partial class OrderCollectionResponse : GetCollectionResponse<Order>
@@ -296,7 +300,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
     #endregion
 }

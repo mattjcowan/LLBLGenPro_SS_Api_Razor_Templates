@@ -1,0 +1,11 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+%>    <link href="/content/bootstrap.min.css" rel="stylesheet">
+    <link href="/content/bootstrap-responsive.min.css" rel="stylesheet">
+    <!--[if lt IE 9] >
+      <script src="/scripts/html5shiv.min.js"></script>
+    <![endif]-->
+    <link href="/css/main.css" rel="stylesheet">

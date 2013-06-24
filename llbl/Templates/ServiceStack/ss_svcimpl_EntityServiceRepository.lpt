@@ -93,6 +93,9 @@ namespace <%=rootNameSpace%>.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -142,6 +145,11 @@ namespace <%=rootNameSpace%>.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
+            var columnFieldIndexNames = Enum.GetNames(typeof(<%=entity.Name%>FieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
             var entities = Fetch(new <%=entity.Name%>QueryCollectionRequest
                 {
                     Filter = filter, 
@@ -177,8 +185,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
   }
   var qsFilter = qsFilterList.Count() == 1 ? qsFilterList.First():  "(^(" + string.Join(")(", qsFilterList.ToArray()) + "))";
 %>                relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/<%=Pluralize(relationshipInfo.RelatedEntity.Name).ToLower()%>?filter=<%=qsFilter%>"">{1} <%=TitleCase(relationshipInfo.Navigator)%></a></div>",
-                            include<%=relationshipInfo.Navigator%> ? <%if(relationshipInfo.RelationshipType == EntityRelationshipType.OneToOne || relationshipInfo.RelationshipType == EntityRelationshipType.ManyToOne){%>(item.<%=relationshipInfo.Navigator%>==null?"0":"1")<%}else{%>item.<%=relationshipInfo.Navigator%>.Count.ToString(CultureInfo.InvariantCulture)<%}%>: "",
-                            include<%=relationshipInfo.Navigator%> ? "": "",
+                            include<%=relationshipInfo.Navigator%> ? <%if(relationshipInfo.RelationshipType == EntityRelationshipType.OneToOne || relationshipInfo.RelationshipType == EntityRelationshipType.ManyToOne){%>(item.<%=relationshipInfo.Navigator%>==null?"0":"1")<%}else{%>item.<%=relationshipInfo.Navigator%>.Count.ToString(CultureInfo.InvariantCulture)<%}%>: "", "",
 <%    for(var z=0;z<fieldPairs.Count();z++){
 %>                            item.<%=fieldPairs.ElementAt(z).Value1.Name%><%if(z<fieldPairs.Count()-1){%>,<%}%>
 <%    }%>                        ));
@@ -190,7 +197,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
     string dotNetFieldTypeName = MJC_SS_GeneralMethods.ProduceDotNetTypeName(field, _executingGenerator, "Nullable<{0}>");
     var isOfStringType = dotNetFieldTypeName.IndexOf("string", 0, StringComparison.InvariantCultureIgnoreCase)>=0;
     if(IsFieldBinary(field)) {
-%>                        string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.<%=field.Name%>.ToImageSrc(null, 160)),<%
+%>                        (item.<%=field.Name%> == null ? null: string.Format("<ul class=\"thumbnails\"><li class=\"span12\"><div class=\"thumbnail\">{0}</div></li></ul>", item.<%=field.Name%>.ToImageSrc(null, 160))),<%
     } else {
 %>                        item.<%=field.Name%><%if(!isOfStringType){%>.ToString()<%}%>,
 <%

@@ -163,3 +163,5 @@ pip-log.txt
 
 /cligenerate.bat
 /cligenerate.log
+src_v4_experimental
+/src/Hosts/WebHost

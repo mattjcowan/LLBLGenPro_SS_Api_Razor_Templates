@@ -19,7 +19,7 @@ namespace Northwind.Data.Services.TypedListServices
     #region Service
     /// <summary>Service class for the typed list 'EmployeesByRegionAndTerritory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                             
+	// __LLBLGENPRO_USER_CODE_REGION_END            
     public partial class EmployeesByRegionAndTerritoryTypedListService : TypedListServiceBase<EmployeesByRegionAndTerritory, IEmployeesByRegionAndTerritoryTypedListServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -168,7 +168,7 @@ namespace Northwind.Data.Services.TypedListServices
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedListCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                         
+	// __LLBLGENPRO_USER_CODE_REGION_END                       
     }
     #endregion
 }

@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Employee'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                    
     public partial class EmployeeService : ServiceBase<Employee, IEmployeeServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -32,12 +32,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetEmployeeQueryCollectionRequest(EmployeeQueryCollectionRequest request, EmployeeCollectionResponse response);
         partial void OnBeforeGetEmployeePkRequest(EmployeePkRequest request);
         partial void OnAfterGetEmployeePkRequest(EmployeePkRequest request, EmployeeResponse response);
+
         partial void OnBeforeEmployeeAddRequest(EmployeeAddRequest request);
         partial void OnAfterEmployeeAddRequest(EmployeeAddRequest request, EmployeeResponse response);
         partial void OnBeforeEmployeeUpdateRequest(EmployeeUpdateRequest request);
         partial void OnAfterEmployeeUpdateRequest(EmployeeUpdateRequest request, EmployeeResponse response);
         partial void OnBeforeEmployeeDeleteRequest(EmployeeDeleteRequest request);
         partial void OnAfterEmployeeDeleteRequest(EmployeeDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -155,6 +157,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -178,110 +181,111 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: EmployeeId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: LastName
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
         public string bRegex_1 { get; set; }
         public string bSearchable_1 { get; set; }
-        public int iSortCol_2 { get; set; }
+        public int iSortCol_2 { get; set; } //Field: FirstName
         public string sSortDir_2 { get; set; }
         public string bSortable_2 { get; set; } 
         public string mDataProp_2 { get; set; } 
         public string bRegex_2 { get; set; }
         public string bSearchable_2 { get; set; }
-        public int iSortCol_3 { get; set; }
+        public int iSortCol_3 { get; set; } //Field: Title
         public string sSortDir_3 { get; set; }
         public string bSortable_3 { get; set; } 
         public string mDataProp_3 { get; set; } 
         public string bRegex_3 { get; set; }
         public string bSearchable_3 { get; set; }
-        public int iSortCol_4 { get; set; }
+        public int iSortCol_4 { get; set; } //Field: TitleOfCourtesy
         public string sSortDir_4 { get; set; }
         public string bSortable_4 { get; set; } 
         public string mDataProp_4 { get; set; } 
         public string bRegex_4 { get; set; }
         public string bSearchable_4 { get; set; }
-        public int iSortCol_5 { get; set; }
+        public int iSortCol_5 { get; set; } //Field: BirthDate
         public string sSortDir_5 { get; set; }
         public string bSortable_5 { get; set; } 
         public string mDataProp_5 { get; set; } 
         public string bRegex_5 { get; set; }
         public string bSearchable_5 { get; set; }
-        public int iSortCol_6 { get; set; }
+        public int iSortCol_6 { get; set; } //Field: HireDate
         public string sSortDir_6 { get; set; }
         public string bSortable_6 { get; set; } 
         public string mDataProp_6 { get; set; } 
         public string bRegex_6 { get; set; }
         public string bSearchable_6 { get; set; }
-        public int iSortCol_7 { get; set; }
+        public int iSortCol_7 { get; set; } //Field: Address
         public string sSortDir_7 { get; set; }
         public string bSortable_7 { get; set; } 
         public string mDataProp_7 { get; set; } 
         public string bRegex_7 { get; set; }
         public string bSearchable_7 { get; set; }
-        public int iSortCol_8 { get; set; }
+        public int iSortCol_8 { get; set; } //Field: City
         public string sSortDir_8 { get; set; }
         public string bSortable_8 { get; set; } 
         public string mDataProp_8 { get; set; } 
         public string bRegex_8 { get; set; }
         public string bSearchable_8 { get; set; }
-        public int iSortCol_9 { get; set; }
+        public int iSortCol_9 { get; set; } //Field: Region
         public string sSortDir_9 { get; set; }
         public string bSortable_9 { get; set; } 
         public string mDataProp_9 { get; set; } 
         public string bRegex_9 { get; set; }
         public string bSearchable_9 { get; set; }
-        public int iSortCol_10 { get; set; }
+        public int iSortCol_10 { get; set; } //Field: PostalCode
         public string sSortDir_10 { get; set; }
         public string bSortable_10 { get; set; } 
         public string mDataProp_10 { get; set; } 
         public string bRegex_10 { get; set; }
         public string bSearchable_10 { get; set; }
-        public int iSortCol_11 { get; set; }
+        public int iSortCol_11 { get; set; } //Field: Country
         public string sSortDir_11 { get; set; }
         public string bSortable_11 { get; set; } 
         public string mDataProp_11 { get; set; } 
         public string bRegex_11 { get; set; }
         public string bSearchable_11 { get; set; }
-        public int iSortCol_12 { get; set; }
+        public int iSortCol_12 { get; set; } //Field: HomePhone
         public string sSortDir_12 { get; set; }
         public string bSortable_12 { get; set; } 
         public string mDataProp_12 { get; set; } 
         public string bRegex_12 { get; set; }
         public string bSearchable_12 { get; set; }
-        public int iSortCol_13 { get; set; }
+        public int iSortCol_13 { get; set; } //Field: Extension
         public string sSortDir_13 { get; set; }
         public string bSortable_13 { get; set; } 
         public string mDataProp_13 { get; set; } 
         public string bRegex_13 { get; set; }
         public string bSearchable_13 { get; set; }
-        public int iSortCol_14 { get; set; }
+        public int iSortCol_14 { get; set; } //Field: Photo
         public string sSortDir_14 { get; set; }
         public string bSortable_14 { get; set; } 
         public string mDataProp_14 { get; set; } 
         public string bRegex_14 { get; set; }
         public string bSearchable_14 { get; set; }
-        public int iSortCol_15 { get; set; }
+        public int iSortCol_15 { get; set; } //Field: Notes
         public string sSortDir_15 { get; set; }
         public string bSortable_15 { get; set; } 
         public string mDataProp_15 { get; set; } 
         public string bRegex_15 { get; set; }
         public string bSearchable_15 { get; set; }
-        public int iSortCol_16 { get; set; }
+        public int iSortCol_16 { get; set; } //Field: ReportsToId
         public string sSortDir_16 { get; set; }
         public string bSortable_16 { get; set; } 
         public string mDataProp_16 { get; set; } 
         public string bRegex_16 { get; set; }
         public string bSearchable_16 { get; set; }
-        public int iSortCol_17 { get; set; }
+        public int iSortCol_17 { get; set; } //Field: PhotoPath
         public string sSortDir_17 { get; set; }
         public string bSortable_17 { get; set; } 
         public string mDataProp_17 { get; set; } 
@@ -336,7 +340,7 @@ namespace Northwind.Data.Services
         public EmployeeResponse(Employee category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
 
     public partial class EmployeeCollectionResponse : GetCollectionResponse<Employee>
@@ -346,7 +350,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
     #endregion
 }

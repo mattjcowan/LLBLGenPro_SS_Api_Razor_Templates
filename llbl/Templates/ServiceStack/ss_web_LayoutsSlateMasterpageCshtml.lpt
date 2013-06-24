@@ -1,0 +1,72 @@
+<# MJC_SS_GeneralMethods #><%
+  var currentProject = _executingGenerator.ProjectDefinition;
+  var rootNameSpace = _executingGenerator.RootNamespaceToUse;
+  //-- Multi entity template --
+  var entities = _executingGenerator.Entities;
+%>@using System
+@{
+    var blogUrl = System.Configuration.ConfigurationManager.AppSettings["BlogUrl"];
+}<!DOCTYPE html>
+<html lang="en">  
+  <head>
+    <meta charset="utf-8">
+    <title><%=rootNameSpace%> - @ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="A code-generated demo REST api and HTML site, generated using LLBLGen Pro, using the ServiceStack framework">
+    <meta name="author" content="Matt Cowan (MJC)">
+    <link href="/content/bootswatch/slate/bootstrap.min.css" rel="stylesheet">
+    <link href="/content/bootswatch/slate/bootstrap-responsive.min.css" rel="stylesheet">
+    <!--[if lt IE 9] >
+      <script src="/scripts/html5shiv.min.js"></script>
+    <![endif]-->
+    <link href="/css/main.css" rel="stylesheet">
+    @RenderSection("Header", false)
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="/"><%=rootNameSpace%></a>
+            <ul class="nav">
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li>
+                <a href="@blogUrl" target="_blank">Learn more</a>
+            </li>
+            <li>
+                <a href="/entities">Browse</a>
+            </li>
+            </ul>
+            <ul class="nav pull-right">
+                <li class="divider-vertical"></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">Themes <strong class="caret"></strong></a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li><a href="#" class="theme-picker" data-theme="Default">Default</a></li>
+@foreach (var theme in ServiceStack.Configuration.ConfigUtils.GetAppSetting("AdditionalThemes", "").Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries))
+{
+                        <li @if (theme.Equals("slate", StringComparison.InvariantCultureIgnoreCase)){<text> class="disabled"</text>}><a href="#" class="theme-picker" data-theme="@theme.ToLowerInvariant()">@theme</a></li>
+}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+      </div>
+    </div>
+      <div class="container">
+
+    @RenderBody()
+
+      <hr>
+      <div>
+        <a href="@blogUrl" target="_blank">About this site</a> |
+        Site and API 100% auto-generated using <a href="http://www.llblgen.com" target="_blank">LLBLGen Pro</a> and <a href="http://www.servicestack.net" target="_blank">ServiceStack</a>
+      </div>
+    </div>
+    @Html.Partial("_FooterScripts")
+    @RenderSection("Footer", false)
+    @Html.Partial("_Analytics")
+  </body>
+</html>

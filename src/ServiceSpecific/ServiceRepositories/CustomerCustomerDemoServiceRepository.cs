@@ -24,17 +24,19 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
+        partial void OnBeforeFetchCustomerCustomerDemoPkRequest(IDataAccessAdapter adapter, CustomerCustomerDemoPkRequest request, CustomerCustomerDemoEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchCustomerCustomerDemoPkRequest(IDataAccessAdapter adapter, CustomerCustomerDemoPkRequest request, CustomerCustomerDemoEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchCustomerCustomerDemoQueryCollectionRequest(IDataAccessAdapter adapter, CustomerCustomerDemoQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchCustomerCustomerDemoQueryCollectionRequest(IDataAccessAdapter adapter, CustomerCustomerDemoQueryCollectionRequest request, EntityCollection<CustomerCustomerDemoEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
         partial void OnBeforeCustomerCustomerDemoDeleteRequest(IDataAccessAdapter adapter, CustomerCustomerDemoDeleteRequest request, CustomerCustomerDemoEntity entity);
         partial void OnAfterCustomerCustomerDemoDeleteRequest(IDataAccessAdapter adapter, CustomerCustomerDemoDeleteRequest request, CustomerCustomerDemoEntity entity, ref bool deleted);
         partial void OnBeforeCustomerCustomerDemoUpdateRequest(IDataAccessAdapter adapter, CustomerCustomerDemoUpdateRequest request);
         partial void OnAfterCustomerCustomerDemoUpdateRequest(IDataAccessAdapter adapter, CustomerCustomerDemoUpdateRequest request);
         partial void OnBeforeCustomerCustomerDemoAddRequest(IDataAccessAdapter adapter, CustomerCustomerDemoAddRequest request);
         partial void OnAfterCustomerCustomerDemoAddRequest(IDataAccessAdapter adapter, CustomerCustomerDemoAddRequest request);
-        partial void OnBeforeFetchCustomerCustomerDemoPkRequest(IDataAccessAdapter adapter, CustomerCustomerDemoPkRequest request, CustomerCustomerDemoEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
-        partial void OnAfterFetchCustomerCustomerDemoPkRequest(IDataAccessAdapter adapter, CustomerCustomerDemoPkRequest request, CustomerCustomerDemoEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
 
-        partial void OnBeforeFetchCustomerCustomerDemoQueryCollectionRequest(IDataAccessAdapter adapter, CustomerCustomerDemoQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
-        partial void OnAfterFetchCustomerCustomerDemoQueryCollectionRequest(IDataAccessAdapter adapter, CustomerCustomerDemoQueryCollectionRequest request, EntityCollection<CustomerCustomerDemoEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -59,6 +61,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -108,8 +113,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-CustomerCustomerDemoQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+CustomerCustomerDemoFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new CustomerCustomerDemoQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -127,13 +137,11 @@ CustomerCustomerDemoQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/customers?filter=customerid:eq:{2}"">{1} Customer</a></div>",
-                            includeCustomer ? (item.Customer==null?"0":"1"): "",
-                            includeCustomer ? "": "",
+                            includeCustomer ? (item.Customer==null?"0":"1"): "", "",
                             item.CustomerId
                         ));
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/customerdemographics?filter=customertypeid:eq:{2}"">{1} Customer Demographic</a></div>",
-                            includeCustomerDemographic ? (item.CustomerDemographic==null?"0":"1"): "",
-                            includeCustomerDemographic ? "": "",
+                            includeCustomerDemographic ? (item.CustomerDemographic==null?"0":"1"): "", "",
                             item.CustomerTypeId
                         ));
 
@@ -202,12 +210,13 @@ CustomerCustomerDemoQueryCollectionRequest
 
         public CustomerCustomerDemoResponse Create(CustomerCustomerDemoAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeCustomerCustomerDemoAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterCustomerCustomerDemoAddRequest(adapter, request);
@@ -220,13 +229,14 @@ CustomerCustomerDemoQueryCollectionRequest
 
         public CustomerCustomerDemoResponse Update(CustomerCustomerDemoUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeCustomerCustomerDemoUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterCustomerCustomerDemoUpdateRequest(adapter, request);

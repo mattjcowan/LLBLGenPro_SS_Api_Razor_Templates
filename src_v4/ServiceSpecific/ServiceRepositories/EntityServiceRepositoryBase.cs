@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SD.LLBLGen.Pro.ORMSupportClasses;
+using SD.LLBLGen.Pro.QuerySpec;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 using ServiceStack.CacheAccess;
 using ServiceStack.ServiceHost;
 using ServiceStack.Text;
@@ -245,26 +247,63 @@ namespace Northwind.Data.ServiceRepositories
             return metaDetails;
         }
 
-        internal EntityCollection<TEntity> Fetch(IDataAccessAdapter adapter, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields,
-            IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber,
+        internal EntityCollection<TEntity> Fetch(IDataAccessAdapter adapter, SortExpression sortExpression,
+                                                 ExcludeIncludeFieldsList excludedIncludedFields,
+                                                 IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket,
+                                                 int pageNumber,
                                                  int pageSize, int limit, out int totalItemCount)
         {
+            return Fetch(adapter, sortExpression, excludedIncludedFields, prefetchPath, predicateBucket, pageNumber,
+                         pageSize, limit, 0, out totalItemCount);
+        }
+
+        internal EntityCollection<TEntity> Fetch(IDataAccessAdapter adapter, SortExpression sortExpression,
+                                                 ExcludeIncludeFieldsList excludedIncludedFields,
+                                                 IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket,
+                                                 int pageNumber,
+                                                 int pageSize, int limit, int cacheTimeInSeconds,
+                                                 out int totalItemCount)
+        {
+            var qf = new QueryFactory();
+            var q = qf.Create().Select(qf.Create<TEntity>().Where(predicateBucket.PredicateExpression).CountRow());
+
+            if (cacheTimeInSeconds > 0)
+                q = q.CacheResultset(cacheTimeInSeconds);
+
+            totalItemCount = adapter.FetchScalar<int>(q);
+
             var entities = new EntityCollection<TEntity>(new TEntityFactory());
-            totalItemCount = adapter.GetDbCount(entities, predicateBucket);
-            if (limit > 0)
-            {
-                adapter.FetchEntityCollection(entities, predicateBucket, limit,
-                                              sortExpression, prefetchPath,
-                                              excludedIncludedFields);
-            }
-            else
-            {
-                adapter.FetchEntityCollection(entities, predicateBucket, 0,
-                                              sortExpression, prefetchPath,
-                                              excludedIncludedFields, pageNumber, pageSize);
-            }
+            var parameters = new QueryParameters
+                {
+                    CollectionToFetch = entities,
+                    FilterToUse = predicateBucket.PredicateExpression,
+                    RelationsToUse = predicateBucket.Relations,
+                    SorterToUse = sortExpression,
+                    ExcludedIncludedFields = excludedIncludedFields,
+                    PrefetchPathToUse = prefetchPath,
+                    CacheResultset = cacheTimeInSeconds > 0,
+                    CacheDuration = cacheTimeInSeconds > 0
+                                ? TimeSpan.FromSeconds(cacheTimeInSeconds)
+                                : TimeSpan.Zero,
+                    RowsToTake = limit > 0 ? limit : pageSize,
+                    RowsToSkip = limit > 0 ? 0 : pageSize*(pageNumber - 1)
+                };
+            adapter.FetchEntityCollection(parameters);
+
             return entities;
-        }      
+        }
+
+        internal TEntity Fetch(IDataAccessAdapter adapter, IPredicate predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields, int cacheTimeInSeconds)
+        {
+            var qf = new QueryFactory();
+            var q = qf.Create<TEntity>().Where(predicate);
+
+            if(cacheTimeInSeconds > 0)
+                q = q.CacheResultset(cacheTimeInSeconds);
+
+            var results = adapter.FetchQuery(q);
+            return (TEntity)(results[0]);
+        }
 
         internal void FixupLimitAndPagingOnRequest(GetCollectionRequest request)
         {
@@ -278,4 +317,3 @@ namespace Northwind.Data.ServiceRepositories
         #endregion
     }
 }
-

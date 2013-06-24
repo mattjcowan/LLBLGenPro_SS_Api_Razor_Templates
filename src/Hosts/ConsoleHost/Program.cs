@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using SD.LLBLGen.Pro.ORMSupportClasses;
 using ServiceStack.CacheAccess;
 using ServiceStack.CacheAccess.Providers;
 using ServiceStack.Common;
@@ -13,22 +14,23 @@ using ServiceStack.Logging;
 using ServiceStack.Logging.Support.Logging;
 using ServiceStack.OrmLite;
 using ServiceStack.OrmLite.SqlServer;
-using ServiceStack.Razor;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.ServiceInterface.Auth;
 using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
-using SD.LLBLGen.Pro.ORMSupportClasses;
 using Northwind.Data;
 using Northwind.Data.DatabaseSpecific;
 using Northwind.Data.Dtos;
+using Northwind.Data.Razor;
 using Northwind.Data.ServiceInterfaces;
-using TLSI = Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces;
-using TVSI = Northwind.Data.ServiceInterfaces.TypedViewServiceInterfaces;
 using Northwind.Data.ServiceRepositories;
+
+using TLSI = Northwind.Data.ServiceInterfaces.TypedListServiceInterfaces;
 using TLSR = Northwind.Data.ServiceRepositories.TypedListServiceRepositories;
+
+using TVSI = Northwind.Data.ServiceInterfaces.TypedViewServiceInterfaces;
 using TVSR = Northwind.Data.ServiceRepositories.TypedViewServiceRepositories;
 
 namespace Northwind.Data.ConsoleHost
@@ -65,7 +67,7 @@ namespace Northwind.Data.ConsoleHost
     // for more detailed information on the various options you can set for hosting the API.
     class ConsoleAppHost : AppHostHttpListenerBase
     {
-        public ConsoleAppHost() : base("Northwind.Data API (updated on 5/11/2013 6:40:48 PM)", typeof(CommonDtoBase).Assembly) { }
+        public ConsoleAppHost() : base("Northwind.Data API (updated on 6/24/2013 1:03:32 AM)", typeof(CommonDtoBase).Assembly) { }
 
         // THIS IS TO SIMULATE AUTHENTICATION
         private const string UserName = "admin";
@@ -88,7 +90,8 @@ namespace Northwind.Data.ConsoleHost
                     DebugMode = true,
                     EnableFeatures = Feature.All.Remove(GetDisabledFeatures()),
                     CustomHttpHandlers = {
-                        { HttpStatusCode.NotFound, new RazorHandler("/notfound") }
+                        // Use the CmsRazorHandler to add theming capabilities
+                        { HttpStatusCode.NotFound, new CmsRazorHandler("/notfound") }
                     }
                 });
 
@@ -103,10 +106,10 @@ namespace Northwind.Data.ConsoleHost
 
             //Enable the validation feature and scan the service assembly for validators
             Plugins.Add(new ValidationFeature());
-            container.RegisterValidators(typeof(Northwind.Data.Services.CategoryService).Assembly);
+            container.RegisterValidators(typeof(Services.CategoryService).Assembly);
 
-            //Razor
-            Plugins.Add(new RazorFormat());
+            //Razor (use CmsRazorFormat to add theming capabilities)
+            Plugins.Add(new CmsRazorFormat());
 
             //Caching
             container.Register<ICacheClient>(new MemoryCacheClient());
@@ -151,6 +154,9 @@ namespace Northwind.Data.ConsoleHost
             var connectionString = ConfigurationManager.ConnectionStrings["ApiDbConnectionString"].ConnectionString;
             container.Register<IDataAccessAdapterFactory>(c => new DataAccessAdapterFactory(connectionString));
             container.Register<IDbConnectionFactory>(c => new OrmLiteConnectionFactory(connectionString, true, new SqlServerOrmLiteDialectProvider()));
+
+            //DataAccess Caching (only for LLBLGen V4)
+            //CacheController.RegisterCache(string.Empty /* connectionString */, new ResultsetCache(5*60 /* will purge the cache every 5 minutes */)); 
         }
 
         private static void CreateUser(IUserAuthRepository repository, int id, string username, string displayName, string email, string password)

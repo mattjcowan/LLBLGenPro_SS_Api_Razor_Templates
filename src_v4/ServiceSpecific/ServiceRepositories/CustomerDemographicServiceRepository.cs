@@ -24,17 +24,19 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
+        partial void OnBeforeFetchCustomerDemographicPkRequest(IDataAccessAdapter adapter, CustomerDemographicPkRequest request, CustomerDemographicEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+        partial void OnAfterFetchCustomerDemographicPkRequest(IDataAccessAdapter adapter, CustomerDemographicPkRequest request, CustomerDemographicEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
+
+        partial void OnBeforeFetchCustomerDemographicQueryCollectionRequest(IDataAccessAdapter adapter, CustomerDemographicQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
+        partial void OnAfterFetchCustomerDemographicQueryCollectionRequest(IDataAccessAdapter adapter, CustomerDemographicQueryCollectionRequest request, EntityCollection<CustomerDemographicEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
         partial void OnBeforeCustomerDemographicDeleteRequest(IDataAccessAdapter adapter, CustomerDemographicDeleteRequest request, CustomerDemographicEntity entity);
         partial void OnAfterCustomerDemographicDeleteRequest(IDataAccessAdapter adapter, CustomerDemographicDeleteRequest request, CustomerDemographicEntity entity, ref bool deleted);
         partial void OnBeforeCustomerDemographicUpdateRequest(IDataAccessAdapter adapter, CustomerDemographicUpdateRequest request);
         partial void OnAfterCustomerDemographicUpdateRequest(IDataAccessAdapter adapter, CustomerDemographicUpdateRequest request);
         partial void OnBeforeCustomerDemographicAddRequest(IDataAccessAdapter adapter, CustomerDemographicAddRequest request);
         partial void OnAfterCustomerDemographicAddRequest(IDataAccessAdapter adapter, CustomerDemographicAddRequest request);
-        partial void OnBeforeFetchCustomerDemographicPkRequest(IDataAccessAdapter adapter, CustomerDemographicPkRequest request, CustomerDemographicEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
-        partial void OnAfterFetchCustomerDemographicPkRequest(IDataAccessAdapter adapter, CustomerDemographicPkRequest request, CustomerDemographicEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
 
-        partial void OnBeforeFetchCustomerDemographicQueryCollectionRequest(IDataAccessAdapter adapter, CustomerDemographicQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
-        partial void OnAfterFetchCustomerDemographicQueryCollectionRequest(IDataAccessAdapter adapter, CustomerDemographicQueryCollectionRequest request, EntityCollection<CustomerDemographicEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -59,6 +61,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -108,8 +113,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-CustomerDemographicQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+CustomerDemographicFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new CustomerDemographicQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -118,6 +128,7 @@ CustomerDemographicQueryCollectionRequest
                     Include = request.Include,
                     Relations = request.Relations,
                     Select = request.Select,
+                    RCache = request.RCache
                 });
             var response = new DataTableResponse();
             var includeCustomerCustomerDemos = ((request.Include ?? "").IndexOf("customercustomerdemos", StringComparison.InvariantCultureIgnoreCase)) >= 0;
@@ -126,8 +137,7 @@ CustomerDemographicQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/customercustomerdemos?filter=customertypeid:eq:{2}"">{1} Customer Customer Demos</a></div>",
-                            includeCustomerCustomerDemos ? item.CustomerCustomerDemos.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeCustomerCustomerDemos ? "": "",
+                            includeCustomerCustomerDemos ? item.CustomerCustomerDemos.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.CustomerTypeId
                         ));
 
@@ -163,7 +173,7 @@ CustomerDemographicQueryCollectionRequest
                 OnBeforeFetchCustomerDemographicQueryCollectionRequest(adapter, request, sortExpression, includeFields, prefetchPath, predicateBucket,
                     request.PageNumber, request.PageSize, request.Limit);
                 entities = base.Fetch(adapter, sortExpression, includeFields, prefetchPath, predicateBucket,
-                    request.PageNumber, request.PageSize, request.Limit, out totalItemCount);
+                    request.PageNumber, request.PageSize, request.Limit, request.RCache, out totalItemCount);
                 OnAfterFetchCustomerDemographicQueryCollectionRequest(adapter, request, entities, sortExpression, includeFields, prefetchPath, predicateBucket,
                     request.PageNumber, request.PageSize, request.Limit, totalItemCount);
             }
@@ -184,7 +194,10 @@ CustomerDemographicQueryCollectionRequest
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeFetchCustomerDemographicPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
-                if (adapter.FetchEntity(entity, prefetchPath, null, excludedIncludedFields))
+
+                var pkPredicate = adapter.CreatePrimaryKeyFilter(entity.Fields.PrimaryKeyFields);
+                entity = base.Fetch(adapter, pkPredicate, prefetchPath, excludedIncludedFields, request.RCache);
+                if (entity != null)
                 {
                     OnAfterFetchCustomerDemographicPkRequest(adapter, request, entity, prefetchPath, excludedIncludedFields);
                     return new CustomerDemographicResponse(entity.ToDto());
@@ -195,12 +208,13 @@ CustomerDemographicQueryCollectionRequest
 
         public CustomerDemographicResponse Create(CustomerDemographicAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeCustomerDemographicAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterCustomerDemographicAddRequest(adapter, request);
@@ -213,13 +227,14 @@ CustomerDemographicQueryCollectionRequest
 
         public CustomerDemographicResponse Update(CustomerDemographicUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeCustomerDemographicUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterCustomerDemographicUpdateRequest(adapter, request);

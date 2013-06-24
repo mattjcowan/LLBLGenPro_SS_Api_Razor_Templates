@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'Territory'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                       
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                    
     public partial class TerritoryService : ServiceBase<Territory, ITerritoryServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -32,12 +32,14 @@ namespace Northwind.Data.Services
         partial void OnAfterGetTerritoryQueryCollectionRequest(TerritoryQueryCollectionRequest request, TerritoryCollectionResponse response);
         partial void OnBeforeGetTerritoryPkRequest(TerritoryPkRequest request);
         partial void OnAfterGetTerritoryPkRequest(TerritoryPkRequest request, TerritoryResponse response);
+
         partial void OnBeforeTerritoryAddRequest(TerritoryAddRequest request);
         partial void OnAfterTerritoryAddRequest(TerritoryAddRequest request, TerritoryResponse response);
         partial void OnBeforeTerritoryUpdateRequest(TerritoryUpdateRequest request);
         partial void OnAfterTerritoryUpdateRequest(TerritoryUpdateRequest request, TerritoryResponse response);
         partial void OnBeforeTerritoryDeleteRequest(TerritoryDeleteRequest request);
         partial void OnAfterTerritoryDeleteRequest(TerritoryDeleteRequest request, SimpleResponse<bool> deleted);
+
         #endregion
     
         
@@ -131,6 +133,7 @@ namespace Northwind.Data.Services
             return output;
         }
 
+
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
 
@@ -154,20 +157,21 @@ namespace Northwind.Data.Services
         public int iSortingCols { get; set; }
         public string sEcho { get; set; }
         public string bRegex { get; set; }
+        public int[] iSelectColumns { get; set; }
 
-        public int iSortCol_0 { get; set; }
+        public int iSortCol_0 { get; set; } //Field: TerritoryId
         public string sSortDir_0 { get; set; }
         public string bSortable_0 { get; set; } 
         public string mDataProp_0 { get; set; } 
         public string bRegex_0 { get; set; }
         public string bSearchable_0 { get; set; }
-        public int iSortCol_1 { get; set; }
+        public int iSortCol_1 { get; set; } //Field: TerritoryDescription
         public string sSortDir_1 { get; set; }
         public string bSortable_1 { get; set; } 
         public string mDataProp_1 { get; set; } 
         public string bRegex_1 { get; set; }
         public string bSearchable_1 { get; set; }
-        public int iSortCol_2 { get; set; }
+        public int iSortCol_2 { get; set; } //Field: RegionId
         public string sSortDir_2 { get; set; }
         public string bSortable_2 { get; set; } 
         public string mDataProp_2 { get; set; } 
@@ -220,7 +224,7 @@ namespace Northwind.Data.Services
         public TerritoryResponse(Territory category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
 
     public partial class TerritoryCollectionResponse : GetCollectionResponse<Territory>
@@ -230,7 +234,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                       
     }
     #endregion
 }

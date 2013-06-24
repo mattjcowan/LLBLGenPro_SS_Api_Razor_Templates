@@ -24,12 +24,6 @@ namespace Northwind.Data.ServiceRepositories
     {
         #region Class Extensibility Methods
         partial void OnCreateRepository();
-        partial void OnBeforeRegionDeleteRequest(IDataAccessAdapter adapter, RegionDeleteRequest request, RegionEntity entity);
-        partial void OnAfterRegionDeleteRequest(IDataAccessAdapter adapter, RegionDeleteRequest request, RegionEntity entity, ref bool deleted);
-        partial void OnBeforeRegionUpdateRequest(IDataAccessAdapter adapter, RegionUpdateRequest request);
-        partial void OnAfterRegionUpdateRequest(IDataAccessAdapter adapter, RegionUpdateRequest request);
-        partial void OnBeforeRegionAddRequest(IDataAccessAdapter adapter, RegionAddRequest request);
-        partial void OnAfterRegionAddRequest(IDataAccessAdapter adapter, RegionAddRequest request);
         partial void OnBeforeFetchRegionPkRequest(IDataAccessAdapter adapter, RegionPkRequest request, RegionEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnAfterFetchRegionPkRequest(IDataAccessAdapter adapter, RegionPkRequest request, RegionEntity entity, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
         partial void OnBeforeFetchRegionUcRegionDescriptionRequest(IDataAccessAdapter adapter, RegionUcRegionDescriptionRequest request, RegionEntity entity, IPredicateExpression predicate, IPrefetchPath2 prefetchPath, ExcludeIncludeFieldsList excludedIncludedFields);
@@ -37,6 +31,14 @@ namespace Northwind.Data.ServiceRepositories
 
         partial void OnBeforeFetchRegionQueryCollectionRequest(IDataAccessAdapter adapter, RegionQueryCollectionRequest request, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit);
         partial void OnAfterFetchRegionQueryCollectionRequest(IDataAccessAdapter adapter, RegionQueryCollectionRequest request, EntityCollection<RegionEntity> entities, SortExpression sortExpression, ExcludeIncludeFieldsList excludedIncludedFields, IPrefetchPath2 prefetchPath, IRelationPredicateBucket predicateBucket, int pageNumber, int pageSize, int limit, int totalItemCount);
+
+        partial void OnBeforeRegionDeleteRequest(IDataAccessAdapter adapter, RegionDeleteRequest request, RegionEntity entity);
+        partial void OnAfterRegionDeleteRequest(IDataAccessAdapter adapter, RegionDeleteRequest request, RegionEntity entity, ref bool deleted);
+        partial void OnBeforeRegionUpdateRequest(IDataAccessAdapter adapter, RegionUpdateRequest request);
+        partial void OnAfterRegionUpdateRequest(IDataAccessAdapter adapter, RegionUpdateRequest request);
+        partial void OnBeforeRegionAddRequest(IDataAccessAdapter adapter, RegionAddRequest request);
+        partial void OnAfterRegionAddRequest(IDataAccessAdapter adapter, RegionAddRequest request);
+
         #endregion
         
         public override IDataAccessAdapterFactory DataAccessAdapterFactory { get; set; }
@@ -61,6 +63,9 @@ namespace Northwind.Data.ServiceRepositories
             request.Filter = System.Web.HttpUtility.UrlDecode(request.Filter);
             request.Relations = System.Web.HttpUtility.UrlDecode(request.Relations);
             request.Select = System.Web.HttpUtility.UrlDecode(request.Select);
+            
+            //Selection
+            var iSelectColumns = request.iSelectColumns;
 
             //Paging
             var iDisplayStart = request.iDisplayStart + 1; // this is because it passes in the 0 instead of 1, 10 instead of 11, etc...
@@ -110,8 +115,13 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-RegionQueryCollectionRequest
+            var columnFieldIndexNames = Enum.GetNames(typeof(
+RegionFieldIndex));
+            if(iSelectColumns != null && iSelectColumns.Length > 0){
+                try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
+            }
+                
+            var entities = Fetch(new RegionQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),
@@ -128,8 +138,7 @@ RegionQueryCollectionRequest
             {
                 var relatedDivs = new List<string>();
                 relatedDivs.Add(string.Format(@"<div style=""display:block;""><span class=""badge badge-info"">{0}</span><a href=""/territories?filter=regionid:eq:{2}"">{1} Territories</a></div>",
-                            includeTerritories ? item.Territories.Count.ToString(CultureInfo.InvariantCulture): "",
-                            includeTerritories ? "": "",
+                            includeTerritories ? item.Territories.Count.ToString(CultureInfo.InvariantCulture): "", "",
                             item.RegionId
                         ));
 
@@ -218,12 +227,13 @@ RegionQueryCollectionRequest
 
         public RegionResponse Create(RegionAddRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeRegionAddRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterRegionAddRequest(adapter, request);
@@ -236,13 +246,14 @@ RegionQueryCollectionRequest
 
         public RegionResponse Update(RegionUpdateRequest request)
         {
-            var entity = request.FromDto();
-            entity.IsNew = false;
-            entity.IsDirty = true;
-
             using (var adapter = DataAccessAdapterFactory.NewDataAccessAdapter())
             {
                 OnBeforeRegionUpdateRequest(adapter, request);
+                
+                var entity = request.FromDto();
+                entity.IsNew = false;
+                entity.IsDirty = true;
+            
                 if (adapter.SaveEntity(entity, true))
                 {
                     OnAfterRegionUpdateRequest(adapter, request);

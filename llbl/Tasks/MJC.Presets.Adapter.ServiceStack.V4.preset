@@ -59,6 +59,12 @@
               <parameter name="folderToCreate" value="ServiceInterfaces\TypedViewServiceInterfaces" />
             </parameters>
           </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.RazorDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Razor" />
+            </parameters>
+          </taskPreset>
           <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ServicesDirectoryCreator">
             <performRule isEnabled="false" settingName="" operator="0" operand="" />
             <parameters>
@@ -273,12 +279,44 @@
             <parameter name="elementFilter" value="TypedViews.Count&gt;0" />
           </parameters>
         </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CmsRazorFormatClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Razor" />
+            <parameter name="filenameFormat" value="CmsRazorFormat.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CmsRazorFormatTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CmsRazorHandlerClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Razor" />
+            <parameter name="filenameFormat" value="CmsRazorHandler.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CmsRazorHandlerTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CmsRazorPageResolverClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Razor" />
+            <parameter name="filenameFormat" value="CmsRazorPageResolver.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CmsRazorPageResolverTemplate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.CmsRazorViewManagerClassGenerator">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Razor" />
+            <parameter name="filenameFormat" value="CmsRazorViewManager.[extension]" />
+            <parameter name="templateID" value="MJC_SS_Svc_CmsRazorViewManagerTemplate" />
+          </parameters>
+        </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.EntityServiceClassGenerator">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="Services" />
             <parameter name="filenameFormat" value="EntityService.[extension]" />
-            <parameter name="templateID" value="MJC_SS_Svc_EntityGenericServiceTemplate" />
+            <parameter name="templateID" value="MJC_SS_V4_Svc_EntityGenericServiceTemplate" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.TypedListServiceClassGenerator">
@@ -350,7 +388,7 @@
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="packages.config" />
             <parameter name="templateID" value="MJC_SS_Svc_Packages" />
-            <parameter name="failWhenExistent" value="true" />
+            <parameter name="failWhenExistent" value="false" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="MJC.Presets.Adapter.ServiceStack.GenerateVSNetProject">
@@ -435,7 +473,7 @@
           <parameters>
             <parameter name="destinationFolder" value="ServiceRepositories" />
             <parameter name="filenameFormat" value="[elementName]ServiceRepository.[extension]" />
-            <parameter name="templateID" value="MJC_SS_SvcImpl_EntityServiceRepositoryTemplate" />
+            <parameter name="templateID" value="MJC_SS_V4_SvcImpl_EntityServiceRepositoryTemplate" />
             <parameter name="emitType" value="allEntities" />
           </parameters>
         </taskPreset>
@@ -462,7 +500,7 @@
           <parameters>
             <parameter name="destinationFolder" value="ServiceRepositories" />
             <parameter name="filenameFormat" value="EntityServiceRepositoryBase.[extension]" />
-            <parameter name="templateID" value="MJC_SS_SvcImpl_EntityServiceRepositoryBaseTemplate" />
+            <parameter name="templateID" value="MJC_SS_V4_SvcImpl_EntityServiceRepositoryBaseTemplate" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.TypedListServiceRepositoryBase">
@@ -497,7 +535,7 @@
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="packages.config" />
             <parameter name="templateID" value="MJC_SS_SvcImpl_Packages" />
-            <parameter name="failWhenExistent" value="true" />
+            <parameter name="failWhenExistent" value="false" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="MJC.Presets.Adapter.ServiceStack.ServiceImplementations.GenerateVSNetProject">
@@ -550,13 +588,49 @@
               <parameter name="folderToCreate" value="Views\TypedViews" />
             </parameters>
           </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ThemesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Themes" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ThemesDefaultDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Themes\Default" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ViewThemesDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views\Themes" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ViewThemesDefaultDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views\Themes\Default" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ViewThemesSlateDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views\Themes\Slate" />
+            </parameters>
+          </taskPreset>
+          <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ViewThemesSuperheroDirectoryCreator">
+            <performRule isEnabled="false" settingName="" operator="0" operand="" />
+            <parameters>
+              <parameter name="folderToCreate" value="Views\Themes\Superhero" />
+            </parameters>
+          </taskPreset>
         </taskGroupPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.ConsoleAppHost">
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="Program.[extension]" />
-            <parameter name="templateID" value="MJC_SS_Web_ConsoleAppHost" />
+            <parameter name="templateID" value="MJC_SS_V4_Web_ConsoleAppHost" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.AppConfig">
@@ -565,7 +639,7 @@
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="app.config" />
             <parameter name="templateID" value="MJC_SS_Web_AppConfigTemplate" />
-            <parameter name="failWhenExistent" value="true" />
+            <parameter name="failWhenExistent" value="false" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.WebConfig">
@@ -574,7 +648,7 @@
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="web.config" />
             <parameter name="templateID" value="MJC_SS_Web_AppConfigTemplate" />
-            <parameter name="failWhenExistent" value="true" />
+            <parameter name="failWhenExistent" value="false" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.AssemblyInfoFileGenerator">
@@ -591,7 +665,7 @@
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="packages.config" />
             <parameter name="templateID" value="MJC_SS_Web_Packages" />
-            <parameter name="failWhenExistent" value="true" />
+            <parameter name="failWhenExistent" value="false" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.DefaultCshtml">
@@ -622,7 +696,7 @@
           <performRule isEnabled="false" settingName="" operator="0" operand="" />
           <parameters>
             <parameter name="destinationFolder" value="Css" />
-            <parameter name="filenameFormat" value="styles.css" />
+            <parameter name="filenameFormat" value="main.css" />
             <parameter name="templateID" value="MJC_SS_Web_CssStyles" />
           </parameters>
         </taskPreset>
@@ -682,6 +756,54 @@
             <parameter name="destinationFolder" value="Views" />
             <parameter name="filenameFormat" value="_Layout.cshtml" />
             <parameter name="templateID" value="MJC_SS_Web_LayoutsMasterpageCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.HeaderScriptsPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="_HeaderScripts.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_HeaderScriptsPartialCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.FooterScriptsPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="_FooterScripts.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_FooterScriptsPartialCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.PullRightPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views" />
+            <parameter name="filenameFormat" value="_PullRight.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_PullRightPartialCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.LayoutSlatePartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\Themes\Slate" />
+            <parameter name="filenameFormat" value="_Layout.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_LayoutsSlateMasterpageCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.HeaderScriptsSuperheroPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\Themes\Superhero" />
+            <parameter name="filenameFormat" value="_HeaderScripts.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_HeaderScriptsSuperheroPartialCshtml" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.PullRightSuperheroPartialCshtml">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="Views\Themes\Superhero" />
+            <parameter name="filenameFormat" value="_PullRight.cshtml" />
+            <parameter name="templateID" value="MJC_SS_Web_PullRightSuperheroPartialCshtml" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.EntitiesDashboardCshtml">
