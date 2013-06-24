@@ -87,7 +87,7 @@ namespace Northwind.Data.Services.TypedViewServices
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                                                                                                                                 
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                                                                                                                                                                                                                         
 
     }
     #endregion
@@ -98,7 +98,7 @@ namespace Northwind.Data.Services.TypedViewServices
     {
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewsMetaRequestAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                               
 
     }
 
@@ -108,7 +108,7 @@ namespace Northwind.Data.Services.TypedViewServices
     {
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewsRequestAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                               
 
     }
     #endregion
@@ -121,7 +121,7 @@ namespace Northwind.Data.Services.TypedViewServices
             base(collection, pageNumber, pageSize, totalItemCount) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcTypedViewCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                             
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                               
 
     }
     #endregion

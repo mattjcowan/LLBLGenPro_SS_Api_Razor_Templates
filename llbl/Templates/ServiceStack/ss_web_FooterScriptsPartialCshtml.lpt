@@ -6,14 +6,17 @@
 %>    <script src="/scripts/jquery-1.9.1.min.js"></script>
     <script src="/scripts/jquery.cookie.js"></script>
     <script src="/scripts/bootstrap.min.js"></script>
+@if (Request.QueryString["Theme"] != null) {
+    <script>
+        $(function(){
+            $.cookie('Theme', '@Request.QueryString["Theme"]');
+        });
+    </script>
+}
     <script>
         $('.theme-picker').each(function () {
             $(this).click(function () {
                 var theme = $(this).attr('data-theme');
-                if(theme.toLowerCase() == 'enterprise') {
-                    alert('The "Enterprise" theme is currently only available as a demo online at:\r\nhttp://northwind.mattjcowan.com/\r\nThis is because the Metronic admin theme has a license that limits re-distribution and requires a purchase first on ThemeForest.');
-                    theme = 'default';
-                }
                 $.cookie('Theme', theme);
                 location.reload(true);
             });

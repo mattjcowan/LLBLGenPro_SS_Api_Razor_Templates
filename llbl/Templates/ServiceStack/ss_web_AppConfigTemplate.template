@@ -10,7 +10,7 @@
     <add key="webPages:Enabled" value="false" />
     <add key="DisabledFeatures" value="Metadata,Soap,Soap11,Soap12,Csv,Jsv" />
     <add key="BlogUrl" value="http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack" />
-    <add key="AdditionalThemes" value="Slate,Superhero,Enterprise"/>
+    <add key="AdditionalThemes" value="Slate,Superhero"/>
   </appSettings>
   <connectionStrings>
     <add name="ApiDbConnectionString" connectionString="<[ConnectionString]>" />

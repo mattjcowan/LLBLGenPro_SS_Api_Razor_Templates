@@ -244,7 +244,7 @@
                   <label class="control-label" for="<%=field.Name.ToLower()%>"><%=TitleCase(field.Name)%></label>
                   <div class="controls">
                       <div class="textarea">
-                          <input type="text" id="<%=field.Name.ToLower()%>" name="<%=field.Name.ToLower()%>" placeholder="" class="input-xlarge" maxlength="<%=field.MaxLength%>">
+                          <input type="text" id="<%=field.Name.ToLower()%>" name="<%=field.Name.ToLower()%>" placeholder="" class="input-xlarge" maxlength="<%=field.MaxLength==0?50:field.MaxLength%>">
                       </div>
                   </div>
               </div>
