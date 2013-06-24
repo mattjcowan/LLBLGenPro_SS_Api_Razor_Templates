@@ -161,8 +161,9 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
+# Misc.
+*.log
 /cligenerate.bat
-/cligenerate.log
 src_v4_experimental
 /src/Hosts/WebHost
 /src_v4/Hosts/WebHost
