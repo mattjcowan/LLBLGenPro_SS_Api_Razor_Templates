@@ -8,7 +8,11 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 ## DEMO ##
 
 - **Demo site**: [http://northwind.mattjcowan.com][demo-site]
-- **Blog post**: [Generating a RESTful Api and UI from a database with LLBLGen and ServiceStack][blog-site]
+- **Themed demo site**:  [http://northwind.mattjcowan.com?theme=enterprise][themed-demo-site]
+- **Blog post**: 
+    - Post #1: [Generating a RESTful Api and UI from a database with LLBLGen and ServiceStack][blog-site]
+    - Post #2: [RESTful Api and UI for Typed Views and Typed Lists with LLBLGen and ServiceStack][blog-site2]
+    - Post #3: Theming ServiceStack Razor Views (Coming shortly)
 
 ## CHANGE LOG ##
 
@@ -132,6 +136,7 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
 - Be able to support aggregates (MAX, MIN, SUM, COUNT) and grouping clauses 
 
 [llblgen-caching]: https://www.llblgen.com/documentation/4.0/LLBLGen%20Pro%20RTF/Using%20the%20generated%20code/gencode_resultsetcaching.htm
+[themed-demo-site]: http://northwind.mattjcowan.com?theme=enterprise
 [demo-site]: http://northwind.mattjcowan.com
 [blog-site]: http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack
 [blog-site2]: http://www.mattjcowan.com/funcoding/2013/05/11/restful-api-and-ui-for-typed-views-and-typed-lists/
