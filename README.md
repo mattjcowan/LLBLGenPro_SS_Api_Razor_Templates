@@ -9,10 +9,10 @@ A set of LLBLGen Pro templates to generate a fully RESTful ServiceStack API and 
 
 - **Demo site**: [http://northwind.mattjcowan.com][demo-site]
 - **Themed demo site**:  [http://northwind.mattjcowan.com?theme=enterprise][themed-demo-site]
-- **Blog post**: 
+- **Blog posts**: 
     - Post #1: [Generating a RESTful Api and UI from a database with LLBLGen and ServiceStack][blog-site]
     - Post #2: [RESTful Api and UI for Typed Views and Typed Lists with LLBLGen and ServiceStack][blog-site2]
-    - Post #3: Theming ServiceStack Razor Views (Coming shortly)
+    - Post #3: [Theming ServiceStack Razor Views][blog-site3]
 
 ## CHANGE LOG ##
 
@@ -21,10 +21,10 @@ Chrome is nice in the sense that it always displays the reponse from the server,
 
 ### Update - June 23, 2013 ###
 
-Blog Post coming on the following (demo site will be updated in the next few days)
 
 - **Upgraded ServiceStack References**: from 3.9.38 to 3.9.54
 - **Added Theming Capability for Razor Views**: by enhancing the RazorFormat class (works for view pages, content pages and razor handlers)
+    - Blog Post: [Theming ServiceStack Razor Views][blog-site3]
 - **Added SQL Resultset Caching to V4 templates**: use a new rcache querystring parameter to identify the number of seconds you wish to cache resultsets for (use 0 to force cache refresh, uses [LLBLGen Resultset Caching][llblgen-caching])
 - **DataTable implementation enhancement**: now when adding/removing columns in the UI, you are truly only fetching the columns being displayed from the database
 
@@ -137,9 +137,10 @@ Please use the "Issues" section of the GitHub project to file desired enhancemen
 
 [llblgen-caching]: https://www.llblgen.com/documentation/4.0/LLBLGen%20Pro%20RTF/Using%20the%20generated%20code/gencode_resultsetcaching.htm
 [themed-demo-site]: http://northwind.mattjcowan.com?theme=enterprise
-[demo-site]: http://northwind.mattjcowan.com
+[demo-site]: http://northwind.mattjcowan.com/?theme=default
 [blog-site]: http://www.mattjcowan.com/funcoding/2013/03/10/rest-api-with-llblgen-and-servicestack
-[blog-site2]: http://www.mattjcowan.com/funcoding/2013/05/11/restful-api-and-ui-for-typed-views-and-typed-lists/
+[blog-site2]: http://www.mattjcowan.com/funcoding/2013/05/11/restful-api-and-ui-for-typed-views-and-typed-lists
+[blog-site3]: http://www.mattjcowan.com/funcoding/2013/06/24/theming-servicestack-razor-views
 [demo-entities]: http://northwind.mattjcowan.com/entities
 [demo-typed-views]: http://northwind.mattjcowan.com/views
 [demo-typed-lists]: http://northwind.mattjcowan.com/lists
