@@ -113,7 +113,7 @@ namespace <%=rootNameSpace%>.ConsoleHost
 
             //Enable the validation feature and scan the service assembly for validators
             Plugins.Add(new ValidationFeature());
-            container.RegisterValidators(typeof(Services.CategoryService).Assembly);
+            container.RegisterValidators(typeof(Services.<%=entities.First().Name%>Service).Assembly);
 
             //Razor (use CmsRazorFormat to add theming capabilities)
             Plugins.Add(new CmsRazorFormat());
