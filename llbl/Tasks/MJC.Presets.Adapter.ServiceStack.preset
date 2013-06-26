@@ -639,7 +639,7 @@
             <parameter name="destinationFolder" value="" />
             <parameter name="filenameFormat" value="app.config" />
             <parameter name="templateID" value="MJC_SS_Web_AppConfigTemplate" />
-            <parameter name="failWhenExistent" value="false" />
+            <parameter name="failWhenExistent" value="true" />
           </parameters>
         </taskPreset>
         <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator" displayName="MJC.Presets.Adapter.ServiceStack.ConsoleHost.WebConfig">
