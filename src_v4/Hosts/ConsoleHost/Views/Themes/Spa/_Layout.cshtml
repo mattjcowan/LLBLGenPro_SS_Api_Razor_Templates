@@ -1,0 +1,78 @@
+@using System
+@using System.Collections.Generic
+@{
+    if(Request.PathInfo != "/"){
+        Response.Redirect("/");
+    }
+    var themes = ServiceStack.Configuration.ConfigUtils.GetAppSetting("AdditionalThemes", "").Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+    var themesDict = new Dictionary<string,string>();
+    foreach(var theme in themes){
+        var s = theme.Split('|');
+        var key = s[0];
+        var val = s.Length>1?s[1]:s[0];
+        themesDict.Add(key,val);
+    }    
+}
+<!DOCTYPE html>
+<html lang="en" data-ng-app="northwindApp" data-ng-controller="AppCtrl" class="ng-app:northwindApp" id="ng-app">
+  <head>
+    <meta charset="utf-8">
+    <title>Northwind.Data - @ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="A code-generated demo REST api and HTML site, generated using LLBLGen Pro, using the ServiceStack framework">
+    <meta name="author" content="Matt Cowan (MJC)">
+    <link href="/content/bootstrap.min.css" rel="stylesheet">
+    <link href="/content/bootstrap-responsive.min.css" rel="stylesheet">
+    <!--[if lt IE 9] >
+      <script src="/scripts/html5shiv.min.js"></script>
+    <![endif]-->
+    <link href="/css/main.css" rel="stylesheet">
+@RenderSection("Header")
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="/">Northwind.Data [ <img src="http://angularjs.org/img/AngularJS-small.png" /> ]</a>
+            <ul class="nav">
+            <li>
+                <a href="~/#/">Home</a>
+            </li>
+            <li>
+                <a href="{{blogUrl}}" target="_blank">Learn more</a>
+            </li>
+            <li>
+                <a href="~/#/entities">Browse</a>
+            </li>
+            </ul>
+            <ul class="nav pull-right">
+                <li class="divider-vertical"></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">Themes <strong class="caret"></strong></a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li><a href="#" data-ng-click="changeTheme('default');">Default</a></li>
+@foreach (var t in themesDict){
+                        <li @if(t.Key.Equals("spa", StringComparison.InvariantCultureIgnoreCase)){<text> class="disabled"</text>}><a href="#" @if(!t.Key.Equals("spa", StringComparison.InvariantCultureIgnoreCase)){<text>data-ng-click="changeTheme('@t.Key.ToLowerInvariant()');"</text>}>@t.Value</a></li>
+}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+
+ @RenderBody()
+
+      <hr>
+      <div>
+        <a href="{{blogUrl}}" target="_blank">About this site</a> |
+        Site and API 100% auto-generated using <a href="http://www.llblgen.com" target="_blank">LLBLGen Pro</a> and <a href="http://www.servicestack.net" target="_blank">ServiceStack</a>
+      </div>
+    </div>
+    @Html.Partial("_FooterScripts")
+    @RenderSection("Footer")
+    @Html.Partial("_Analytics")
+  </body>
+</html>

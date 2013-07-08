@@ -1,0 +1,34 @@
+@inherits ViewPage
+@{
+    //This default.cshtml file is necessary, if only just to set the Title
+    //We are also forcing the layout page to always redirect if another page is being requested, 
+    //so that this page is loaded
+    ViewBag.Title = "AngularJS SPA Sample";
+}
+    <div ng-view></div>
+@section Header {
+
+}
+@section Footer {
+
+@if (Request.QueryString["Theme"] == null) {
+    <script src="~/scripts/angular.min.js"></script>
+    <script src="~/scripts/angular-strap.min.js"></script>
+    <script src="~/app/app.js"></script>
+    <script src="~/app/controllers/controllers.js"></script>
+    <script src="~/app/services/services.js"></script>
+    <script src="~/app/directives/directives.js"></script>
+    <script src="~/app/filters/filters.js"></script>
+    @*
+    <div id="page-info" style="display:none;">
+        <pre>@@Request.PathInfo = @Request.PathInfo</pre>
+        <pre>$location.path() = {{$location.path()}}</pre>
+        <pre>$route.current.templateUrl = {{$route.current.templateUrl}}</pre>
+        <pre>$route.current.params = {{$route.current.params}}</pre>
+        <pre>$route.current.scope.name = {{$route.current.scope.name}}</pre>
+        <pre>$routeParams = {{$routeParams}}</pre>
+    </div>
+    *@
+}
+    
+}
