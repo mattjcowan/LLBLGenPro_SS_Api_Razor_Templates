@@ -18,7 +18,7 @@
             $(this).click(function () {
                 var theme = $(this).attr('data-theme');
                 $.cookie('Theme', theme);
-                location.reload(true);
+                window.location = '/'; //location.reload(true);
             });
         });
     </script>
