@@ -5,10 +5,15 @@ body { padding-top: 60px; }
 .entity-row a, .entity-row a:hover, .entity-row a:active, .entity-row a:visited { text-decoration: none; }
 /* some responsive rendering */
 @media all and (max-width: 800px) { 
+    body { padding-top: 0px; }
     .wide-screen { display: none !important; }
     .narrow-screen { display: block !important; }
 }
 @media all and (min-width: 801px) { 
+    body { padding-top: 0px; }
     .wide-screen { display: block !important; }
     .narrow-screen { display: none !important; }
+}
+@media all and (min-width: 980px) { 
+    body { padding-top: 60px; }
 }

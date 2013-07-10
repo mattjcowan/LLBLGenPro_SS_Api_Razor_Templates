@@ -9,7 +9,7 @@
   			</a>
   			<ul class="dropdown-menu" style="width:100%;">
   				<li><a href="/#/{{typeCollectionSlug}}">All</a></li>
-  				<li data-ng-show="typesLoaded" data-ng-repeat="item in types" data-ng-class="{'active':isPath('/{{itemCollectionSlug}}/{{item.metaLink.id}}')}"><a href="/#/{{typeCollectionSlug}}/{{item.metaLink.id}}">{{splitTitleCaseAndPluralize(item.name)}}</a></li>
+  				<li data-ng-show="typesLoaded" data-ng-repeat="item in types" data-ng-class="{'active':isPath('/{{typeCollectionSlug}}/{{item.metaLink.id}}')}"><a href="/#/{{typeCollectionSlug}}/{{item.metaLink.id}}">{{getBrowseName(item)}}</a></li>
   			</ul>
   		</div>
   		<div class="well sidebar-nav wide-screen">
@@ -17,7 +17,7 @@
   				<li class="nav-header">{{typeNameTCP}}</li>
   				<li></li>
   				<li><a href="/#/{{typeCollectionSlug}}">All</a></li>
-  				<li data-ng-show="typesLoaded" data-ng-repeat="item in types" data-ng-class="{'active':getClass('/{{itemCollectionSlug}}/{{item.metaLink.id}}')}"><a href="/#/{{typeCollectionSlug}}/{{item.metaLink.id}}">{{splitTitleCaseAndPluralize(item.name)}}</a></li>
+  				<li data-ng-show="typesLoaded" data-ng-repeat="item in types" data-ng-class="{'active':isPath('/{{typeCollectionSlug}}/{{item.metaLink.id}}')}"><a href="/#/{{typeCollectionSlug}}/{{item.metaLink.id}}">{{getBrowseName(item)}}</a></li>
   			</ul>
   		</div>
     </div>
@@ -54,7 +54,7 @@
             <ul class="breadcrumb">
               <li><a href="/">Home</a> <span class="divider">/</span></li>
               <li><a href="/#/{{typeCollectionSlug}}">Browse</a> <span class="divider">/</span></li>
-              <li data-ng-show="currentTypeLoaded" class="active">{{splitTitleCaseAndPluralize(currentType.name)}}</li>
+              <li data-ng-show="currentTypeLoaded" class="active">{{getBrowseName(currentType)}}</li>
             </ul>
         </div>
         <div class="row-fluid">
@@ -105,7 +105,7 @@
                 <div class="entity-row" style="clear:both;width:100%;display:block;">
                     <table data-js-datatable="dtOverrideOptions"
                     	dt-ready-for-init="dtReadyForInit"
-                      dt-draw-count="dtRedraw"
+                        dt-draw-count="dtRedraw"
                     	ao-columns="dtAjaxColumns"
                     	fn-init-complete="dtInitComplete"
                     	fn-draw-callback="dtDrawCallback"
@@ -138,7 +138,7 @@
     </div>
     <div class="modal-body">
       <form id="addEditItemForm" form-data="{{selectedEntity}}" form-draw-count="{{dtRedrawAddEdit}}" form-fields="{{currentTypeGridFields}}"
-          class="add-update-item form-horizontal" data-target="#addEditItemModal" 
+          class="add-update-item form-horizontal" data-target="#addEditItemModal"
           method="POST" enctype="multipart/form-data">
           <fieldset>
               <legend style="display:none;"></legend>
@@ -160,5 +160,3 @@
         <input type="button" value="Submit" id="btnSubmitAddEditForm" class="btn btn-primary">
     </div>
 </div>
-
-<script type="text/javascript" charset="utf-8" language="javascript" src="/js/plugins.js"></script>
