@@ -167,3 +167,5 @@ pip-log.txt
 src_v4_experimental
 /src/Hosts/WebHost
 /src_v4/Hosts/WebHost
+/backup_for_skydrive_download.bat
+/_skydrive
