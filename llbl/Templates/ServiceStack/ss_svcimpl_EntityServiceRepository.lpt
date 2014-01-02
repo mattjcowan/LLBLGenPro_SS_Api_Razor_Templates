@@ -461,6 +461,7 @@ namespace <%=rootNameSpace%>.ServiceRepositories
 
             // Map entity properties
 <%  foreach(var field in allEntityFields){
+      if(field.IsReadOnly)continue;
       if(IsFieldBinary(field)){
 %>            if (dto.<%=field.Name%> != null) entity.<%=field.Name%> = dto.<%=field.Name%>;
 <%    }else{
