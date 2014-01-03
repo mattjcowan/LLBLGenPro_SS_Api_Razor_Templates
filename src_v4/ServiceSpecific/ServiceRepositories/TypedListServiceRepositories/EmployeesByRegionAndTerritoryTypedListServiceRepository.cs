@@ -101,8 +101,7 @@ namespace Northwind.Data.ServiceRepositories.TypedListServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-EmployeesByRegionAndTerritoryQueryCollectionRequest
+            var entities = Fetch(new EmployeesByRegionAndTerritoryQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),

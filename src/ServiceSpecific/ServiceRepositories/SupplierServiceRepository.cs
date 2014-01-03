@@ -388,7 +388,6 @@ SupplierFieldIndex));
             var entity = new SupplierEntity();
 
             // Map entity properties
-            entity.SupplierId = dto.SupplierId;
             entity.CompanyName = dto.CompanyName;
             entity.ContactName = dto.ContactName;
             entity.ContactTitle = dto.ContactTitle;

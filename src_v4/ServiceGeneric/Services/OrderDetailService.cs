@@ -17,7 +17,7 @@ namespace Northwind.Data.Services
     #region Service
     /// <summary>Service class for the entity 'OrderDetail'.</summary>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END             
+	// __LLBLGENPRO_USER_CODE_REGION_END                  
     public partial class OrderDetailService : ServiceBase<OrderDetail, IOrderDetailServiceRepository>
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
 	// __LLBLGENPRO_USER_CODE_REGION_END 
@@ -238,7 +238,7 @@ namespace Northwind.Data.Services
         public OrderDetailResponse(OrderDetail category) : base(category) { }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                         
+	// __LLBLGENPRO_USER_CODE_REGION_END                                   
     }
 
     public partial class OrderDetailCollectionResponse : GetCollectionResponse<OrderDetail>
@@ -248,7 +248,7 @@ namespace Northwind.Data.Services
             base(collection, pageNumber, pageSize, totalItemCount){}
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcCollectionResponseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                         
+	// __LLBLGENPRO_USER_CODE_REGION_END                                   
     }
     #endregion
 }

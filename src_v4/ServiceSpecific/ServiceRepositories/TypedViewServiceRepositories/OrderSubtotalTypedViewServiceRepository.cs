@@ -104,8 +104,7 @@ namespace Northwind.Data.ServiceRepositories.TypedViewServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var entities = Fetch(new 
-OrderSubtotalQueryCollectionRequest
+            var entities = Fetch(new OrderSubtotalQueryCollectionRequest
                 {
                     Filter = filter, 
                     PageNumber = Convert.ToInt32(pageNumber),

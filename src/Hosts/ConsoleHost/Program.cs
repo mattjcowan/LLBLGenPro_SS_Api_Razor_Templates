@@ -67,7 +67,7 @@ namespace Northwind.Data.ConsoleHost
     // for more detailed information on the various options you can set for hosting the API.
     class ConsoleAppHost : AppHostHttpListenerBase
     {
-        public ConsoleAppHost() : base("Northwind.Data API (updated on 6/24/2013 12:08:45 PM)", typeof(CommonDtoBase).Assembly) { }
+        public ConsoleAppHost() : base("Northwind.Data API (updated on 1/2/2014 6:47:02 PM)", typeof(CommonDtoBase).Assembly) { }
 
         // THIS IS TO SIMULATE AUTHENTICATION
         private const string UserName = "admin";
@@ -106,7 +106,8 @@ namespace Northwind.Data.ConsoleHost
 
             //Enable the validation feature and scan the service assembly for validators
             Plugins.Add(new ValidationFeature());
-            container.RegisterValidators(typeof(Services.CategoryService).Assembly);
+            container.RegisterValidators(typeof(Services.
+CategoryService).Assembly);
 
             //Razor (use CmsRazorFormat to add theming capabilities)
             Plugins.Add(new CmsRazorFormat());

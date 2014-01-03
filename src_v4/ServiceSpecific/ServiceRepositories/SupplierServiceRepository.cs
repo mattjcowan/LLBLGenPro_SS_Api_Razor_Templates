@@ -115,8 +115,7 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var columnFieldIndexNames = Enum.GetNames(typeof(
-SupplierFieldIndex));
+            var columnFieldIndexNames = Enum.GetNames(typeof(SupplierFieldIndex));
             if(iSelectColumns != null && iSelectColumns.Length > 0){
                 try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
             }
@@ -394,7 +393,6 @@ SupplierFieldIndex));
             var entity = new SupplierEntity();
 
             // Map entity properties
-            entity.SupplierId = dto.SupplierId;
             entity.CompanyName = dto.CompanyName;
             entity.ContactName = dto.ContactName;
             entity.ContactTitle = dto.ContactTitle;

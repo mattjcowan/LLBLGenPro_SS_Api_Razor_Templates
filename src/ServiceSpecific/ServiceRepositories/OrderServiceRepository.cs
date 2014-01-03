@@ -395,7 +395,6 @@ OrderFieldIndex));
             var entity = new OrderEntity();
 
             // Map entity properties
-            entity.OrderId = dto.OrderId;
             entity.CustomerId = dto.CustomerId;
             entity.EmployeeId = dto.EmployeeId;
             entity.OrderDate = dto.OrderDate;

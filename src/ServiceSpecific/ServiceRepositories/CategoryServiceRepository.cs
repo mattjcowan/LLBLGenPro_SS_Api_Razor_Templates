@@ -371,7 +371,6 @@ CategoryFieldIndex));
             var entity = new CategoryEntity();
 
             // Map entity properties
-            entity.CategoryId = dto.CategoryId;
             entity.CategoryName = dto.CategoryName;
             entity.Description = dto.Description;
             if (dto.Picture != null) entity.Picture = dto.Picture;

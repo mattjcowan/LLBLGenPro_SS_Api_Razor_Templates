@@ -370,7 +370,6 @@ ShipperFieldIndex));
             var entity = new ShipperEntity();
 
             // Map entity properties
-            entity.ShipperId = dto.ShipperId;
             entity.CompanyName = dto.CompanyName;
             entity.Phone = dto.Phone;
 

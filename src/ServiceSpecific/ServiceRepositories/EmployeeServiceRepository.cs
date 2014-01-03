@@ -402,7 +402,6 @@ EmployeeFieldIndex));
             var entity = new EmployeeEntity();
 
             // Map entity properties
-            entity.EmployeeId = dto.EmployeeId;
             entity.LastName = dto.LastName;
             entity.FirstName = dto.FirstName;
             entity.Title = dto.Title;

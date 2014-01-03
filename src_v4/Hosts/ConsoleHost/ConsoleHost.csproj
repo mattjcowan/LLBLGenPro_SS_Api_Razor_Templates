@@ -29,12 +29,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+  </PropertyGroup>  
   <ItemGroup>
     <!-- LLBLGen References -->
     <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
-      <SpecificVersion>True</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Solutions Design\LLBLGen Pro v4.0\Frameworks\LLBLGen Pro\RuntimeLibraries\CompiledRuntimeLibraries\</HintPath>
+        <SpecificVersion>True</SpecificVersion>
+        <HintPath>C:\Program Files (x86)\Solutions Design\LLBLGen Pro v4.0\Frameworks\LLBLGen Pro\RuntimeLibraries\CompiledRuntimeLibraries\</HintPath>
     </Reference>
     <Reference Include="SD.LLBLGen.Pro.DQE.SqlServer, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
@@ -104,58 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="app\app.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\controllers\controllers.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\directives\directives.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\filters\filters.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\libs\pluralize.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\libs\pluralize.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\partials\browseNavbar.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\partials\home.tpl.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\partials\type.tpl.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\partials\types.tpl.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="app\services\services.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Scripts\angular-strap.js" />
-    <Content Include="Scripts\angular-strap.min.js" />
-    <Content Include="Scripts\angular.js" />
-    <Content Include="Scripts\angular.min.js" />
-    <Content Include="web.iis.global.asax.cs.txt" />
     <None Include="app.config" />
-    <None Include="Themes\Spa\Default.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Views\Themes\Spa\_FooterScripts.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Views\Themes\Spa\_Layout.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="web.iis.config" />
-    <None Include="Js\plugins.min.js.map">
-      <DependentUpon>plugins.js</DependentUpon>
-    </None>
     <None Include="web.config" />
     <None Include="packages.config" />
     <Compile Include="Program.cs" />
@@ -167,9 +116,6 @@
     </Content>
     <Content Include="Js\plugins.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Js\plugins.min.js">
-      <DependentUpon>plugins.js</DependentUpon>
     </Content>
     <Content Include="Js\scripts.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -314,11 +260,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Themes\Default\" />
+    <Folder Include="Themes\Default" />
     <Folder Include="Views\Themes\Default\" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DbGeneric\Northwind.Data.csproj">
@@ -452,8 +399,8 @@
     <None Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="Scripts\jquery.cookie.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content>    
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
-</Project>
+</Project>  

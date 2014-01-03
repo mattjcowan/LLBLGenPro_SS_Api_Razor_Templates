@@ -2,7 +2,6 @@
 // This is generated code. 
 //////////////////////////////////////////////////////////////
 // Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Monday, June 24, 2013 12:09:59 PM
 //////////////////////////////////////////////////////////////
 using System;
 using System.Collections;

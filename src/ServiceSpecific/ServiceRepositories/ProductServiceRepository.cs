@@ -404,7 +404,6 @@ ProductFieldIndex));
             var entity = new ProductEntity();
 
             // Map entity properties
-            entity.ProductId = dto.ProductId;
             entity.ProductName = dto.ProductName;
             entity.SupplierId = dto.SupplierId;
             entity.CategoryId = dto.CategoryId;

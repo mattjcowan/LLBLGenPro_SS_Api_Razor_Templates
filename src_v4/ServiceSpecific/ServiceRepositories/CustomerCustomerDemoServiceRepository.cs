@@ -113,8 +113,7 @@ namespace Northwind.Data.ServiceRepositories
                     searchStr.StartsWith("(") ? searchStr : "(" + searchStr + ")");
             }
 
-            var columnFieldIndexNames = Enum.GetNames(typeof(
-CustomerCustomerDemoFieldIndex));
+            var columnFieldIndexNames = Enum.GetNames(typeof(CustomerCustomerDemoFieldIndex));
             if(iSelectColumns != null && iSelectColumns.Length > 0){
                 try { request.Select = string.Join(",", iSelectColumns.Select(c => columnFieldIndexNames[c]).ToArray()); } catch {}
             }
