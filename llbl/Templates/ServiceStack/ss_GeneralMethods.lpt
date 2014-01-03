@@ -62,13 +62,13 @@ public string TitleCase(string text) {
 /// Singularize a string
 /// Requires: &lt;$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $&gt;
 public string Singularize(string text) {
-    return System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(System.Globalization.CultureInfo.CurrentCulture).Singularize(text);
+    return System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(new System.Globalization.CultureInfo("en-US")).Singularize(text);
 }
 
 /// Pluralize a string
 /// Requires: &lt;$ C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.Design.dll $&gt;
 public string Pluralize(string text) {
-    var pluralizedText = System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(System.Globalization.CultureInfo.CurrentCulture).Pluralize(text);
+    var pluralizedText = System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(new System.Globalization.CultureInfo("en-US")).Pluralize(text);
 
     // handle edge cases
     pluralizedText = pluralizedText.Replace("emoes", "emos");
