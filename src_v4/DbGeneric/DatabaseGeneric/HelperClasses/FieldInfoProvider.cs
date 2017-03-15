@@ -1,8 +1,8 @@
 ﻿///////////////////////////////////////////////////////////////
 // This is generated code. 
 //////////////////////////////////////////////////////////////
-// Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Thursday, January 02, 2014 6:55:37 PM
+// Code is generated using LLBLGen Pro version: 5.1
+// Code is generated on: 
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates
 // Templates vendor: Solutions Design.
 // Templates version: 
@@ -242,13 +242,13 @@ namespace Northwind.Data.HelperClasses
 			this.AddFieldIndexEnumForElementName(typeof(AlphabeticalListOfProductsFieldIndex), "AlphabeticalListOfProductsTypedView");
 			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "ProductId", typeof(System.Int32), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.ProductId, 0, 0, 10);
 			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "ProductName", typeof(System.String), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.ProductName, 40, 0, 0);
-			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "SupplierId", typeof(System.Int32), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.SupplierId, 0, 0, 10);
-			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "CategoryId", typeof(System.Int32), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.CategoryId, 0, 0, 10);
+			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "SupplierId", typeof(Nullable<System.Int32>), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.SupplierId, 0, 0, 10);
+			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "CategoryId", typeof(Nullable<System.Int32>), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.CategoryId, 0, 0, 10);
 			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "QuantityPerUnit", typeof(System.String), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.QuantityPerUnit, 20, 0, 0);
-			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "UnitPrice", typeof(System.Decimal), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.UnitPrice, 0, 4, 19);
-			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "UnitsInStock", typeof(System.Int16), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.UnitsInStock, 0, 0, 5);
-			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "UnitsOnOrder", typeof(System.Int16), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.UnitsOnOrder, 0, 0, 5);
-			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "ReorderLevel", typeof(System.Int16), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.ReorderLevel, 0, 0, 5);
+			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "UnitPrice", typeof(Nullable<System.Decimal>), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.UnitPrice, 0, 4, 19);
+			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "UnitsInStock", typeof(Nullable<System.Int16>), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.UnitsInStock, 0, 0, 5);
+			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "UnitsOnOrder", typeof(Nullable<System.Int16>), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.UnitsOnOrder, 0, 0, 5);
+			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "ReorderLevel", typeof(Nullable<System.Int16>), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.ReorderLevel, 0, 0, 5);
 			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "Discontinued", typeof(System.Boolean), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.Discontinued, 0, 0, 0);
 			this.AddElementFieldInfo("AlphabeticalListOfProductsTypedView", "CategoryName", typeof(System.String), false, false, true, false, (int)AlphabeticalListOfProductsFieldIndex.CategoryName, 15, 0, 0);
 		}
@@ -257,7 +257,7 @@ namespace Northwind.Data.HelperClasses
 		{
 			this.AddFieldIndexEnumForElementName(typeof(CategorySalesFor1997FieldIndex), "CategorySalesFor1997TypedView");
 			this.AddElementFieldInfo("CategorySalesFor1997TypedView", "CategoryName", typeof(System.String), false, false, true, false, (int)CategorySalesFor1997FieldIndex.CategoryName, 15, 0, 0);
-			this.AddElementFieldInfo("CategorySalesFor1997TypedView", "CategorySales", typeof(System.Decimal), false, false, true, false, (int)CategorySalesFor1997FieldIndex.CategorySales, 0, 4, 19);
+			this.AddElementFieldInfo("CategorySalesFor1997TypedView", "CategorySales", typeof(Nullable<System.Decimal>), false, false, true, false, (int)CategorySalesFor1997FieldIndex.CategorySales, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitCurrentProductListTypedViewInfos()
@@ -294,17 +294,17 @@ namespace Northwind.Data.HelperClasses
 			this.AddElementFieldInfo("InvoicesTypedView", "Country", typeof(System.String), false, false, true, false, (int)InvoicesFieldIndex.Country, 15, 0, 0);
 			this.AddElementFieldInfo("InvoicesTypedView", "Salesperson", typeof(System.String), false, false, true, false, (int)InvoicesFieldIndex.Salesperson, 31, 0, 0);
 			this.AddElementFieldInfo("InvoicesTypedView", "OrderId", typeof(System.Int32), false, false, true, false, (int)InvoicesFieldIndex.OrderId, 0, 0, 10);
-			this.AddElementFieldInfo("InvoicesTypedView", "OrderDate", typeof(System.DateTime), false, false, true, false, (int)InvoicesFieldIndex.OrderDate, 0, 0, 0);
-			this.AddElementFieldInfo("InvoicesTypedView", "RequiredDate", typeof(System.DateTime), false, false, true, false, (int)InvoicesFieldIndex.RequiredDate, 0, 0, 0);
-			this.AddElementFieldInfo("InvoicesTypedView", "ShippedDate", typeof(System.DateTime), false, false, true, false, (int)InvoicesFieldIndex.ShippedDate, 0, 0, 0);
+			this.AddElementFieldInfo("InvoicesTypedView", "OrderDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)InvoicesFieldIndex.OrderDate, 0, 0, 0);
+			this.AddElementFieldInfo("InvoicesTypedView", "RequiredDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)InvoicesFieldIndex.RequiredDate, 0, 0, 0);
+			this.AddElementFieldInfo("InvoicesTypedView", "ShippedDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)InvoicesFieldIndex.ShippedDate, 0, 0, 0);
 			this.AddElementFieldInfo("InvoicesTypedView", "ShipperName", typeof(System.String), false, false, true, false, (int)InvoicesFieldIndex.ShipperName, 40, 0, 0);
 			this.AddElementFieldInfo("InvoicesTypedView", "ProductId", typeof(System.Int32), false, false, true, false, (int)InvoicesFieldIndex.ProductId, 0, 0, 10);
 			this.AddElementFieldInfo("InvoicesTypedView", "ProductName", typeof(System.String), false, false, true, false, (int)InvoicesFieldIndex.ProductName, 40, 0, 0);
 			this.AddElementFieldInfo("InvoicesTypedView", "UnitPrice", typeof(System.Decimal), false, false, true, false, (int)InvoicesFieldIndex.UnitPrice, 0, 4, 19);
 			this.AddElementFieldInfo("InvoicesTypedView", "Quantity", typeof(System.Int16), false, false, true, false, (int)InvoicesFieldIndex.Quantity, 0, 0, 5);
 			this.AddElementFieldInfo("InvoicesTypedView", "Discount", typeof(System.Single), false, false, true, false, (int)InvoicesFieldIndex.Discount, 0, 0, 24);
-			this.AddElementFieldInfo("InvoicesTypedView", "ExtendedPrice", typeof(System.Decimal), false, false, true, false, (int)InvoicesFieldIndex.ExtendedPrice, 0, 4, 19);
-			this.AddElementFieldInfo("InvoicesTypedView", "Freight", typeof(System.Decimal), false, false, true, false, (int)InvoicesFieldIndex.Freight, 0, 4, 19);
+			this.AddElementFieldInfo("InvoicesTypedView", "ExtendedPrice", typeof(Nullable<System.Decimal>), false, false, true, false, (int)InvoicesFieldIndex.ExtendedPrice, 0, 4, 19);
+			this.AddElementFieldInfo("InvoicesTypedView", "Freight", typeof(Nullable<System.Decimal>), false, false, true, false, (int)InvoicesFieldIndex.Freight, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitOrderDetailsExtendedTypedViewInfos()
@@ -316,7 +316,7 @@ namespace Northwind.Data.HelperClasses
 			this.AddElementFieldInfo("OrderDetailsExtendedTypedView", "UnitPrice", typeof(System.Decimal), false, false, true, false, (int)OrderDetailsExtendedFieldIndex.UnitPrice, 0, 4, 19);
 			this.AddElementFieldInfo("OrderDetailsExtendedTypedView", "Quantity", typeof(System.Int16), false, false, true, false, (int)OrderDetailsExtendedFieldIndex.Quantity, 0, 0, 5);
 			this.AddElementFieldInfo("OrderDetailsExtendedTypedView", "Discount", typeof(System.Single), false, false, true, false, (int)OrderDetailsExtendedFieldIndex.Discount, 0, 0, 24);
-			this.AddElementFieldInfo("OrderDetailsExtendedTypedView", "ExtendedPrice", typeof(System.Decimal), false, false, true, false, (int)OrderDetailsExtendedFieldIndex.ExtendedPrice, 0, 4, 19);
+			this.AddElementFieldInfo("OrderDetailsExtendedTypedView", "ExtendedPrice", typeof(Nullable<System.Decimal>), false, false, true, false, (int)OrderDetailsExtendedFieldIndex.ExtendedPrice, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitOrdersQryTypedViewInfos()
@@ -324,12 +324,12 @@ namespace Northwind.Data.HelperClasses
 			this.AddFieldIndexEnumForElementName(typeof(OrdersQryFieldIndex), "OrdersQryTypedView");
 			this.AddElementFieldInfo("OrdersQryTypedView", "OrderId", typeof(System.Int32), false, false, true, false, (int)OrdersQryFieldIndex.OrderId, 0, 0, 10);
 			this.AddElementFieldInfo("OrdersQryTypedView", "CustomerId", typeof(System.String), false, false, true, false, (int)OrdersQryFieldIndex.CustomerId, 5, 0, 0);
-			this.AddElementFieldInfo("OrdersQryTypedView", "EmployeeId", typeof(System.Int32), false, false, true, false, (int)OrdersQryFieldIndex.EmployeeId, 0, 0, 10);
-			this.AddElementFieldInfo("OrdersQryTypedView", "OrderDate", typeof(System.DateTime), false, false, true, false, (int)OrdersQryFieldIndex.OrderDate, 0, 0, 0);
-			this.AddElementFieldInfo("OrdersQryTypedView", "RequiredDate", typeof(System.DateTime), false, false, true, false, (int)OrdersQryFieldIndex.RequiredDate, 0, 0, 0);
-			this.AddElementFieldInfo("OrdersQryTypedView", "ShippedDate", typeof(System.DateTime), false, false, true, false, (int)OrdersQryFieldIndex.ShippedDate, 0, 0, 0);
-			this.AddElementFieldInfo("OrdersQryTypedView", "ShipVia", typeof(System.Int32), false, false, true, false, (int)OrdersQryFieldIndex.ShipVia, 0, 0, 10);
-			this.AddElementFieldInfo("OrdersQryTypedView", "Freight", typeof(System.Decimal), false, false, true, false, (int)OrdersQryFieldIndex.Freight, 0, 4, 19);
+			this.AddElementFieldInfo("OrdersQryTypedView", "EmployeeId", typeof(Nullable<System.Int32>), false, false, true, false, (int)OrdersQryFieldIndex.EmployeeId, 0, 0, 10);
+			this.AddElementFieldInfo("OrdersQryTypedView", "OrderDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)OrdersQryFieldIndex.OrderDate, 0, 0, 0);
+			this.AddElementFieldInfo("OrdersQryTypedView", "RequiredDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)OrdersQryFieldIndex.RequiredDate, 0, 0, 0);
+			this.AddElementFieldInfo("OrdersQryTypedView", "ShippedDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)OrdersQryFieldIndex.ShippedDate, 0, 0, 0);
+			this.AddElementFieldInfo("OrdersQryTypedView", "ShipVia", typeof(Nullable<System.Int32>), false, false, true, false, (int)OrdersQryFieldIndex.ShipVia, 0, 0, 10);
+			this.AddElementFieldInfo("OrdersQryTypedView", "Freight", typeof(Nullable<System.Decimal>), false, false, true, false, (int)OrdersQryFieldIndex.Freight, 0, 4, 19);
 			this.AddElementFieldInfo("OrdersQryTypedView", "ShipName", typeof(System.String), false, false, true, false, (int)OrdersQryFieldIndex.ShipName, 40, 0, 0);
 			this.AddElementFieldInfo("OrdersQryTypedView", "ShipAddress", typeof(System.String), false, false, true, false, (int)OrdersQryFieldIndex.ShipAddress, 60, 0, 0);
 			this.AddElementFieldInfo("OrdersQryTypedView", "ShipCity", typeof(System.String), false, false, true, false, (int)OrdersQryFieldIndex.ShipCity, 15, 0, 0);
@@ -348,14 +348,14 @@ namespace Northwind.Data.HelperClasses
 		{
 			this.AddFieldIndexEnumForElementName(typeof(OrderSubtotalFieldIndex), "OrderSubtotalTypedView");
 			this.AddElementFieldInfo("OrderSubtotalTypedView", "OrderId", typeof(System.Int32), false, false, true, false, (int)OrderSubtotalFieldIndex.OrderId, 0, 0, 10);
-			this.AddElementFieldInfo("OrderSubtotalTypedView", "Subtotal", typeof(System.Decimal), false, false, true, false, (int)OrderSubtotalFieldIndex.Subtotal, 0, 4, 19);
+			this.AddElementFieldInfo("OrderSubtotalTypedView", "Subtotal", typeof(Nullable<System.Decimal>), false, false, true, false, (int)OrderSubtotalFieldIndex.Subtotal, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitProductsAboveAveragePriceTypedViewInfos()
 		{
 			this.AddFieldIndexEnumForElementName(typeof(ProductsAboveAveragePriceFieldIndex), "ProductsAboveAveragePriceTypedView");
 			this.AddElementFieldInfo("ProductsAboveAveragePriceTypedView", "ProductName", typeof(System.String), false, false, true, false, (int)ProductsAboveAveragePriceFieldIndex.ProductName, 40, 0, 0);
-			this.AddElementFieldInfo("ProductsAboveAveragePriceTypedView", "UnitPrice", typeof(System.Decimal), false, false, true, false, (int)ProductsAboveAveragePriceFieldIndex.UnitPrice, 0, 4, 19);
+			this.AddElementFieldInfo("ProductsAboveAveragePriceTypedView", "UnitPrice", typeof(Nullable<System.Decimal>), false, false, true, false, (int)ProductsAboveAveragePriceFieldIndex.UnitPrice, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitProductSalesFor1997TypedViewInfos()
@@ -363,7 +363,7 @@ namespace Northwind.Data.HelperClasses
 			this.AddFieldIndexEnumForElementName(typeof(ProductSalesFor1997FieldIndex), "ProductSalesFor1997TypedView");
 			this.AddElementFieldInfo("ProductSalesFor1997TypedView", "CategoryName", typeof(System.String), false, false, true, false, (int)ProductSalesFor1997FieldIndex.CategoryName, 15, 0, 0);
 			this.AddElementFieldInfo("ProductSalesFor1997TypedView", "ProductName", typeof(System.String), false, false, true, false, (int)ProductSalesFor1997FieldIndex.ProductName, 40, 0, 0);
-			this.AddElementFieldInfo("ProductSalesFor1997TypedView", "ProductSales", typeof(System.Decimal), false, false, true, false, (int)ProductSalesFor1997FieldIndex.ProductSales, 0, 4, 19);
+			this.AddElementFieldInfo("ProductSalesFor1997TypedView", "ProductSales", typeof(Nullable<System.Decimal>), false, false, true, false, (int)ProductSalesFor1997FieldIndex.ProductSales, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitProductsByCategoryTypedViewInfos()
@@ -372,7 +372,7 @@ namespace Northwind.Data.HelperClasses
 			this.AddElementFieldInfo("ProductsByCategoryTypedView", "CategoryName", typeof(System.String), false, false, true, false, (int)ProductsByCategoryFieldIndex.CategoryName, 15, 0, 0);
 			this.AddElementFieldInfo("ProductsByCategoryTypedView", "ProductName", typeof(System.String), false, false, true, false, (int)ProductsByCategoryFieldIndex.ProductName, 40, 0, 0);
 			this.AddElementFieldInfo("ProductsByCategoryTypedView", "QuantityPerUnit", typeof(System.String), false, false, true, false, (int)ProductsByCategoryFieldIndex.QuantityPerUnit, 20, 0, 0);
-			this.AddElementFieldInfo("ProductsByCategoryTypedView", "UnitsInStock", typeof(System.Int16), false, false, true, false, (int)ProductsByCategoryFieldIndex.UnitsInStock, 0, 0, 5);
+			this.AddElementFieldInfo("ProductsByCategoryTypedView", "UnitsInStock", typeof(Nullable<System.Int16>), false, false, true, false, (int)ProductsByCategoryFieldIndex.UnitsInStock, 0, 0, 5);
 			this.AddElementFieldInfo("ProductsByCategoryTypedView", "Discontinued", typeof(System.Boolean), false, false, true, false, (int)ProductsByCategoryFieldIndex.Discontinued, 0, 0, 0);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
@@ -391,32 +391,32 @@ namespace Northwind.Data.HelperClasses
 			this.AddElementFieldInfo("SalesByCategoryTypedView", "CategoryId", typeof(System.Int32), false, false, true, false, (int)SalesByCategoryFieldIndex.CategoryId, 0, 0, 10);
 			this.AddElementFieldInfo("SalesByCategoryTypedView", "CategoryName", typeof(System.String), false, false, true, false, (int)SalesByCategoryFieldIndex.CategoryName, 15, 0, 0);
 			this.AddElementFieldInfo("SalesByCategoryTypedView", "ProductName", typeof(System.String), false, false, true, false, (int)SalesByCategoryFieldIndex.ProductName, 40, 0, 0);
-			this.AddElementFieldInfo("SalesByCategoryTypedView", "ProductSales", typeof(System.Decimal), false, false, true, false, (int)SalesByCategoryFieldIndex.ProductSales, 0, 4, 19);
+			this.AddElementFieldInfo("SalesByCategoryTypedView", "ProductSales", typeof(Nullable<System.Decimal>), false, false, true, false, (int)SalesByCategoryFieldIndex.ProductSales, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitSalesTotalsByAmountTypedViewInfos()
 		{
 			this.AddFieldIndexEnumForElementName(typeof(SalesTotalsByAmountFieldIndex), "SalesTotalsByAmountTypedView");
-			this.AddElementFieldInfo("SalesTotalsByAmountTypedView", "SaleAmount", typeof(System.Decimal), false, false, true, false, (int)SalesTotalsByAmountFieldIndex.SaleAmount, 0, 4, 19);
+			this.AddElementFieldInfo("SalesTotalsByAmountTypedView", "SaleAmount", typeof(Nullable<System.Decimal>), false, false, true, false, (int)SalesTotalsByAmountFieldIndex.SaleAmount, 0, 4, 19);
 			this.AddElementFieldInfo("SalesTotalsByAmountTypedView", "OrderId", typeof(System.Int32), false, false, true, false, (int)SalesTotalsByAmountFieldIndex.OrderId, 0, 0, 10);
 			this.AddElementFieldInfo("SalesTotalsByAmountTypedView", "CompanyName", typeof(System.String), false, false, true, false, (int)SalesTotalsByAmountFieldIndex.CompanyName, 40, 0, 0);
-			this.AddElementFieldInfo("SalesTotalsByAmountTypedView", "ShippedDate", typeof(System.DateTime), false, false, true, false, (int)SalesTotalsByAmountFieldIndex.ShippedDate, 0, 0, 0);
+			this.AddElementFieldInfo("SalesTotalsByAmountTypedView", "ShippedDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)SalesTotalsByAmountFieldIndex.ShippedDate, 0, 0, 0);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitSummaryOfSalesByQuarterTypedViewInfos()
 		{
 			this.AddFieldIndexEnumForElementName(typeof(SummaryOfSalesByQuarterFieldIndex), "SummaryOfSalesByQuarterTypedView");
-			this.AddElementFieldInfo("SummaryOfSalesByQuarterTypedView", "ShippedDate", typeof(System.DateTime), false, false, true, false, (int)SummaryOfSalesByQuarterFieldIndex.ShippedDate, 0, 0, 0);
+			this.AddElementFieldInfo("SummaryOfSalesByQuarterTypedView", "ShippedDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)SummaryOfSalesByQuarterFieldIndex.ShippedDate, 0, 0, 0);
 			this.AddElementFieldInfo("SummaryOfSalesByQuarterTypedView", "OrderId", typeof(System.Int32), false, false, true, false, (int)SummaryOfSalesByQuarterFieldIndex.OrderId, 0, 0, 10);
-			this.AddElementFieldInfo("SummaryOfSalesByQuarterTypedView", "Subtotal", typeof(System.Decimal), false, false, true, false, (int)SummaryOfSalesByQuarterFieldIndex.Subtotal, 0, 4, 19);
+			this.AddElementFieldInfo("SummaryOfSalesByQuarterTypedView", "Subtotal", typeof(Nullable<System.Decimal>), false, false, true, false, (int)SummaryOfSalesByQuarterFieldIndex.Subtotal, 0, 4, 19);
 		}
 		/// <summary>Inits View's FieldInfo objects</summary>
 		private void InitSummaryOfSalesByYearTypedViewInfos()
 		{
 			this.AddFieldIndexEnumForElementName(typeof(SummaryOfSalesByYearFieldIndex), "SummaryOfSalesByYearTypedView");
-			this.AddElementFieldInfo("SummaryOfSalesByYearTypedView", "ShippedDate", typeof(System.DateTime), false, false, true, false, (int)SummaryOfSalesByYearFieldIndex.ShippedDate, 0, 0, 0);
+			this.AddElementFieldInfo("SummaryOfSalesByYearTypedView", "ShippedDate", typeof(Nullable<System.DateTime>), false, false, true, false, (int)SummaryOfSalesByYearFieldIndex.ShippedDate, 0, 0, 0);
 			this.AddElementFieldInfo("SummaryOfSalesByYearTypedView", "OrderId", typeof(System.Int32), false, false, true, false, (int)SummaryOfSalesByYearFieldIndex.OrderId, 0, 0, 10);
-			this.AddElementFieldInfo("SummaryOfSalesByYearTypedView", "Subtotal", typeof(System.Decimal), false, false, true, false, (int)SummaryOfSalesByYearFieldIndex.Subtotal, 0, 4, 19);
+			this.AddElementFieldInfo("SummaryOfSalesByYearTypedView", "Subtotal", typeof(Nullable<System.Decimal>), false, false, true, false, (int)SummaryOfSalesByYearFieldIndex.Subtotal, 0, 4, 19);
 		}		
 	}
 }

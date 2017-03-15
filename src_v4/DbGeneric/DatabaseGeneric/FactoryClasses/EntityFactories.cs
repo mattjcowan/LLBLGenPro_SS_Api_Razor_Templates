@@ -1,8 +1,8 @@
 ﻿///////////////////////////////////////////////////////////////
 // This is generated code. 
 //////////////////////////////////////////////////////////////
-// Code is generated using LLBLGen Pro version: 4.0
-// Code is generated on: Thursday, January 02, 2014 6:55:39 PM
+// Code is generated using LLBLGen Pro version: 5.1
+// Code is generated on: 
 // Code is generated using templates: SD.TemplateBindings.SharedTemplates
 // Templates vendor: Solutions Design.
 // Templates version: 
@@ -482,6 +482,21 @@ namespace Northwind.Data.FactoryClasses
 		{
 			return new ResultsetFields(numberOfFields);
 		}
+		
+		/// <summary>Obtains the inheritance info provider instance from the singleton </summary>
+		/// <returns>The singleton instance of the inheritance info provider</returns>
+		public override IInheritanceInfoProvider ObtainInheritanceInfoProviderInstance()
+		{
+			return InheritanceInfoProviderSingleton.GetInstance();
+		}
+
+		/// <summary>Gets the typed view fields of the typedview with the typedviewenum type value specified.</summary>
+		/// <param name="typedViewTypeEnumValue">The typed view type enum value.</param>
+		/// <returns></returns>
+		public override IEntityFieldsCore GetTypedViewFields(int typedViewTypeEnumValue)
+		{
+			return EntityFieldsFactory.CreateTypedViewEntityFieldsObject((TypedViewType)typedViewTypeEnumValue);
+		}
 
 		/// <summary>Creates a new dynamic relation instance</summary>
 		/// <param name="leftOperand">The left operand.</param>
@@ -501,13 +516,19 @@ namespace Northwind.Data.FactoryClasses
 		{
 			return new DynamicRelation(leftOperand, joinType, rightOperand, onClause);
 		}
-		
-		/// <summary>Obtains the inheritance info provider instance from the singleton </summary>
-		/// <returns>The singleton instance of the inheritance info provider</returns>
-		public override IInheritanceInfoProvider ObtainInheritanceInfoProviderInstance()
+
+		/// <summary>Creates a new dynamic relation instance</summary>
+		/// <param name="leftOperand">The left operand.</param>
+		/// <param name="joinType">Type of the join. If None is specified, Inner is assumed.</param>
+		/// <param name="rightOperand">The right operand.</param>
+		/// <param name="aliasLeftOperand">The alias of the left operand. If you don't want to / need to alias the right operand (only alias if you have to), specify string.Empty.</param>
+		/// <param name="onClause">The on clause for the join.</param>
+		/// <returns>ready to use dynamic relation</returns>
+		public override IDynamicRelation CreateDynamicRelation(IEntityFieldCore leftOperand, JoinHint joinType, DerivedTableDefinition rightOperand, string aliasLeftOperand, IPredicate onClause)
 		{
-			return InheritanceInfoProviderSingleton.GetInstance();
+			return new DynamicRelation(leftOperand, joinType, rightOperand, aliasLeftOperand, onClause);
 		}
+
 
 		/// <summary>Creates a new dynamic relation instance</summary>
 		/// <param name="leftOperand">The left operand.</param>
@@ -532,6 +553,19 @@ namespace Northwind.Data.FactoryClasses
 		public override IDynamicRelation CreateDynamicRelation(string leftOperandEntityName, JoinHint joinType, string rightOperandEntityName, string aliasLeftOperand, string aliasRightOperand, IPredicate onClause)
 		{
 			return new DynamicRelation((Northwind.Data.EntityType)Enum.Parse(typeof(Northwind.Data.EntityType), leftOperandEntityName, false), joinType, (Northwind.Data.EntityType)Enum.Parse(typeof(Northwind.Data.EntityType), rightOperandEntityName, false), aliasLeftOperand, aliasRightOperand, onClause);
+		}
+		
+		/// <summary>Creates a new dynamic relation instance</summary>
+		/// <param name="leftOperand">The left operand.</param>
+		/// <param name="joinType">Type of the join. If None is specified, Inner is assumed.</param>
+		/// <param name="rightOperandEntityName">Name of the entity, which is used as the right operand.</param>
+		/// <param name="aliasLeftOperand">The alias of the left operand. If you don't want to / need to alias the right operand (only alias if you have to), specify string.Empty.</param>
+		/// <param name="aliasRightOperand">The alias of the right operand. If you don't want to / need to alias the right operand (only alias if you have to), specify string.Empty.</param>
+		/// <param name="onClause">The on clause for the join.</param>
+		/// <returns>ready to use dynamic relation</returns>
+		public override IDynamicRelation CreateDynamicRelation(IEntityFieldCore leftOperand, JoinHint joinType, string rightOperandEntityName, string aliasLeftOperand, string aliasRightOperand, IPredicate onClause)
+		{
+			return new DynamicRelation(leftOperand, joinType, (Northwind.Data.EntityType)Enum.Parse(typeof(Northwind.Data.EntityType), rightOperandEntityName, false), aliasLeftOperand, aliasRightOperand, onClause);
 		}
 		
 		/// <summary>Implementation of the routine which gets the factory of the Entity type with the Northwind.Data.EntityType value passed in</summary>

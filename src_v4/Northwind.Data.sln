@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.DataDBSpecific", "DbSpecific\Northwind.DataDBSpecific.csproj", "{36759884-C5DA-42A9-A90E-FDDDD0FC301C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{7D54486C-3B52-4214-897E-D915D553DC34}"
@@ -16,6 +18,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Data", "DbGeneric\Northwind.Data.csproj", "{B81D0E85-E5CB-432D-8832-5C02D28D912D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosts", "Hosts", "{A2071B2C-D7CA-41CE-BDFA-EFBB32B780AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E739928-51A8-4CB9-8679-5597598AF926}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,9 +56,9 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{36759884-C5DA-42A9-A90E-FDDDD0FC301C} = {7D54486C-3B52-4214-897E-D915D553DC34}
-		{B81D0E85-E5CB-432D-8832-5C02D28D912D} = {7D54486C-3B52-4214-897E-D915D553DC34}
-		{BE62F222-BD2C-45D6-AFFB-52ED5A243EB0} = {06DDC51F-D558-41D4-B694-55E74EE3FBBC}
 		{E3740FE0-A708-49A7-8F3B-AB8C369F0AD6} = {06DDC51F-D558-41D4-B694-55E74EE3FBBC}
+		{BE62F222-BD2C-45D6-AFFB-52ED5A243EB0} = {06DDC51F-D558-41D4-B694-55E74EE3FBBC}
 		{C5528A9C-4565-409B-9457-92A0561C8847} = {A2071B2C-D7CA-41CE-BDFA-EFBB32B780AC}
+		{B81D0E85-E5CB-432D-8832-5C02D28D912D} = {7D54486C-3B52-4214-897E-D915D553DC34}
 	EndGlobalSection
 EndGlobal

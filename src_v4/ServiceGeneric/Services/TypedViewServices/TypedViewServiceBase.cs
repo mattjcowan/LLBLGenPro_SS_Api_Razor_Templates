@@ -18,7 +18,7 @@ using Northwind.Data.ServiceInterfaces.TypedViewServiceInterfaces;
 namespace Northwind.Data.Services.TypedViewServices
 { 
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                  
+	// __LLBLGENPRO_USER_CODE_REGION_END                   
     [LogRequestFilter, LogExceptionFilter]
     public abstract partial class TypedViewServiceBase: Service
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalInterfaces 
@@ -30,14 +30,14 @@ namespace Northwind.Data.Services.TypedViewServices
         }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcBaseAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                       
     }
     
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalAttributes 
-	// __LLBLGENPRO_USER_CODE_REGION_END                  
+	// __LLBLGENPRO_USER_CODE_REGION_END                   
     public abstract partial class TypedViewServiceBase<TDto, TRepository>: TypedViewServiceBase
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalInterfaces 
-	// __LLBLGENPRO_USER_CODE_REGION_END                  
+	// __LLBLGENPRO_USER_CODE_REGION_END                   
         where TDto: CommonTypedViewDtoBase
         where TRepository: ITypedViewServiceRepository<TDto>
     {
@@ -45,6 +45,6 @@ namespace Northwind.Data.Services.TypedViewServices
         public virtual TRepository Repository { get; set; }
         
 	// __LLBLGENPRO_USER_CODE_REGION_START SsSvcAdditionalMethods 
-	// __LLBLGENPRO_USER_CODE_REGION_END                                                    
+	// __LLBLGENPRO_USER_CODE_REGION_END                                                       
     }
 }

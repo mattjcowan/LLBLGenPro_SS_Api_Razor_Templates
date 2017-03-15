@@ -40,6 +40,7 @@ local.properties
 *.suo
 *.user
 *.sln.docstates
+.vs/
 
 # Build results
 [Dd]ebug/
@@ -169,3 +170,5 @@ src_v4_experimental
 /src_v4/Hosts/WebHost
 /backup_for_skydrive_download.bat
 /_skydrive
+/.vs
+/.vs
